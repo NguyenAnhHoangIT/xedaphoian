@@ -1,0 +1,111 @@
+﻿@section Styles {
+    <link rel="stylesheet" href="~/css/DangKy.css" />
+}
+@model ThueXeDapHoiAn.ViewModels.LoginViewModel
+
+
+<!-- Main Content -->
+<main class="main-content">
+    <div class="content-container">
+        <div class="registration-container">
+            <div class="registration-flex">
+                <!-- Left Side - Image Section -->
+                <div class="registration-image"></div>
+
+                <!-- Right Side - Registration Form -->
+                <div class="registration-form-container">
+                    <div class="registration-form">
+                        <h2 class="form-title">Đăng nhập</h2>
+
+                        <form id="loginForm" asp-action="DangNhap" method="post">
+
+                            <!-- Phone Number -->
+                            <div class="form-group">
+                                <label asp-for="SoDienThoai"></label>
+                                <input asp-for="SoDienThoai" class="form-control" placeholder="Số điện thoại" />
+                                <span asp-validation-for="SoDienThoai" class="error-message"></span>
+                            </div>
+
+                            <!-- Password -->
+                            <div class="form-group">
+                                <label asp-for="Password"></label>
+                                <div class="password-container">
+                                    <input asp-for="Password" class="form-control" placeholder="Mật khẩu" />
+                                    <button type="button" class="password-toggle" onclick="togglePassword('Password')">
+                                        <i class="fa-solid fa-eye"></i>
+                                    </button>
+                                </div>
+                                <span asp-validation-for="Password" class="error-message"></span>
+                            </div>
+
+                            <!-- Remember Me -->
+                            <div class="form-group">
+                                <label asp-for="RememberMe">
+                                    <input style="width: 15px; height:15px;" asp-for="RememberMe" /> @Html.DisplayNameFor(m => m.RememberMe)
+                                </label>
+                            </div>
+
+                            <!-- Submit Button -->
+                            <button type="submit" class="btn btn-register">Đăng nhập</button>
+
+                        </form>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<script>
+    // Simple password toggle functionality
+    function togglePassword(fieldId) {
+      const passwordField = document.getElementById(fieldId);
+      const icon = passwordField.nextElementSibling.querySelector('i');
+
+      if (passwordField.type === 'password') {
+        passwordField.type = 'text';
+        icon.className = 'fa-solid fa-eye-slash';
+      } else {
+        passwordField.type = 'password';
+        icon.className = 'fa-solid fa-eye';
+      }
+    }
+
+    // Form validation
+    document.getElementById('registerForm').addEventListener('submit', function(e) {
+
+      let isValid = true;
+      const phoneNumber = document.getElementById('phoneNumber').value;
+      const password = document.getElementById('password').value;
+
+      // Reset error messages
+      document.querySelectorAll('.error-message').forEach(el => el.textContent = '');
+
+
+
+
+      // Phone number validation
+      if (!phoneNumber) {
+        document.getElementById('phoneNumberError').textContent = 'Vui lòng nhập số điện thoại';
+        isValid = false;
+      } else if (phoneNumber.length < 10) {
+        document.getElementById('phoneNumberError').textContent = 'Số điện thoại phải có ít nhất 10 số';
+        isValid = false;
+      } else if (!/^\+?[0-9]+$/.test(phoneNumber)) {
+        document.getElementById('phoneNumberError').textContent = 'Số điện thoại không hợp lệ';
+        isValid = false;
+      }
+
+      // Password validation
+        if (!password) {
+            document.getElementById('passwordError').textContent = 'Vui lòng nhập mật khẩu';
+            isValid = false;
+        } else if (password.length < 8) {
+            document.getElementById('passwordError').textContent = 'Mật khẩu phải có ít nhất 8 ký tự';
+            isValid = false;
+        }
+
+    });
+</script>
+

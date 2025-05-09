@@ -1,0 +1,141 @@
+﻿.back-button {
+    cursor: pointer;
+    font-size: 1.4rem;
+    margin: 10px 20px;
+    color: #007bff;
+    display: inline-block;
+    transition: color 0.3s;
+}
+
+    .back-button:hover {
+        color: #0056b3;
+        text-decoration: none;
+    }
+/* Container chứa nội dung */
+.ndung-container {
+    display: flex;
+    justify-content: center;
+    padding: 40px 15px;
+    background-color: #f4f7fa;
+}
+
+/* Nội dung chính */
+.ndung {
+    width: 100%;
+    max-width: 1200px;
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Tiêu đề chi tiết đơn thuê */
+.qly {
+    font-size: 1.6rem;
+    font-weight: bold;
+    color: #1a3b73;
+    text-align: center;
+    margin-bottom: 20px;
+    border-bottom: 2px solid #1a3b73;
+    padding-bottom: 10px;
+}
+
+/* Khối chi tiết đơn thuê */
+.detail {
+    background-color: white;
+    padding: 25px;
+    border-radius: 10px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* Bố cục các phần chi tiết */
+.ngang {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: 15px;
+    margin-bottom: 15px;
+}
+
+/* Các label cho thông tin chi tiết */
+.text {
+    font-size: 1rem;
+    font-weight: 500;
+    color: #555;
+    margin: 0;
+}
+
+.dlieu {
+    font-size: 1rem;
+    font-weight: bold;
+    color: #092a8f;
+    margin: 0;
+}
+
+/* Các nút hành động */
+.button-group {
+    display: flex;
+    justify-content: flex-end;
+    gap: 20px;
+    margin-top: 40px;
+}
+
+/* Nút đánh giá */
+.btn3 {
+    width: 200px;
+    height: 45px;
+    border-radius: 25px;
+    font-size: 1rem;
+    font-weight: bold;
+    background-color: #FFAC11;
+    color: white;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+    .btn3:hover {
+        background-color: #e68906;
+        transform: translateY(-3px);
+    }
+
+/* Responsive Design cho các thiết bị nhỏ */
+@media (max-width: 768px) {
+    .ndung {
+        padding: 15px;
+    }
+
+    .ngang {
+        grid-template-columns: 1fr;
+    }
+
+    .qly {
+        font-size: 1.2rem;
+    }
+
+    .button-group {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .btn3 {
+        width: 100%;
+        font-size: 1.1rem;
+    }
+}
+
+/* Thêm hiệu ứng hover cho các phần tử */
+.ngang:hover {
+    background-color: #f1f1f1;
+    transform: translateY(-3px);
+    transition: transform 0.3s ease, background-color 0.3s ease;
+}
+
+/* Bóng đổ cho các phần tử trong chi tiết */
+.ngang {
+    padding: 15px;
+    border-radius: 8px;
+    background-color: #ffffff;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}

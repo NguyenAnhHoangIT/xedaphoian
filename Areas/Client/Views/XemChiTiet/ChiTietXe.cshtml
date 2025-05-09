@@ -1,0 +1,294 @@
+﻿@{
+    Layout = "~/Areas/Client/Views/Shared/_Layout.cshtml";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/LayoutClient.css" />
+    <link rel="stylesheet" href="~/css/ChiTietXe.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+}
+<div class="ndung">
+    <div class="wrapper">
+        <div style="margin-left: 20px;">
+            <!-- Ảnh lớn -->
+            <img id="mainImage" src="~/images/xe1.jpg" style="width: 430px; height: 280px; border-radius: 6px;" alt="Ảnh chính">
+
+            <!-- Ảnh nhỏ bên dưới -->
+            <div style="margin-top: 10px; display: flex; gap: 10px;">
+                <img src="~/images/xe1.jpg" style="width: 100px; height: 65px; cursor: pointer;" onclick="changeImage(this)">
+                <img src="~/images/xe2.jpg" style="width: 100px; height: 65px; cursor: pointer;" onclick="changeImage(this)">
+                <img src="~/images/xe3.png" style="width: 100px; height: 65px; cursor: pointer;" onclick="changeImage(this)">
+            </div>
+        </div>
+        <div style="margin-right: 250px;">
+            <p class="title">Xe đạp đường phố (Hybrid-Bike)</p>
+            <p class="title">Chọn khung giờ</p>
+            <div style="display: flex;gap:6px;align-items: center;">
+                <p class="text">từ</p>
+                <input type="datetime-local" class="form-control" id="thoigianGio">
+                <p class="text">đến</p>
+                <input type="datetime-local" class="form-control" id="thoigianGio">
+            </div>
+            <div style="display: flex;gap:20px">
+                <p class="text">Tình trạng</p>
+                <p >Còn 22 chiếc </p>
+            </div>
+            <div style="display: flex;gap:60px">
+                <div style="display:flex;gap:10px">
+                    <p class="text">Theo giờ</p>
+                    <p >150.000 đ/1h</p>
+                </div>
+                <div style="display:flex;gap:10px">
+                    <p class="text">Theo ngày</p>
+                    <p >300.000 đ/ 1 ngày</p>
+                </div>
+            </div>
+            <p style="width: 460px;" class="title">Những dòng xe đạp cho thuê tại GIANT thường xuyên được bảo dưỡng định kỳ trước khi đưa tới tay khách hàng sử dụng.</p>
+            <div class="so-luong-group">
+                <p class="text">Số lượng</p>
+                <div class="quantity-wrapper">
+                    <button class="btn-quantity" onclick="decreaseQuantity()">-</button>
+                    <span id="quantityValue">1</span>
+                    <button class="btn-quantity" onclick="increaseQuantity()">+</button>
+                </div>
+            </div>
+            <div style="display: flex;gap:40px;margin-top: 30px">
+                <button type="submit" style="height: 40px;background-color:#00FF84;color: #00175D;width: 200px;border-radius: 8px;cursor:pointer;">Thêm vào giỏ hàng</button>
+                <button type="submit" style="height: 40px;background-color:#00175D;color: white;width: 200px;border-radius: 8px;cursor:pointer;"
+                    onclick=" window.location.href='@Url.Action("DatXe", "XemChiTiet", new { area = "Client" })'">
+                    Thuê ngay
+                </button>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="wrapper">
+        <div>
+            <div style="margin-left: 20px;">
+                <p class="title">CHI TIẾT SẢN PHẨM</p>
+                <p class="text">Xe đạp đường phố (Hybrid-Bike) là sự kết hợp hoàn hảo giữa xe đạp địa hình (MTB) và xe đạp đua (Road Bike), mang lại trải nghiệm êm ái, linh hoạt trên nhiều loại địa hình. Đây là dòng xe lý tưởng cho những ai muốn khám phá thành phố, đạp xe dạo phố hoặc di chuyển hàng ngày một cách tiện lợi.</p>
+            </div>
+            <div style="margin-left: 20px;">
+                <p class="title">THÔNG SỐ KỸ THUẬT</p>
+                <div>
+                    <p class="text"> - Khung xe: Hợp kim nhôm/Thép cao cấp</p>
+                    <p class="text"> - Trọng lượng: ~10-15kg</p>
+                    <p class="text"> - Kích thước bánh xe: 26 inch / 27.5 inch</p>
+                    <p class="text"> - Hệ thống truyền động: Shimano 7 - 24 tốc độ</p>
+                    <p class="text"> - Phanh: Phanh đĩa hoặc phanh vành</p>
+                    <p class="text"> - Tải trọng tối đa: 120kg</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="wrapper2">
+        <p style="margin-left: 20px;" class="title">ĐÁNH GIÁ VỀ CỬA HÀNG</p>
+        <div class="danhGia">
+            <div class="row">
+                <div class="col-md-4 col-12 text-center mb-3">
+                    <div class="rating-summary">
+                        <div class="shop-image">
+                            <img src="~/images/avatar-cuahang.jpg" alt="Shop Image" class="shop-img">
+                        </div>
+                        <div class="rating-detail">
+                            <div class="rating-detail-stars">
+                                <div class="stars">
+                                    <img src="~/images/star2.png" alt="star" class="star-icon">
+                                    <img src="~/images/star2.png" alt="star" class="star-icon">
+                                    <img src="~/images/star2.png" alt="star" class="star-icon">
+                                    <img src="~/images/star2.png" alt="star" class="star-icon">
+                                    <img src="~/images/star2.png" alt="star" class="star-icon">
+                                </div>
+                                <div class="rating-value"><p>4.5/5</p></div>
+                            </div>
+                            <div class="reviews-count"><p>(15 đánh giá)</p></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-8 col-12">
+                    <div class="filter-options">
+                        <div class="luaChon">Tất cả</div>
+                        <div class="luaChon">5 sao</div>
+                        <div class="luaChon">4 sao</div>
+                        <div class="luaChon">Có bình luận</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Comment Section Display -->
+            <div class="ndung_comment">
+                <div class="comment-item">
+                    <div class="comment-avatar">
+                        <img src="~/images/avatar-default.jpg" alt="Avatar" class="avatar-img">
+                    </div>
+
+                    <div class="comment-detail">
+                        <p class="comment-author">Hoàng</p>
+                        <div class="stars">
+                            <img src="~/images/star2.png" alt="star" class="star-icon">
+                            <img src="~/images/star2.png" alt="star" class="star-icon">
+                            <img src="~/images/star2.png" alt="star" class="star-icon">
+                            <img src="~/images/star2.png" alt="star" class="star-icon">
+                            <img src="~/images/star2.png" alt="star" class="star-icon">
+                        </div>
+                        <div class="comment-text">
+                            <p>Xe xịn xò, đạp siêu êm luôn, dịch vụ cũng rất tốt nữa</p>
+                            <p class="comment-date">20/03/2025</p>
+                        </div>
+                        <div class="comment-actions">
+                            <p class="comment-like">Thích</p>
+                            <p class="comment-reply">Phản hồi</p>
+                            <div class="report">
+                                <i class="fa-solid fa-triangle-exclamation"></i>
+                                <p>Báo cáo vi phạm</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="comment-item">
+                    <div class="comment-avatar">
+                        <img src="~/images/avatar-default.jpg" alt="Avatar" class="avatar-img">
+                    </div>
+
+                    <div class="comment-detail">
+                        <p class="comment-author">Bảo</p>
+                        <div class="stars">
+                            <img src="~/images/star2.png" alt="star" class="star-icon">
+                            <img src="~/images/star2.png" alt="star" class="star-icon">
+                            <img src="~/images/star2.png" alt="star" class="star-icon">
+                            <img src="~/images/star2.png" alt="star" class="star-icon">
+                        </div>
+                        <div class="comment-text">
+                            <p>Dịch vụ oke!</p>
+                            <p class="comment-date">10/03/2025</p>
+                        </div>
+                        <div class="comment-actions">
+                            <p class="comment-like">Thích</p>
+                            <p class="comment-reply">Phản hồi</p>
+                            <div class="report">
+                                <i class="fa-solid fa-triangle-exclamation"></i>
+                                <p>Báo cáo vi phạm</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+
+    <div class="wrapper2">
+        <p style="margin-left: 20px;" class="title">CÁC SẢN PHẨM TƯƠNG TỰ TẠI CỬA HÀNG</p>
+        <section class="bike-list" style="margin-left: 20px;">
+            <a href="#">
+                <div class="xe-card">
+                <img src="~/images/xe2.jpg" alt="Xe đạp đua">
+                    <div class="xe-card-body">
+                        <p class="tenXe">Xe đạp đua <span class="loai">(Hybrid-Bike)</span></p>
+                        <p class="moTa">Tốc độ cao, nhẹ nhàng, linh hoạt, hiệu suất cao</p>
+                        <p class="gia">Giá thuê: <span>150.000 đ/chiếc</span></p>
+                    </div>
+                </div>
+            </a>
+
+            <a href="#">
+                <div class="xe-card">
+                <img src="~/images/xe2.jpg" alt="Xe đạp đua">
+                    <div class="xe-card-body">
+                        <p class="tenXe">Xe đạp đua <span class="loai">(Hybrid-Bike)</span></p>
+                        <p class="moTa">Tốc độ cao, nhẹ nhàng, linh hoạt, hiệu suất cao</p>
+                        <p class="gia">Giá thuê: <span>150.000 đ/chiếc</span></p>
+                    </div>
+                </div>
+            </a>
+
+            <a href="#">
+                <div class="xe-card">
+                <img src="~/images/xe3.png" alt="Xe trẻ em">
+                    <div class="xe-card-body">
+                        <p class="tenXe">Xe đạp trẻ em</p>
+                        <p class="moTa">An toàn, thiết kế dễ thương, phù hợp trẻ nhỏ</p>
+                        <p class="gia">Giá thuê: <span>70.000 đ/chiếc</span></p>
+                    </div>
+                </div>
+            </a>
+
+        </section>
+
+        <div class="btn-wrapper">
+            <button class="btn-xem-them">Xem thêm</button>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/vn.js"></script>
+    <script>
+        flatpickr("#thoigianGio", {
+          enableTime: true,
+          dateFormat: "Y-m-d H:i",
+          locale: "vn"
+        });
+
+        flatpickr("#ngayNhan", {
+          dateFormat: "Y-m-d",
+          locale: "vn"
+        });
+
+        flatpickr("#ngayTra", {
+          dateFormat: "Y-m-d",
+          locale: "vn"
+        });
+
+        const btnGio = document.getElementById("btnGio");
+        const btnNgay = document.getElementById("btnNgay");
+        const khungTheoGio = document.getElementById("khungTheoGio");
+        const khungTheoNgay = document.getElementById("khungTheoNgay");
+
+        const btnDivGio = btnGio.querySelector(".btn-thue");
+        const btnDivNgay = btnNgay.querySelector(".btn-thue");
+
+        btnGio.addEventListener("click", function (e) {
+          e.preventDefault();
+          khungTheoGio.classList.remove("d-none");
+          khungTheoNgay.classList.add("d-none");
+          btnDivGio.classList.add("active");
+          btnDivNgay.classList.remove("active");
+        });
+
+        btnNgay.addEventListener("click", function (e) {
+          e.preventDefault();
+          khungTheoGio.classList.add("d-none");
+          khungTheoNgay.classList.remove("d-none");
+          btnDivNgay.classList.add("active");
+          btnDivGio.classList.remove("active");
+        });
+    </script>
+    <script>
+        let quantity = 1;
+        const quantityDisplay = document.getElementById('quantityValue');
+
+        function increaseQuantity() {
+          quantity++;
+          quantityDisplay.textContent = quantity;
+        }
+
+        function decreaseQuantity() {
+          if (quantity > 1) {
+            quantity--;
+            quantityDisplay.textContent = quantity;
+          }
+        }
+    </script>
+
+    <script>
+        function changeImage(el) {
+        document.getElementById("mainImage").src = el.src;
+        }
+    </script>
+}

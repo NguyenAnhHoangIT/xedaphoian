@@ -1,0 +1,83 @@
+﻿@{
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/LayoutClient.css" />
+    <link rel="stylesheet" href="~/css/CuaHang.css" />
+    <link rel="stylesheet" href="~/css/AdminHome.css" />
+}
+<!-- WRAPPER -->
+<div class="wrapper_cuahang">
+    <aside>
+        <h3>Quản lý</h3>
+        <nav>
+            <a class="active">Tài Khoản</a>
+            <a asp-area="Admin" asp-controller="Home" asp-action="DanhGiaBiBaoCao">Đánh giá bị báo cáo</a>
+            <a asp-area="Admin" asp-controller="Home" asp-action="DuyetDangKyTaoCuaHang">Đăng ký tạo cửa hàng</a>
+        </nav>
+    </aside>
+
+    <div class="content_cuahang">
+        <div class="container_cuahang">
+            <h2>Danh sách tài khoản</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID tài khoản</th>
+                        <th>Họ</th>
+                        <th>Tên</th>
+                        <th>Số điện thoại</th>
+                        <th>Mật khẩu</th>
+                        <th>Hình ảnh</th>
+                        <th>Vai trò</th>
+                        <th>Trạng Thái Tài Khoản</th>
+                        <th>Thao tác</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>1</td>
+                        <td>Nguyen</td>
+                        <td>Anh</td>
+                        <td>0905271271</td>
+                        <td>12345678</td>
+                        <td><img src="~/images/avatar-default.jpg" class="taikhoan-avatar" /></td>
+                        <td>Admin</td>
+                        <td>True</td>
+                        <td>
+                            <button class="chinhsua"><i class="fa-solid fa-pen"></i></button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>2</td>
+                        <td>Nguyen</td>
+                        <td>Anh</td>
+                        <td>0901234567</td>
+                        <td>password123</td>
+                        <td><img src="~/images/avatar-default.jpg" class="taikhoan-avatar" /></td>
+                        <td>Admin</td>
+                        <td>True</td>
+                        <td>
+                            <button class="chinhsua"><i class="fa-solid fa-pen"></i></button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>3</td>
+                        <td>Nguyen</td>
+                        <td>Anh</td>
+                        <td>0901234567</td>
+                        <td>password123</td>
+                        <td><img src="~/images/avatar-default.jpg" class="taikhoan-avatar" /></td>
+                        <td>Admin</td>
+                        <td>True</td>
+                        <td>
+                            <button class="chinhsua"><i class="fa-solid fa-pen"></i></button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+

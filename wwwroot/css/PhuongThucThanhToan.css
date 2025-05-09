@@ -1,0 +1,209 @@
+﻿/* Đặt nền cho trang */
+.ndung {
+    background-color: #EFF1F5;
+    display: flex;
+    justify-content: center;
+}
+
+/* Wrapper chứa nội dung */
+.wrapper {
+    max-width: 1200px;
+    width: 100%;
+    padding: 10px 40px;
+    box-sizing: border-box;
+}
+
+    /* Chỉnh sửa các chi tiết */
+    .wrapper .detail {
+        background-color: white;
+        margin: 20px 0;
+        border: 1px solid #EFF1F5;
+        margin-bottom: 30px;
+        border-radius: 10px;
+        height: fit-content;
+    }
+
+/* Phần bên trái của thông tin */
+.text_left {
+    padding-left: 20px;
+    padding-top: 30px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    align-items: center;
+}
+
+/* Căn chỉnh các label cho các input */
+.label {
+    width: 130px; /* Đảm bảo label có chiều rộng cố định */
+    font-size: 16px;
+    font-weight: normal;
+}
+
+/* Các ô input */
+.data-box {
+    background-color: #f1f1f1;
+    color: #666;
+    padding: 10px 20px;
+    border-radius: 10px;
+    border: 1px solid #ccc;
+    font-weight: bold;
+    font-size: 16px;
+    width: calc(100% - 140px); /* Chiếm hết không gian còn lại, giảm bớt khoảng cách với label */
+    min-width: 200px; /* Đảm bảo ô dữ liệu không quá nhỏ */
+}
+
+/* Textarea */
+.textarea {
+    width: calc(100% - 140px); /* Giống như trên, để textarea chiếm hết không gian còn lại */
+    height: 100px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    font-size: 14px;
+}
+
+/* Cái tiêu đề chính */
+.title {
+    font-size: 16px;
+    margin-top: 100px;
+    color: #00175D;
+    font-weight: bold;
+}
+
+/* Các phần tử checkbox */
+.wrapper-check {
+    gap: 10px;
+    margin-left: 50px;
+}
+
+/* Wrapper phụ cho các phần tử */
+.wrapper2 {
+    background-color: white;
+    border: 3px solid #E1E1E1;
+    border-radius: 10px;
+    max-height: 700px;
+    overflow-y: auto;
+    padding-bottom: 20px;
+}
+
+    /* Button */
+    .wrapper2 .button {
+        width: 200px;
+        height: 45px;
+        background-color: #1264C1;
+        border: 10px solid #1264C1;
+        border-radius: 10px;
+        margin-left: 300px;
+    }
+
+/* Cải thiện các phần tử text cho dễ đọc */
+.chu_hoa {
+    padding-top: 20px;
+    font-weight: bold;
+    padding-left: 30px;
+    padding-bottom: 10px;
+    height: fit-content;
+}
+
+/* Button thuê */
+.btn_thue {
+    display: flex;
+    text-decoration: none;
+    border-radius: 5px;
+    height: 40px;
+    width: 200px;
+    background-color: #1264C1;
+    color: white;
+    align-items: center;
+    justify-content: center;
+    margin-left: 230px;
+}
+
+/* Các phần tử "Ghi chú" và "Mã khuyến mãi" */
+.promo-container {
+    display: flex;
+    align-items: center;
+    width: calc(100% - 140px);
+}
+
+.promo-input {
+    height: 40px;
+    width: 200px !important;
+    padding: 0 10px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+}
+
+.btn-promo {
+    height: 40px;
+    width: 100px;
+    background-color: #1264C1;
+    color: white;
+    border-radius: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+}
+
+/* Đảm bảo không gian hợp lý khi phóng to */
+@media (min-width: 768px) {
+    .text_left p {
+        width: 130px;
+    }
+
+    .data-box, .textarea, .promo-input {
+        width: 300px; /* Căn chỉnh lại chiều rộng khi phóng to */
+    }
+
+    .promo-container {
+        width: auto; /* Đảm bảo khối chứa mã khuyến mãi có thể xếp lại theo chiều ngang */
+    }
+}
+
+/* Đảm bảo các phần tử không bị bể trên màn hình nhỏ */
+@media (max-width: 768px) {
+    .wrapper {
+        padding: 10px 20px;
+    }
+
+    .text_left {
+        flex-direction: column; /* Xếp các phần tử theo chiều dọc khi nhỏ màn hình */
+        gap: 15px;
+    }
+
+    .label {
+        width: 100%;
+    }
+
+    .textarea {
+        width: 100%;
+    }
+
+    .promo-container {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .promo-input {
+        width: 100%;
+    }
+
+    .btn-promo {
+        width: 100%;
+        margin-top: 10px;
+    }
+
+    .wrapper2 .button {
+        width: 100%;
+        margin-left: 0;
+    }
+}
+
+/* Đảm bảo bố cục hợp lý trên các màn hình lớn hơn */
+@media (min-width: 1200px) {
+    .wrapper {
+        max-width: 1100px;
+    }
+}

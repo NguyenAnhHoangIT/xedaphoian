@@ -1,0 +1,167 @@
+﻿.banner {
+    display: flex;
+    justify-content: center;
+    background-color: #6398B8;
+    padding: 20px 40px;
+    flex-wrap: wrap;
+}
+
+    .banner > div {
+        max-width: 40%;
+        margin: 0px 10px 0px 0px;
+    }
+
+    .banner img:last-child {
+        width: 30%;
+        height: 250px;
+        object-fit: cover;
+        border-radius: 8px;
+    }
+
+    .banner h5 {
+        color: white;
+        font-size: 20px;
+        margin-bottom: 10px;
+    }
+
+    .banner .text {
+        color: white;
+        font-size: 16px;
+        margin: 10px 0;
+    }
+
+    .banner p {
+        margin: 5px 0;
+        color: white;
+    }
+
+    .banner .stars img {
+        width: 30px;
+        height: 30px;
+        margin: 0 2px;
+    }
+
+/* Nội dung chính */
+.main-content {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    padding: 20px 40px;
+}
+
+/* Sidebar bộ lọc */
+.filter-sidebar {
+    width: 250px;
+    height: fit-content;
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    flex-shrink: 0;
+}
+
+    .filter-sidebar h2 {
+        font-size: 18px;
+        margin-bottom: 15px;
+        text-align: center;
+    }
+
+    .filter-sidebar label {
+        display: block;
+        font-size: 14px;
+        margin-bottom: 10px;
+        cursor: pointer;
+    }
+
+/* Danh sách xe */
+.bike-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(30%, 1fr));
+    gap: 20px;
+    width: 67%;
+    margin: 0 auto 0 0;
+}
+
+/* Thẻ xe */
+.xe-card {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    overflow: hidden;
+    transition: transform 0.3s ease;
+}
+
+    .xe-card:hover {
+        transform: translateY(-5px);
+    }
+
+    .xe-card img {
+        width: 100%;
+        aspect-ratio: 1/1;
+        object-fit: contain;
+        background-color: #f3f3f3;
+    }
+
+.xe-card-body {
+    padding: 15px;
+}
+
+.tenXe {
+    font-weight: bold;
+    font-size: 18px;
+    color: #00175D;
+    margin-bottom: 8px;
+}
+
+.loai {
+    font-weight: normal;
+    font-size: 14px;
+    color: #4e4e4e;
+}
+
+.moTa {
+    font-size: 14px;
+    color: #555;
+    margin-bottom: 10px;
+}
+
+.gia {
+    font-weight: bold;
+    font-size: 16px;
+    color: #00994d;
+}
+
+    .gia span {
+        color: #00994d;
+    }
+
+/* Responsive */
+@media (max-width: 1024px) {
+    .banner {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+        .banner > div, .banner img:last-child {
+            margin: 0 auto;
+        }
+
+    .main-content {
+        flex-direction: column;
+    }
+
+    .filter-sidebar {
+        width: 100%;
+    }
+}
+
+.stars {
+    height: fit-content;
+    width: fit-content;
+    margin: 5px 10px 0px 0px;
+}
+
+.star-icon {
+    width: 35px;
+    height: 35px;
+}

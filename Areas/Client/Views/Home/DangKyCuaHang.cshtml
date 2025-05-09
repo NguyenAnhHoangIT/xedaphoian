@@ -1,0 +1,47 @@
+﻿@{
+    Layout = "~/Areas/Client/Views/Shared/_Layout.cshtml";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/LayoutClient.css" />
+    <link rel="stylesheet" href="~/css/DangKyCuaHang.css" />
+}
+<div class="register-container">
+    <div class="register-card">
+        <h3 class="form-title">Đăng Ký Cửa Hàng</h3>
+
+        <form action="#" method="post" enctype="multipart/form-data">
+            <div class="form-group">
+                <label for="tenCuaHang">Tên cửa hàng</label>
+                <input type="text" id="tenCuaHang" name="tenCuaHang" class="form-control" placeholder="Nhập tên cửa hàng">
+            </div>
+
+            <div class="form-group">
+                <label for="diaChi">Địa chỉ</label>
+                <input type="text" id="diaChi" name="diaChi" class="form-control" placeholder="Nhập địa chỉ">
+            </div>
+
+            <div class="form-group">
+                <label for="soDienThoai">Số điện thoại</label>
+                <input type="text" id="soDienThoai" name="soDienThoai" class="form-control" placeholder="Nhập số điện thoại">
+            </div>
+
+            <div class="form-group">
+                <label for="gmail">Địa chỉ email</label>
+                <input type="email" id="gmail" name="gmail" class="form-control" placeholder="Nhập email">
+            </div>
+
+            <div class="form-group">
+                <label for="gioiThieu">Giới thiệu về cửa hàng</label>
+                <textarea id="gioiThieu" name="gioiThieu" class="form-control" rows="4" placeholder="Giới thiệu ngắn về cửa hàng"></textarea>
+            </div>
+
+            <div class="form-group">
+                <label for="hinhAnh">Hình ảnh</label>
+                <input type="file" id="hinhAnh" name="hinhAnh" class="form-control" accept="image/*">
+            </div>
+
+            <button type="submit" class="btn-primary">Đăng ký cửa hàng</button>
+        </form>
+    </div>
+</div>

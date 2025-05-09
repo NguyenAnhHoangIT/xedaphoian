@@ -1,0 +1,157 @@
+﻿@{
+    Layout = "~/Areas/Client/Views/Shared/_Layout.cshtml";
+}
+
+@section Styles {
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="~/css/LayoutClient.css" />
+    <link rel="stylesheet" href="~/css/DatXe.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+
+}
+<main class="ndung py-4">
+    <div class="container">
+        <h5 class="title text-primary">CHI TIẾT ĐƠN THUÊ</h5>
+        <p class="name_store">Cửa hàng GIANT</p>
+
+        <div class="thoigian row p-3 bg-white rounded shadow-sm mb-4">
+            <div class="col-md-4 mb-3">
+                <p class="pthoigian fw-bold">Thời gian thuê</p>
+                <a href="#" id="btnGio"><div class="btn-thue button active">Theo giờ</div></a>
+                <a href="#" id="btnNgay"><div class="btn-thue button2" style="margin-top: 10px;">Theo ngày</div></a>
+            </div>
+
+            <div id="khungTheoGio" class="col-md-8">
+                <div class="row mb-3">
+                    <div class="col-12 col-md-6">
+                        <label class="form-label fw-bold">Nhận xe</label>
+                        <input type="text" class="form-control" id="thoigianGio">
+                    </div>
+                    <div class="col-6 col-md-3">
+                        <label class="form-label fw-bold">Số giờ thuê</label>
+                        <select class="form-select">
+                            <option>1</option>
+                            <option>2</option>
+                            <option>3</option>
+                            <option>4</option>
+                            <option>5</option>
+                        </select>
+                    </div>
+                </div>
+                <div>
+                    <p class="fw-bold">Trả xe: <span class="text-muted">19:00, 21/03/2025</span></p>
+                </div>
+            </div>
+
+            <div id="khungTheoNgay" class="col-md-8 d-none">
+                <div class="row mb-3">
+                    <div class="col-12 col-md-6">
+                        <label class="form-label fw-bold">Ngày nhận xe</label>
+                        <input type="text" class="form-control" id="ngayNhan">
+                    </div>
+                    <div class="col-12 col-md-6">
+                        <label class="form-label fw-bold">Ngày trả xe</label>
+                        <input type="text" class="form-control" id="ngayTra">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="donThue bg-white p-3 rounded shadow-sm">
+            <table class="table table-bordered text-center align-middle">
+                <tbody>
+                    <tr>
+                        <td><img src="~/images/xe1.jpg" class="img-fluid rounded" style="max-width:150px;"></td>
+                        <td>Xe đạp đường phố (Hybrid-Bike)</td>
+                        <td>Đơn giá: 150.000 đ/1h</td>
+                        <td>
+                            <div class="quantity-control d-flex justify-content-center align-items-center gap-2">
+                                <button class="btn btn-warning btn-sm">-</button>
+                                <input class="form-control text-center" type="text" value="1" style="width:60px;">
+                                <button class="btn btn-success btn-sm">+</button>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="d-flex justify-content-between mt-4">
+                <p class="fw-bold">Tạm tính:</p>
+                <span class="fw-bold text-primary">300.000 đ</span>
+            </div>
+
+            <div class="d-flex justify-content-between mt-2">
+                <p class="fw-bold">Tổng tiền:</p>
+                <span class="fw-bold text-primary">300.000 đ</span>
+            </div>
+        </div>
+
+        <div class="text-end mt-4">
+            <a asp-area="Client" asp-controller="XemChiTiet" asp-action="PhuongThucThanhToan" class="btn btn-primary px-4 py-2" >
+                Tiến hành đặt xe
+            </a>
+        </div>
+    </div>
+</main>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/vn.js"></script>
+    <script>
+        flatpickr("#thoigianGio", {
+          enableTime: true,
+          dateFormat: "Y-m-d H:i",
+          locale: "vn"
+        });
+
+        flatpickr("#ngayNhan", {
+          dateFormat: "Y-m-d",
+          locale: "vn"
+        });
+
+        flatpickr("#ngayTra", {
+          dateFormat: "Y-m-d",
+          locale: "vn"
+        });
+
+        const btnGio = document.getElementById("btnGio");
+        const btnNgay = document.getElementById("btnNgay");
+        const khungTheoGio = document.getElementById("khungTheoGio");
+        const khungTheoNgay = document.getElementById("khungTheoNgay");
+
+        btnGio.addEventListener("click", function (e) {
+          e.preventDefault();
+          khungTheoGio.classList.remove("d-none");
+          khungTheoNgay.classList.add("d-none");
+        });
+
+        btnNgay.addEventListener("click", function (e) {
+          e.preventDefault();
+          khungTheoGio.classList.add("d-none");
+          khungTheoNgay.classList.remove("d-none");
+        });
+      </script>
+    <script>
+        const btnDivGio = document.querySelector("#btnGio .btn-thue");
+        const btnDivNgay = document.querySelector("#btnNgay .btn-thue");
+
+        btnGio.addEventListener("click", function (e) {
+            e.preventDefault();
+            khungTheoGio.classList.remove("d-none");
+            khungTheoNgay.classList.add("d-none");
+
+            btnDivGio.classList.add("active");
+            btnDivNgay.classList.remove("active");
+        });
+
+        btnNgay.addEventListener("click", function (e) {
+            e.preventDefault();
+            khungTheoGio.classList.add("d-none");
+            khungTheoNgay.classList.remove("d-none");
+
+            btnDivNgay.classList.add("active");
+            btnDivGio.classList.remove("active");
+        });
+    </script>
+}

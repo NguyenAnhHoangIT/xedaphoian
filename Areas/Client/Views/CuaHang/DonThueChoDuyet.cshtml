@@ -1,0 +1,99 @@
+﻿@{
+    Layout = "~/Areas/Client/Views/Shared/_LayoutCuaHang.cshtml";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/LayoutClient.css" />
+}
+<header>
+    <nav class="main-nav">
+        <a asp-area="Client" asp-controller="CuaHang" asp-action="ThongTinCuaHang">Thông tin cửa hàng</a>
+        <a asp-area="Client" asp-controller="CuaHang" asp-action="DanhSachXe">Quản lý xe</a>
+        <a asp-area="Client" asp-controller="CuaHang" asp-action="DonThueChoDuyet" class="active">Quản lý đơn thuê</a>
+        <a href="#">Báo cáo</a>
+        <a asp-area="Client" asp-controller="CuaHang" asp-action="DanhSachKhuyenMai">Khuyến mãi</a>
+    </nav>
+</header>
+<!-- WRAPPER -->
+<div class="wrapper_cuahang">
+    <aside>
+        <h3>Quản lý</h3>
+        <nav>
+            <a class="active">Chờ duyệt</a>
+            <a asp-area="Client" asp-controller="CuaHang" asp-action="DonThueDaDuyet">Đã duyệt</a>
+            <a asp-area="Client" asp-controller="CuaHang" asp-action="DonThueDaHuy">Đã huỷ</a>
+            <a asp-area="Client" asp-controller="CuaHang" asp-action="DonThueHoanThanh">Hoàn thành</a>
+        </nav>
+    </aside>
+
+    <div class="content_cuahang">
+        <div class="container_cuahang">
+            <h2>Danh sách đơn chờ duyệt</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID đơn thuê</th>
+                        <th>Tên khách hàng</th>
+                        <th>Loại xe đặt</th>
+                        <th>Số giờ/ngày thuê</th>
+                        <th>Ngày nhận</th>
+                        <th>Tổng tiền</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>1</td>
+                        <td>Nguyễn Văn Hải</td>
+                        <td>Xe địa hình x2</td>
+                        <td>2 giờ</td>
+                        <td>3h 15/05/2025</td>
+                        <td>300.000</td>
+                        <td>
+                            <a href="#"><i class="fa-solid fa-check-circle" style="color: green;"></i></a>
+                            <a href="#"><i class="fa-solid fa-times-circle" style="color: red;"></i></a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>2</td>
+                        <td>Trần Thị Mai</td>
+                        <td>Xe đạp điện x1</td>
+                        <td>1 ngày</td>
+                        <td>8h 16/05/2025</td>
+                        <td>500.000</td>
+                        <td>
+                            <a href="#"><i class="fa-solid fa-check-circle" style="color: green;"></i></a>
+                            <a href="#"><i class="fa-solid fa-times-circle" style="color: red;"></i></a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>3</td>
+                        <td>Nguyễn Văn Hải</td>
+                        <td>Xe địa hình x2</td>
+                        <td>2 giờ</td>
+                        <td>3h 15/05/2025</td>
+                        <td>300.000</td>
+                        <td>
+                            <a href="#"><i class="fa-solid fa-check-circle" style="color: green;"></i></a>
+                            <a href="#"><i class="fa-solid fa-times-circle" style="color: red;"></i></a>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td>4</td>
+                        <td>Nguyễn Văn Hải</td>
+                        <td>Xe địa hình x2</td>
+                        <td>2 giờ</td>
+                        <td>3h 15/05/2025</td>
+                        <td>300.000</td>
+                        <td>
+                            <a href="#"><i class="fa-solid fa-check-circle" style="color: green;"></i></a>
+                            <a href="#"><i class="fa-solid fa-times-circle" style="color: red;"></i></a>
+                        </td>
+                    </tr>
+
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

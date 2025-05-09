@@ -1,0 +1,144 @@
+﻿.ndung-container {
+    display: flex;
+    justify-content: center;
+    padding: 40px 20px;
+    background-color: #EFF1F5;
+}
+
+.ndung {
+    width: 100%;
+    max-width: 1200px;
+    background-color: #FFFFFF;
+    display: flex;
+    flex-direction: column;
+    border-radius: 10px;
+    padding: 30px;
+}
+
+.qly {
+    font-size: 1.5rem;
+    margin-bottom: 20px;
+    color: #00175D;
+    font-weight: bold;
+    margin-left: 20px;
+}
+
+.wrapper-table {
+    padding: 0 20px 40px 20px;
+    overflow-x: auto; /* Cho phép cuộn ngang nếu bảng quá rộng */
+    -webkit-overflow-scrolling: touch;
+}
+
+.table {
+    width: 100%;
+    table-layout: auto; /* Đảm bảo bảng tự điều chỉnh chiều rộng của các cột */
+    border-collapse: collapse;
+}
+
+    .table th, .table td {
+        padding: 12px;
+        text-align: left;
+        word-break: break-word;
+        overflow-wrap: break-word;
+    }
+
+/* Hover effect for table rows */
+.table-hover tbody tr:hover {
+    background-color: #e0e3e7; /* Slightly darker than #EFF1F5 */
+    transition: background-color 0.2s ease;
+}
+.table tr {
+    border-bottom: 1px solid rgb(0,0,0,0.2);
+}
+
+.status {
+    font-weight: bold;
+    border-radius: 15px;
+    padding: 6px 12px;
+    display: inline-block;
+    white-space: nowrap;
+    text-align: center;
+    font-size: 1rem;
+    min-width: 120px;
+}
+
+.cho-duyet {
+    background-color: #FFF3CD;
+    color: #856404;
+}
+
+.da-duyet {
+    background-color: #CCE5FF;
+    color: #004085;
+}
+
+.dang-thue {
+    background-color: #D4EDDA;
+    color: #155724;
+}
+
+.qua-han {
+    background-color: #FD7E14;
+    color: #3D1F06;
+}
+
+.hoan-thanh {
+    background-color: #9ACD32;
+    color: #383D41;
+}
+
+.da-huy {
+    background-color: #F8D7DA;
+    color: #721C24;
+}
+
+.btn-warning {
+    background-color: #FFC107;
+    padding: 10px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size: 1rem;
+    font-weight: normal;
+}
+
+@media (max-width: 768px) {
+    .qly {
+        font-size: 16px;
+    }
+
+    .wrapper-table {
+        padding: 0 10px;
+    }
+
+    .status {
+        font-size: 0.8rem;
+    }
+
+    .table th, .table td {
+        font-size: 0.85rem;
+        padding: 10px;
+    }
+}
+
+@media (max-width: 576px) {
+    .qly {
+        font-size: 14px;
+        margin-left: 0;
+    }
+
+    .table th, .table td {
+        font-size: 0.75rem;
+        padding: 8px;
+    }
+
+    .status {
+        font-size: 0.7rem;
+        padding: 4px 8px;
+        min-width: auto; /* Allow it to shrink on mobile */
+    }
+
+    .btn-warning {
+        font-size: 0.8rem;
+    }
+}

@@ -1,0 +1,97 @@
+﻿@{
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/LayoutClient.css" />
+    <link rel="stylesheet" href="~/css/CuaHang.css" />
+    <link rel="stylesheet" href="~/css/AdminHome.css" />
+}
+<!-- WRAPPER -->
+<div class="wrapper_cuahang">
+    <aside>
+        <h3>Quản lý</h3>
+        <nav>
+            <a asp-area="Admin" asp-controller="Home" asp-action="TaiKhoan">Tài Khoản</a>
+            <a asp-area="Admin" asp-controller="Home" asp-action="DanhGiaBiBaoCao">Đánh giá bị báo cáo</a>
+            <a class="active">Đăng ký tạo cửa hàng</a>
+        </nav>
+    </aside>
+
+    <div class="content_cuahang">
+        <div class="container_cuahang">
+            <h2>Danh sách tài khoản đăng ký tạo cửa hàng</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID tài khoản</th>
+                        <th>Họ</th>
+                        <th>Tên</th>
+                        <th>Số điện thoại</th>
+                        <th>Xem chi tiết</th>
+                        <th>Thao Tác</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>1</td>
+                        <td>Nguyen</td>
+                        <td>Anh</td>
+                        <td>0905271271</td>
+                        <td>
+                            <button class="chitiet">Chi tiết</button>
+                        </td>
+                        <td class="thaotac">
+                            <button class="icon chapnhan">
+                                <span class ="tooltip">Chấp nhận</span>
+                                <i class="fa-solid fa-circle-check"></i>
+                            </button>
+                            <button class="icon tuchoi">
+                                <span class="tooltip">Từ chối</span>
+                                <i class="fa-solid fa-circle-xmark"></i>
+                            </button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>2</td>
+                        <td>Nguyen</td>
+                        <td>Anh</td>
+                        <td>0901234567</td>
+                        <td>
+                            <button class="chitiet">Chi tiết</i></button>
+                        </td>
+                        <td class="thaotac">
+                            <button class="icon chapnhan">
+                                <span class="tooltip">Chấp nhận</span>
+                                <i class="fa-solid fa-circle-check"></i>
+                            </button>
+                            <button class="icon tuchoi">
+                                <span class="tooltip">Từ chối</span>
+                                <i class="fa-solid fa-circle-xmark"></i>
+                            </button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>3</td>
+                        <td>Nguyen</td>
+                        <td>Anh</td>
+                        <td>0901234567</td>
+                        <td>
+                            <button class="chitiet">Chi tiết</i></button>
+                        </td>
+                        <td class="thaotac">
+                            <button class="icon chapnhan">
+                                <span class="tooltip">Chấp nhận</span>
+                                <i class="fa-solid fa-circle-check"></i>
+                            </button>
+                            <button class="icon tuchoi">
+                                <span class="tooltip">Từ chối</span>
+                                <i class="fa-solid fa-circle-xmark"></i>
+                            </button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

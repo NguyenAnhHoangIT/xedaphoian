@@ -1,0 +1,164 @@
+﻿@{
+    Layout = "~/Areas/Client/Views/Shared/_Layout.cshtml";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/LayoutClient.css" />
+    <link rel="stylesheet" href="~/css/DanhGia.css" />
+
+    <!-- Font Awesome cho icon sao -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <!-- RateYo CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/rateYo/2.3.4/jquery.rateyo.min.css" rel="stylesheet">
+   
+}
+
+<div class="ndung-container">
+    <div class="ndung">
+      <p class="title">Đánh giá cửa hàng GIANT</p>
+
+      <div class="danhGia">
+        <div class="row">
+          <div class="col-md-4 col-12 text-center mb-3">
+            <div class="rating-summary">
+              <div class="shop-image">
+                <img src="~/images/avatar-cuahang.jpg" alt="Shop Image" class="shop-img">
+              </div>
+              <div class="rating-detail">
+                  <div class="rating-detail-stars">
+                      <div class="stars">
+                        <img src="~/images/star2.png" alt="star" class="star-icon">
+                        <img src="~/images/star2.png" alt="star" class="star-icon">
+                        <img src="~/images/star2.png" alt="star" class="star-icon">
+                        <img src="~/images/star2.png" alt="star" class="star-icon">
+                        <img src="~/images/star2.png" alt="star" class="star-icon">
+                      </div>
+                      <div class="rating-value"><p>4.5/5</p></div>
+                  </div>
+                  <div class="reviews-count"><p>(15 đánh giá)</p></div>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-8 col-12">
+            <div class="filter-options">
+              <div class="luaChon">Tất cả</div>
+              <div class="luaChon">5 sao</div>
+              <div class="luaChon">4 sao</div>
+              <div class="luaChon">Có bình luận</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Rating input with RateYo -->
+        <div class="rating">
+          <p class="rating-title">Đánh giá của bạn về đơn thuê:</p>
+          <div class="wrapper-rateyo">
+            <div class="rateyo" id="rating"></div>
+          </div>
+        </div>
+
+        <!-- Comment Section -->
+        <div class="comment">
+          <textarea class="textarea1" placeholder="Nội dung đánh giá"></textarea>
+        </div>
+        <button class="btn btn-warning btn-submit">Gửi đánh giá</button>
+      </div>
+
+      <!-- Comment Section Display -->
+      <div class="ndung_comment">
+        <div class="comment-item">
+          <div class="comment-avatar">
+            <img src="~/images/avatar-default.jpg" alt="Avatar" class="avatar-img">
+          </div>
+
+          <div class="comment-detail">
+              <p class="comment-author">Hoàng</p>
+              <div class="stars">
+                <img src="~/images/star2.png" alt="star" class="star-icon">
+                <img src="~/images/star2.png" alt="star" class="star-icon">
+                <img src="~/images/star2.png" alt="star" class="star-icon">
+                <img src="~/images/star2.png" alt="star" class="star-icon">
+                <img src="~/images/star2.png" alt="star" class="star-icon">
+              </div>
+              <div class="comment-text">
+                <p>Xe xịn xò, đạp siêu êm luôn, dịch vụ cũng rất tốt nữa</p>
+                <p class="comment-date">20/03/2025</p>
+              </div>
+              <div class="comment-actions">
+                <p class="comment-like">Thích</p>
+                <p class="comment-reply">Phản hồi</p>
+                <div class="report">
+                  <i class="fa-solid fa-triangle-exclamation"></i>
+                  <p>Báo cáo vi phạm</p>
+                </div>
+              </div>
+              </div>
+          </div>
+          <div class="comment-item">
+               <div class="comment-avatar">
+                <img src="~/images/avatar-default.jpg" alt="Avatar" class="avatar-img">
+               </div>
+
+               <div class="comment-detail">
+                  <p class="comment-author">Bảo</p>
+                  <div class="stars">
+                    <img src="~/images/star2.png" alt="star" class="star-icon">
+                    <img src="~/images/star2.png" alt="star" class="star-icon">
+                    <img src="~/images/star2.png" alt="star" class="star-icon">
+                    <img src="~/images/star2.png" alt="star" class="star-icon">
+                  </div>
+                  <div class="comment-text">
+                    <p>Dịch vụ oke!</p>
+                    <p class="comment-date">10/03/2025</p>
+                  </div>
+                  <div class="comment-actions">
+                    <p class="comment-like">Thích</p>
+                    <p class="comment-reply">Phản hồi</p>
+                    <div class="report">
+                      <i class="fa-solid fa-triangle-exclamation"></i>
+                      <p>Báo cáo vi phạm</p>
+                    </div>
+                  </div>
+               </div>
+          </div>
+        
+      </div>
+    </div>
+  </div>
+@section Scripts {
+    <!-- jQuery và RateYo JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/rateYo/2.3.4/jquery.rateyo.min.js"></script>
+
+    <!-- Khởi tạo RateYo -->
+    <script>
+        $(function () {
+            $("#rating").rateYo({
+                rating: 0,
+                fullStar: true,
+                starWidth: "30px",
+                spacing: "8px",
+                onSet: function (rating, rateYoInstance) {
+                    console.log("Bạn đã chọn: " + rating);
+                    // Bạn có thể lưu giá trị này vào 1 biến ẩn hoặc xử lý submit
+                }
+            });
+        });
+
+        $(".btn-submit").on("click", function() {
+            var rating = $("#rating").rateYo("option", "rating");
+            var comment = $(".textarea1").val();
+
+            if (rating === 0) {
+                alert("Vui lòng chọn số sao đánh giá!");
+                return;
+            }
+
+            // Gửi AJAX (ví dụ)
+            $.post("/api/danhgia", { rating: rating, comment: comment }, function(response) {
+                alert("Đánh giá của bạn đã được gửi!");
+                // Có thể reset form hoặc load lại danh sách đánh giá
+            });
+        });
+    </script>
+}

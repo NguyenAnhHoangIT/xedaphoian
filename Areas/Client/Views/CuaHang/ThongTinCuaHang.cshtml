@@ -1,0 +1,67 @@
+﻿@{
+    Layout = "~/Areas/Client/Views/Shared/_LayoutCuaHang.cshtml";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/LayoutClient.css" />
+    <link rel="stylesheet" href="~/css/ThongTinTaiKhoan.css" />
+}
+<header>
+    <nav class="main-nav">
+        <a asp-area="Client" asp-controller="CuaHang" asp-action="ThongTinCuaHang" class="active">Thông tin cửa hàng</a>
+        <a asp-area="Client" asp-controller="CuaHang" asp-action="DanhSachXe">Quản lý xe</a>
+        <a asp-area="Client" asp-controller="CuaHang" asp-action="DonThueChoDuyet">Quản lý đơn thuê</a>
+        <a href="#">Báo cáo</a>
+        <a asp-area="Client" asp-controller="CuaHang" asp-action="DanhSachKhuyenMai">Khuyến mãi</a>
+    </nav>
+</header>
+<!-- WRAPPER -->
+<div class="wrapper_cuahang">
+
+    <div class="container_cuahang0 cuahang_class">
+        <div class="form-container">
+            <div class="profile-header">
+                <img src="~/images/avatar-default.jpg" alt="Avatar" class="avatar">
+                <div class="profile-info">
+                    <h3>THUEXEDAPHOIAN</h3>
+                    <p>thuexedaphoian@gmail.com</p>
+                </div>
+            </div>
+
+            <form class="form-grid">
+                <div class="form-group">
+                    <label>Tên cửa hàng</label>
+                    <input type="text" name="tenCuaHang" placeholder="Nhập tên cửa hàng" value="THUEXEDAPHOIAN">
+                </div>
+
+                <div class="form-group">
+                    <label>Địa chỉ</label>
+                    <input type="text" name="diaChi" placeholder="Nhập địa chỉ" value="46 Hoi An">
+                </div>
+
+                <div class="form-group">
+                    <label>Số điện thoại</label>
+                    <input type="text" name="soDienThoai" placeholder="Nhập số điện thoại" value="0123456789">
+                </div>
+
+                <div class="form-group">
+                    <label>Liên hệ</label>
+                    <input type="email" name="lienHe" placeholder="Nhập email liên hệ" value="thuexedaphoian@gmail.com">
+                </div>
+
+                <div class="form-group" style="grid-column: span 2;">
+                    <label>Giới thiệu</label>
+                    <textarea name="gioiThieu" rows="4" placeholder="Giới thiệu về cửa hàng"
+                              style="padding: 10px 14px; border: 1px solid #e2e8f0; border-radius: 8px; background: #f9fafb; font-size: 15px; outline: none; resize: none;">Chào mừng bạn đến với THUEXEDAPHOIAN, địa chỉ uy tín cho thuê xe đạp tại Hội An! Chúng tôi mang đến những chiếc xe chất lượng, giúp bạn thoải mái khám phá phố cổ, làng quê và những bãi biển tuyệt đẹp.</textarea>
+                </div>
+
+                <div class="form-buttons">
+                    <button type="submit" class="btn btn-save">Xác nhận lưu</button>
+                    <button type="button" class="btn btn-cancel">Huỷ chỉnh sửa</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+
+</div>

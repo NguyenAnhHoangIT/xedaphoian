@@ -1,0 +1,73 @@
+﻿@{
+    Layout = "~/Areas/Client/Views/Shared/_LayoutCuaHang.cshtml";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/LayoutClient.css" />
+}
+<header>
+    <nav class="main-nav">
+        <a asp-area="Client" asp-controller="CuaHang" asp-action="ThongTinCuaHang">Thông tin cửa hàng</a>
+        <a asp-area="Client" asp-controller="CuaHang" asp-action="DanhSachXe">Quản lý xe</a>
+        <a asp-area="Client" asp-controller="CuaHang" asp-action="DonThueChoDuyet">Quản lý đơn thuê</a>
+        <a href="#">Báo cáo</a>
+        <a asp-area="Client" asp-controller="CuaHang" asp-action="DanhSachKhuyenMai" class="active">Khuyến mãi</a>
+    </nav>
+</header>
+<!-- WRAPPER -->
+<div class="wrapper_cuahang">
+    <aside>
+        <h3>Quản lý</h3>
+        <nav>
+            <a asp-area="Client" asp-controller="CuaHang" asp-action="DanhSachKhuyenMai">Danh sách mã</a>
+            <a class="active">Thêm mã</a>
+        </nav>
+    </aside>
+
+    <div class="content_cuahang">
+        <div class="container_cuahang8 cuahang_class">
+            <h2 class="form-title">Tạo mới</h2>
+            <form method="POST" action="/Home/ThemKhuyenMai" class="form-grid">
+
+                <div class="form-group">
+                    <label>Mã khuyến mãi <span class="required">*</span></label>
+                    <input type="text" name="maKhuyenMai" placeholder="Nhập mã khuyến mãi" required />
+                </div>
+
+                <div class="form-group">
+                    <label>Mức giảm giá <span class="required">*</span></label>
+                    <input type="text" name="mucGiamGia" placeholder="Nhập mức giảm (%)" required />
+                </div>
+
+                <div class="form-group">
+                    <label>Đơn hàng tối thiểu <span class="required">*</span></label>
+                    <input type="text" name="donHangToiThieu" placeholder="Nhập đơn hàng tối thiểu" required />
+                </div>
+
+                <div class="form-group">
+                    <label>Số lượng <span class="required">*</span></label>
+                    <input type="number" name="soLuong" placeholder="Nhập số lượng" required />
+                </div>
+
+                <div class="form-group" style="grid-column: span 2;">
+                    <label>Thời gian <span class="required">*</span></label>
+                    <div class="date-group" style="display: flex; gap: 20px;">
+                        <div style="flex: 1;">
+                            <label style="font-size: 14px; display: block; margin-bottom: 6px;">Bắt đầu</label>
+                            <input type="date" name="tuNgay" class="date-input" style="width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #ccc;" required />
+                        </div>
+                        <div style="flex: 1;">
+                            <label style="font-size: 14px; display: block; margin-bottom: 6px;">Kết thúc</label>
+                            <input type="date" name="denNgay" class="date-input" style="width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #ccc;" required />
+                        </div>
+                    </div>
+                </div>
+
+                <button type="submit" class="submit-btn" style="margin-top: 20px;">Thêm</button>
+
+            </form>
+        </div>
+    </div>
+
+
+</div>

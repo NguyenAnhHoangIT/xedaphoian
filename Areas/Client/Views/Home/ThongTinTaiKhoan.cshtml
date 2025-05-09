@@ -1,0 +1,68 @@
+﻿@{
+    Layout = "~/Areas/Client/Views/Shared/_Layout.cshtml";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/LayoutClient.css" />
+    <link rel="stylesheet" href="~/css/ThongTinTaiKhoan.css" />
+}
+
+    <div class="form-container">
+        <div class="profile-header">
+            <img src="~/images/avatar-default.jpg" alt="Avatar" class="avatar">
+            <div class="profile-info">
+                <h3>Nguyễn Văn Hải</h3>
+                <p>VanHai@gmail.com</p>
+            </div>
+        </div>
+
+        <form class="form-grid">
+            <div class="form-group">
+                <label>Họ</label>
+                <input type="text" name="ho" placeholder="Nhập họ" value="Nguyễn Văn">
+            </div>
+
+            <div class="form-group">
+                <label>Tên</label>
+                <input type="text" name="ten" placeholder="Nhập tên" value="Hải">
+            </div>
+
+            <div class="form-group">
+                <label>Số điện thoại</label>
+                <input type="text" name="sdt" placeholder="Nhập số điện thoại" value="0987654321">
+            </div>
+
+            <div class="form-group">
+                <label >Mật khẩu</label>
+                <div class="password-container">
+                    <input id="Password" type="password" name="matkhau" placeholder="Nhập mật khẩu" value="12345678">
+                    <button type="button" class="password-toggle" onclick="togglePassword('Password')">
+                        <i class="fa-solid fa-eye"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div class="form-buttons">
+                <button type="submit" class="btn btn-save">Xác nhận lưu</button>
+                <button type="button" class="btn btn-cancel">Huỷ chỉnh sửa</button>
+            </div>
+        </form>
+    </div>
+@section Scripts {
+    <script>
+        // Simple password toggle functionality
+        function togglePassword(fieldId) {
+            const passwordField = document.getElementById(fieldId);
+            const icon = passwordField.nextElementSibling.querySelector('i');
+
+            if (passwordField.type === 'password') {
+                passwordField.type = 'text';
+                icon.className = 'fa-solid fa-eye-slash';
+            } else {
+                passwordField.type = 'password';
+                icon.className = 'fa-solid fa-eye';
+            }
+        }
+    </script>
+}
+

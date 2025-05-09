@@ -1,0 +1,84 @@
+﻿a {
+    text-decoration: none;
+}
+
+.title {
+    margin-top: 60px;
+    font-size: 20px;
+    font-weight: bold;
+}
+
+.name_store {
+    font-size: 16px;
+    color: #00175D;
+    margin-bottom: 20px;
+}
+
+.pthoigian {
+    color: #00175D;
+    margin-bottom: 10px;
+}
+
+.button, .button2 {
+    background-color: white;
+    color: black;
+    padding: 8px 16px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    text-align: center;
+    cursor: pointer;
+}
+
+    .button.active, .button2.active {
+        background-color: red;
+        color: white;
+        border-color: red;
+    }
+
+.button {
+    background-color: #FF4D4D;
+    color: white;
+}
+
+.btn-thue {
+    background-color: white;
+    color: black;
+    padding: 8px 16px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    text-align: center;
+    cursor: pointer;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+    .btn-thue.active {
+        background-color: #dc3545; /* đỏ Bootstrap */
+        color: white;
+        border-color: #dc3545;
+    }
+
+.button2 {
+    background-color: white;
+    border: 1px solid #FF4D4D;
+    color: #FF4D4D;
+}
+
+.quantity-control input {
+    max-width: 60px;
+}
+
+@media (max-width: 768px) {
+    .title {
+        margin-top: 30px;
+        font-size: 18px;
+    }
+
+    .button, .button2 {
+        width: 100%;
+    }
+
+    .quantity-control {
+        flex-direction: column;
+        gap: 5px;
+    }
+}

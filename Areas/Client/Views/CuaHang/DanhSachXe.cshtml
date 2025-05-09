@@ -1,0 +1,70 @@
+﻿@{
+    Layout = "~/Areas/Client/Views/Shared/_LayoutCuaHang.cshtml";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/LayoutClient.css" />
+}
+<header>
+    <nav class="main-nav">
+        <a asp-area="Client" asp-controller="CuaHang" asp-action="ThongTinCuaHang">Thông tin cửa hàng</a>
+        <a asp-area="Client" asp-controller="CuaHang" asp-action="DanhSachXe" class="active">Quản lý xe</a>
+        <a asp-area="Client" asp-controller="CuaHang" asp-action="DonThueChoDuyet">Quản lý đơn thuê</a>
+        <a href="#">Báo cáo</a>
+        <a asp-area="Client" asp-controller="CuaHang" asp-action="DanhSachKhuyenMai">Khuyến mãi</a>
+    </nav>
+</header>
+
+
+<!-- WRAPPER -->
+<div class="wrapper_cuahang">
+    <aside>
+        <h3>Quản lý</h3>
+        <nav>
+            <a class="active">Danh sách xe</a>
+            <a asp-area="Client" asp-controller="CuaHang" asp-action="ThemXe">Thêm xe</a>
+        </nav>
+    </aside>
+
+    <div class="content_cuahang">
+        <div class="container_cuahang">
+            <h2>Danh sách xe đạp</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Loại xe</th>
+                        <th>Giá thuê theo giờ</th>
+                        <th>Giá thuê theo ngày</th>
+                        <th>Số lượng</th>
+                        <th>Thao tác</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>1</td>
+                        <td>Mountain Bike</td>
+                        <td>50.000 VND</td>
+                        <td>300.000 VND</td>
+                        <td>10</td>
+                        <td>
+                            <a href="#"><i class="fa-solid fa-pen"></i></a>
+                            <a href="#"><i class="fa-solid fa-trash"></i></a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>2</td>
+                        <td>City Bike</td>
+                        <td>30.000 VND</td>
+                        <td>200.000 VND</td>
+                        <td>15</td>
+                        <td>
+                            <a href="#"><i class="fa-solid fa-pen"></i></a>
+                            <a href="#"><i class="fa-solid fa-trash"></i></a>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

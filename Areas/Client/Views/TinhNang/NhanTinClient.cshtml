@@ -1,0 +1,86 @@
+﻿@{
+    Layout = "~/Areas/Client/Views/Shared/_Layout.cshtml";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/LayoutClient.css" />
+    <link rel="stylesheet" href="~/css/NhanTinClient.css" />
+}
+
+<div class="ndung">
+    <div class="wrapper">
+        <div class="layout">
+
+            <!-- Danh sách hội thoại -->
+            <div class="left-panel">
+                <div class="box">
+                    <div class="chat-preview active">
+                        <img src="~/images/avatar-default.jpg" class="chat-avatar">
+                        <div class="chat-info">
+                            <p class="chat-name">Cửa hàng GIANT</p>
+                            <p class="chat-msg">Bạn: Mình muốn... 5 phút</p>
+                        </div>
+                    </div>
+                    <div class="chat-preview">
+                        <img src="~/images/avatar-default.jpg" class="chat-avatar">
+                        <div class="chat-info">
+                            <p class="chat-name">Cửa hàng GIANT</p>
+                            <p class="chat-msg">Bạn: Mình muốn... 5 phút</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Nội dung trò chuyện -->
+            <div class="chat-panel">
+                <div class="box chat-box">
+                    <div class="chat-header">
+                        <div class="chat-header-left">
+                            <img src="~/images/avatar-default.jpg" class="chat-avatar-lg">
+                            <div>
+                                <p class="fw-bold">Cửa hàng GIANT</p>
+                                <small>Hoạt động 15 phút trước</small>
+                            </div>
+                        </div>
+                        <div class="chat-header-right">
+                            <a class="btn2">i</a>
+                        </div>
+                    </div>
+
+                    <div class="chat-content">
+                        <div class="message-left">
+                            <img src="~/images/avatar-default.jpg" class="chat-avatar-sm">
+                            <div class="text">Mình đã xác nhận đơn đơn của bạn rồi ạ!</div>
+                        </div>
+
+                        <div class="message-right">
+                            <div class="text2">Vâng, mình cảm ơn ạ.</div>
+                        </div>
+
+                        <div class="message-right">
+                            <div class="text3">Mình muốn thuê thêm 2 xe nữa được không?</div>
+                        </div>
+                    </div>
+
+                    <div class="chat-input">
+                        <input type="text" placeholder="Nhập tin nhắn" class="nhap">
+                        <a href="#" class="gui">Gửi</a>
+                    </div>
+                </div>
+            </div>
+            <!-- Thông tin cửa hàng -->
+            <div class="right-panel">
+                <div class="box text-center">
+                    <img src="images/avatar.png" class="avatar-lg">
+                    <div class="fw-bold">Cửa hàng GIANT</div>
+                    <a href="#" class="detail">Xem trang cửa hàng</a>
+                    <div class="info">
+                        <p>Địa chỉ: 180 Trần Cao Vân, Hội An</p>
+                        <p>SĐT liên hệ: 0123456789</p>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>

@@ -1,0 +1,49 @@
+﻿@{
+    Layout = "~/Areas/Client/Views/Shared/_Layout.cshtml";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/LayoutClient.css" />
+    <link rel="stylesheet" href="~/css/ThanhToan.css" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+}
+<div class="ndung">
+    <div class="wrapper">
+        <h5 class="title">THUÊ XE ĐẠP</h5>
+        <p class="subtitle">Hoàn tất thuê xe đạp</p>
+
+        <div class="info-row">
+            <p class="info-label">Phương thức thanh toán</p>
+            <span class="info-value">Chuyển khoản qua ngân hàng</span>
+        </div>
+
+        <div class="border-box">
+            <div class="info-row">
+                <p class="info-label">Tên ngân hàng</p>
+                <span class="info-value">Viettinbank</span>
+            </div>
+
+            <div class="info-row">
+                <p class="info-label">Chủ tài khoản</p>
+                <span class="info-value">Do Thanh Bao</span>
+            </div>
+
+            <div class="info-row">
+                <p class="info-label">Số tài khoản</p>
+                <span class="info-value">22115053122202</span>
+            </div>
+
+            <p style="margin-top: 20px;">Có thể quét mã QR dưới đây: </p>
+
+            <div class="qr-section">
+                <img src="~/images/qr.png" alt="Mã QR ngân hàng">
+                <a asp-area="Client" asp-controller="Home" asp-action="Index" class="button2">Hoàn tất thanh toán</a>
+            </div>
+
+            <p class="note">Sau khi thanh toán xong, bấm <strong>Hoàn tất thanh toán</strong> bên cạnh để hoàn tất giao dịch.</p>
+        </div>
+    </div>
+</div>
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+}

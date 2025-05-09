@@ -1,0 +1,108 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+    <title>THUEXEDAPHOIAN</title>
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    @await RenderSectionAsync("Styles", required: false)
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-container">
+                <div class="header-content">
+                    <!-- Logo -->
+                    <div class="logo">
+                        <a asp-area="Admin" asp-controller="Home" asp-action="TaiKhoan">
+                            <img src="~/images/logo2.png" class="logo-img"/>
+                            <span>THUEXEDAPHOIAN</span>
+                        </a>
+                    </div>
+                </div>
+                <!-- Navigation -->
+                <nav class="navigation">
+                    <a asp-area="Admin" asp-controller="Home" asp-action="TaiKhoan" class="nav-link" style="white-space: nowrap;">Trang chủ</a>
+                </nav>
+                <div class="header-icons">
+                    <!-- User Profile Dropdown -->
+                    <div class="user-profile">
+                        <img src="~/images/avatar-default.jpg" alt="User Avatar" class="user-avatar">
+                        <p class="user-name" style="white-space: nowrap;">Admin</p>
+                        <i class="fas fa-chevron-down dropdown-arrow"></i>
+
+                        <div class="dropdown-menu">
+                            <a asp-area="Admin" asp-controller="Home" asp-action="ThongTinTaiKhoan" class="dropdown-item">Tài khoản</a>
+                            <a href="/dangxuatAdmin" class="dropdown-item">Đăng xuất</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </header>
+
+        @RenderBody()
+        
+        <!-- Footer -->
+        <footer class="footer">
+            <div class="footer-container">
+                <div class="footer-content">
+                    <!-- Company Info -->
+                    <div class="footer-section">
+                        <h3 class="footer-title">THUEXEDAPHOIAN</h3>
+                        <p class="footer-description">Website giới thiệu cho thuê xe đạp tại Hội An</p>
+                        <h3 class="footer-title">Liên hệ</h3>
+                        <div class="contact-info">
+                            <p><i class="fas fa-phone"></i> (+84)3951649980</p>
+                            <p><i class="fas fa-envelope"></i> hoanghaibao@gmail.com</p>
+                        </div>
+                        
+                    </div>
+
+                    <!-- Contact Info -->
+                    <div class="footer-section">
+                        <h3 class="footer-title">Mạng xã hội</h3>
+                        <div class="social-links">
+                            <span class="social-link facebook"><i class="fab fa-facebook"></i></span>
+                            <span class="social-link twitter"><i class="fab fa-twitter"></i></span>
+                            <span class="social-link instagram"><i class="fab fa-instagram"></i></span>
+                        </div>
+                        <h3 class="footer-title">Địa chỉ văn phòng</h3>
+                        <p><i class="fas fa-map-marker-alt"></i> 48 Cao Thắng, Thanh Bình, Hải Châu, Đà Nẵng, Việt Nam</p>
+                    </div>
+
+                    <!-- Stats -->
+                    <div class="footer-section">
+                        <div class="stats-container">
+                            <div class="stat-box">
+                                <div class="stat-value">148</div>
+                                <div class="stat-label">Online</div>
+                            </div>
+                            <div class="stat-box">
+                                <div class="stat-value">1824</div>
+                                <div class="stat-label">Tổng lượt xem</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </footer>
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // User Profile Dropdown Toggle
+            const userProfile = document.querySelector('.user-profile');
+            const dropdownMenu = document.querySelector('.dropdown-menu');
+            if (userProfile && dropdownMenu) {
+                userProfile.addEventListener('click', function(e) {
+                    e.stopPropagation(); // Prevent click bubbling
+                    dropdownMenu.classList.toggle('show');
+                });
+            }
+        });
+    </script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

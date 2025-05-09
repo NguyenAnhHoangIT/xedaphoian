@@ -1,0 +1,73 @@
+﻿@{
+    Layout = "~/Areas/Client/Views/Shared/_Layout.cshtml";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/LayoutClient.css" />
+    <link rel="stylesheet" href="~/css/DonThue.css" />
+}
+
+<div class="ndung-container">
+    <div class="ndung">
+        <h5 class="qly">QUẢN LÝ ĐƠN THUÊ</h5>
+        <div class="wrapper-table">
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th scope="col">Mã đơn thuê</th>
+                            <th scope="col">Loại xe đặt</th>
+                            <th scope="col">Cửa hàng cho thuê</th>
+                            <th scope="col" class="status-col">Trạng thái</th>
+                            <th scope="col">Hành động</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td scope="row">DT01</td>
+                            <td>Xe đạp leo núi</td>
+                            <td>Shop A</td>
+                            <td class="status-col"><span class="status cho-duyet">Chờ duyệt đơn</span></td>
+                            <td><a asp-area="Client" asp-controller="DonThue" asp-action="ChiTietDonThueChuaDuyet"><button class="btn btn-warning">Xem</button></a></td>
+                        </tr>
+                        <tr>
+                            <td scope="row">DT02</td>
+                            <td>Xe đạp đôi</td>
+                            <td>Shop B</td>
+                            <td class="status-col"><span class="status da-duyet">Đã duyệt đơn</span></td>
+                            <td><button class="btn btn-warning">Xem</button></td>
+                        </tr>
+                        <tr>
+                            <td scope="row">DT03</td>
+                            <td>Xe cổ điển</td>
+                            <td>Shop B</td>
+                            <td class="status-col"><span class="status hoan-thanh">Hoàn thành</span></td>
+                            <td><a <a asp-area="Client" asp-controller="DonThue" asp-action="ChiTietDonThue"><button class="btn btn-warning">Xem</button></a></td>
+                        </tr>
+                        <tr>
+                            <td scope="row">DT04</td>
+                            <td>Xe cổ điển</td>
+                            <td>Shop B</td>
+                            <td class="status-col"><span class="status dang-thue">Đang thuê</span></td>
+                            <td><button class="btn btn-warning">Xem</button></td>
+                        </tr>
+                        <tr>
+                            <td scope="row">DT05</td>
+                            <td>Xe cổ điển</td>
+                            <td>Shop B</td>
+                            <td class="status-col"><span class="status qua-han">Quá hạn</span></td>
+                            <td><button class="btn btn-warning">Xem</button></td>
+                        </tr>
+                        <tr>
+                            <td scope="row">DT06</td>
+                            <td>Xe cổ điển</td>
+                            <td>Shop B</td>
+                            <td class="status-col"><span class="status da-huy">Đã hủy</span></td>
+                            <td><button class="btn btn-warning">Xem</button></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
