@@ -1,10 +1,13 @@
-﻿@{
+﻿@model IEnumerable<ThueXeDapHoiAn.Models.KhuyenMaiModel>
+
+@{
     Layout = "~/Areas/Client/Views/Shared/_LayoutCuaHang.cshtml";
 }
 
 @section Styles {
     <link rel="stylesheet" href="~/css/LayoutClient.css" />
 }
+
 <header>
     <nav class="main-nav">
         <a asp-area="Client" asp-controller="CuaHang" asp-action="ThongTinCuaHang">Thông tin cửa hàng</a>
@@ -14,6 +17,7 @@
         <a asp-area="Client" asp-controller="CuaHang" asp-action="DanhSachKhuyenMai" class="active">Khuyến mãi</a>
     </nav>
 </header>
+
 <!-- WRAPPER -->
 <div class="wrapper_cuahang">
     <aside>
@@ -26,86 +30,48 @@
 
     <div class="content_cuahang">
         <div class="container_cuahang">
-            <h2>Danh sách xe đạp</h2>
-            <table>
+            <h2>Danh sách mã khuyến mãi</h2>
+
+            @if (TempData["ErrorMessage"] != null)
+            {
+                <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
+            }
+            @if (TempData["SuccessMessage"] != null)
+            {
+                <div class="alert alert-success">@TempData["SuccessMessage"]</div>
+            }
+            <table class="table">
                 <thead>
                     <tr>
                         <th>ID</th>
                         <th>Mã khuyến mãi</th>
-                        <th>Mức giảm giá</th>
-                        <th>Đơn tối thiểu</th>
-                        <th>Ngày bắt đầu</th>
-                        <th>Ngày kết thúc</th>
-                        <th>Số lượng còn</th>
-                        <th></th>
+                        <th>Mức giảm giá (%)</th>
+                        <th>Đơn tối thiểu (VNĐ)</th>
+                        <th>Số lượng</th>
+                        <th>Trạng thái</th>
+                        <th>Thao tác</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
-                        <td>1</td>
-                        <td>G18</td>
-                        <td>15%</td>
-                        <td>300.000 VND</td>
-                        <td>10/05/2025</td>
-                        <td>20/05/2025</td>
-                        <td>13</td>
-                        <td>
-                            <a href="#"><i class="fa-solid fa-pen"></i></a>
-                            <a href="#"><i class="fa-solid fa-trash"></i></a>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>2</td>
-                        <td>G18</td>
-                        <td>15%</td>
-                        <td>300.000 VND</td>
-                        <td>10/05/2025</td>
-                        <td>20/05/2025</td>
-                        <td>13</td>
-                        <td>
-                            <a href="#"><i class="fa-solid fa-pen"></i></a>
-                            <a href="#"><i class="fa-solid fa-trash"></i></a>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>3</td>
-                        <td>G18</td>
-                        <td>15%</td>
-                        <td>300.000 VND</td>
-                        <td>10/05/2025</td>
-                        <td>20/05/2025</td>
-                        <td>13</td>
-                        <td>
-                            <a href="#"><i class="fa-solid fa-pen"></i></a>
-                            <a href="#"><i class="fa-solid fa-trash"></i></a>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>4</td>
-                        <td>G18</td>
-                        <td>15%</td>
-                        <td>300.000 VND</td>
-                        <td>10/05/2025</td>
-                        <td>20/05/2025</td>
-                        <td>13</td>
-                        <td>
-                            <a href="#"><i class="fa-solid fa-pen"></i></a>
-                            <a href="#"><i class="fa-solid fa-trash"></i></a>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>5</td>
-                        <td>G18</td>
-                        <td>15%</td>
-                        <td>300.000 VND</td>
-                        <td>10/05/2025</td>
-                        <td>20/05/2025</td>
-                        <td>13</td>
-                        <td>
-                            <a href="#"><i class="fa-solid fa-pen"></i></a>
-                            <a href="#"><i class="fa-solid fa-trash"></i></a>
-                        </td>
-                    </tr>
+                    @foreach (var km in Model)
+                    {
+                        <tr>
+                            <td>@km.idKhuyenMai</td>
+                            <td>@km.maKhuyenMai</td>
+                            <td>@km.mucGiamGia %</td>
+                            <td>@km.donToiThieu.ToString("N0")</td>
+                            <td>@km.soLuong</td>
+                            <td>@(km.trangThaiKhuyenMai ? "Kích hoạt" : "Vô hiệu")</td>
+                            <td>
+                                <a href="@Url.Action("SuaKhuyenMai", "CuaHang", new { area = "Client", idKhuyenMai = km.idKhuyenMai })">
+                                    <i class="fa-solid fa-pen"></i>
+                                </a>
+                                <a href="@Url.Action("XoaKhuyenMai", "CuaHang", new { area = "Client", id = km.idKhuyenMai })" onclick="return confirm('Bạn có chắc chắn muốn xóa khuyến mãi này?')">
+                                    <i class="fa-solid fa-trash"></i>
+                                </a>
+                            </td>
+                        </tr>
+                    }
                 </tbody>
             </table>
         </div>

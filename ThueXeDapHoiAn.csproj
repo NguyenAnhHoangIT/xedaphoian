@@ -9,6 +9,8 @@
   <ItemGroup>
     <Folder Include="Areas\Admin\ViewModels\" />
     <Folder Include="Areas\Client\ViewModels\" />
+    <Folder Include="wwwroot\images\cuahang\" />
+    <Folder Include="wwwroot\images\xe\" />
   </ItemGroup>
 
   <ItemGroup>

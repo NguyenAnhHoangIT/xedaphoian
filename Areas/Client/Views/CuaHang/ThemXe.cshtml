@@ -1,4 +1,6 @@
-﻿@{
+﻿@model ThueXeDapHoiAn.Models.XeModel
+
+@{
     Layout = "~/Areas/Client/Views/Shared/_LayoutCuaHang.cshtml";
 }
 
@@ -15,7 +17,7 @@
         <a asp-area="Client" asp-controller="CuaHang" asp-action="DanhSachKhuyenMai">Khuyến mãi</a>
     </nav>
 </header>
-<!-- WRAPPER -->
+
 <div class="wrapper_cuahang">
     <aside>
         <h3>Quản lý</h3>
@@ -28,32 +30,35 @@
     <div class="content_cuahang">
         <div class="container_cuahang8 cuahang_class">
             <h2>Thông tin xe đạp</h2>
-            <form method="POST" action="/Home/ThemXe" enctype="multipart/form-data">
+            <form method="POST" enctype="multipart/form-data" asp-action="ThemXe" asp-controller="CuaHang" asp-area="Client">
                 <label>Tên xe <span class="required">*</span></label>
                 <input type="text" name="tenXe" placeholder="Nhập tên xe" required />
 
                 <div class="form-group">
-                    <label class="custom-label">Loại xe <span class="required">*</span></label>
+                    <label>Loại xe <span class="required">*</span></label>
                     <select class="custom-select" name="idLoaiXe" required>
                         <option value="">Chọn loại xe</option>
-                        <!-- Options will be populated dynamically -->
+                        @if (ViewBag.LoaiXeList != null)
+                        {
+                            foreach (var loaiXe in ViewBag.LoaiXeList)
+                            {
+                                <option value="@loaiXe.idLoaiXe">@loaiXe.tenLoaiXe</option>
+                            }
+                        }
                     </select>
                 </div>
 
                 <label>Số lượng <span class="required">*</span></label>
-                <input type="number" name="so_luong" placeholder="Nhập số lượng" required />
+                <input type="number" name="soLuong" placeholder="Nhập số lượng" required />
 
                 <label>Giá thuê theo giờ <span class="required">*</span></label>
-                <input type="text" name="gia_thue_gio" placeholder="Nhập giá thuê theo giờ" required />
+                <input type="number" step="0.01" name="giaThueTheoGio" placeholder="Nhập giá thuê theo giờ" required />
 
                 <label>Giá thuê theo ngày <span class="required">*</span></label>
-                <input type="text" name="gia_thue_ngay" placeholder="Nhập giá thuê theo ngày" required />
+                <input type="number" step="0.01" name="giaThueTheoNgay" placeholder="Nhập giá thuê theo ngày" required />
 
                 <label>Giới thiệu</label>
-                <input type="text" name="gioi_thieu" placeholder="Nhập giới thiệu" />
-
-                <label>Thông số</label>
-                <input type="text" name="thong_so" placeholder="Nhập thông số kỹ thuật" />
+                <input type="text" name="gioiThieu" placeholder="Nhập giới thiệu" />
 
                 <div class="form-group">
                     <label>Hình ảnh</label>

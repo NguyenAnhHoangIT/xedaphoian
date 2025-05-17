@@ -1,7 +1,20 @@
 ﻿@{
     Layout = "~/Areas/Client/Views/Shared/_Layout.cshtml";
 }
-
+@if (TempData["ThongBao"] != null)
+{
+    <div class="alert alert-warning" role="alert">
+        @TempData["ThongBao"]
+    </div>
+}
+@section Scripts {
+    <script>
+        setTimeout(function () {
+            var alert = document.querySelector('.alert');
+            if (alert) alert.style.display = 'none';
+        }, 3000); // 5 giây
+    </script>
+}
 @section Styles {
     <link rel="stylesheet" href="~/css/LayoutClient.css" />
     <link rel="stylesheet" href="~/css/IndexClient.css" />

@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.EntityFrameworkCore;
 using ThueXeDapHoiAn.Data;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -23,6 +24,9 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
         options.AccessDeniedPath = "/Account/AccessDenied"; // Redirect if forbidden
     });
 
+// Configure DbContext for Client
+builder.Services.AddDbContext<AppDbContextClient>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("Default")));
 
 // Register DatabaseHelper (to interact with the custom `TaiKhoan` table)
 builder.Services.AddSingleton<DatabaseHelper>();
@@ -49,11 +53,9 @@ app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
 
-
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
-
 
 app.MapControllerRoute(
     name: "Areas",

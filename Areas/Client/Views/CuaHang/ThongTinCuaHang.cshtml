@@ -1,11 +1,25 @@
-﻿@{
+﻿@model ThueXeDapHoiAn.Models.CuaHangModel
+
+@{
     Layout = "~/Areas/Client/Views/Shared/_LayoutCuaHang.cshtml";
 }
 
 @section Styles {
     <link rel="stylesheet" href="~/css/LayoutClient.css" />
     <link rel="stylesheet" href="~/css/ThongTinTaiKhoan.css" />
+    <link href="~/css/ThongTinCuaHang.css" rel="stylesheet" />
 }
+<style>
+    .form-container {
+        width: 100%;
+        max-width: 1000px;
+        margin: 40px auto;
+        background-color: white;
+        padding: 30px;
+        border-radius: 12px;
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+    }
+</style>
 <header>
     <nav class="main-nav">
         <a asp-area="Client" asp-controller="CuaHang" asp-action="ThongTinCuaHang" class="active">Thông tin cửa hàng</a>
@@ -15,53 +29,65 @@
         <a asp-area="Client" asp-controller="CuaHang" asp-action="DanhSachKhuyenMai">Khuyến mãi</a>
     </nav>
 </header>
-<!-- WRAPPER -->
-<div class="wrapper_cuahang">
 
+<div class="wrapper_cuahang">
     <div class="container_cuahang0 cuahang_class">
         <div class="form-container">
-            <div class="profile-header">
-                <img src="~/images/avatar-default.jpg" alt="Avatar" class="avatar">
-                <div class="profile-info">
-                    <h3>THUEXEDAPHOIAN</h3>
-                    <p>thuexedaphoian@gmail.com</p>
+            <form asp-area="Client" asp-controller="CuaHang" asp-action="CapNhatThongTin" method="post" enctype="multipart/form-data" class="form-grid">
+                <div class="profile-header" style="grid-column: span 2;">
+                    <div class="avatar-upload" onclick="document.getElementById('avatarInput').click();">
+                        <img src="~/images/cuahang/@Model.hinhAnh" alt="Avatar" class="avatar" id="avatarPreview">
+                        <span class="edit-icon"><i class="fa fa-camera"></i></span>
+                        <input type="file" id="avatarInput" name="hinhAnh" accept="image/*" onchange="previewAvatar(event)">
+                    </div>
+                    <div class="profile-info">
+                        <h3>@Model.tenCuaHang</h3>
+                        <p>@Model.gmail</p>
+                    </div>
                 </div>
-            </div>
 
-            <form class="form-grid">
                 <div class="form-group">
                     <label>Tên cửa hàng</label>
-                    <input type="text" name="tenCuaHang" placeholder="Nhập tên cửa hàng" value="THUEXEDAPHOIAN">
+                    <input type="text" name="tenCuaHang" placeholder="Nhập tên cửa hàng" value="@Model.tenCuaHang" />
                 </div>
 
                 <div class="form-group">
                     <label>Địa chỉ</label>
-                    <input type="text" name="diaChi" placeholder="Nhập địa chỉ" value="46 Hoi An">
+                    <input type="text" name="diaChi" placeholder="Nhập địa chỉ" value="@Model.diaChi" />
                 </div>
 
                 <div class="form-group">
                     <label>Số điện thoại</label>
-                    <input type="text" name="soDienThoai" placeholder="Nhập số điện thoại" value="0123456789">
+                    <input type="text" name="soDienThoai" placeholder="Nhập số điện thoại" value="@Model.soDienThoai" />
                 </div>
 
                 <div class="form-group">
                     <label>Liên hệ</label>
-                    <input type="email" name="lienHe" placeholder="Nhập email liên hệ" value="thuexedaphoian@gmail.com">
+                    <input type="email" name="gmail" placeholder="Nhập email liên hệ" value="@Model.gmail" />
                 </div>
 
                 <div class="form-group" style="grid-column: span 2;">
                     <label>Giới thiệu</label>
-                    <textarea name="gioiThieu" rows="4" placeholder="Giới thiệu về cửa hàng"
-                              style="padding: 10px 14px; border: 1px solid #e2e8f0; border-radius: 8px; background: #f9fafb; font-size: 15px; outline: none; resize: none;">Chào mừng bạn đến với THUEXEDAPHOIAN, địa chỉ uy tín cho thuê xe đạp tại Hội An! Chúng tôi mang đến những chiếc xe chất lượng, giúp bạn thoải mái khám phá phố cổ, làng quê và những bãi biển tuyệt đẹp.</textarea>
+                    <textarea name="gioiThieu" rows="4"
+                              style="padding: 10px 14px; border: 1px solid #e2e8f0; border-radius: 8px; background: #f9fafb; font-size: 15px; outline: none; resize: none;">@Model.gioiThieu</textarea>
                 </div>
 
                 <div class="form-buttons">
                     <button type="submit" class="btn btn-save">Xác nhận lưu</button>
-                    <button type="button" class="btn btn-cancel">Huỷ chỉnh sửa</button>
+                    <button type="button" class="btn btn-cancel" onclick="window.location.reload();">Huỷ chỉnh sửa</button>
                 </div>
             </form>
         </div>
     </div>
-
-
 </div>
+
+@section Scripts {
+    <script>
+        function previewAvatar(event) {
+            const [file] = event.target.files;
+            if (file) {
+                document.getElementById('avatarPreview').src = URL.createObjectURL(file);
+            }
+        }
+    </script>
+}

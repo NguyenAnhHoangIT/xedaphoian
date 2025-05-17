@@ -39,30 +39,46 @@ namespace ThueXeDapHoiAn.Controllers
 
                 if (user != null)
                 {
-                    // Verify the password manually
+                    // Verify password manually
                     if (user.MatKhau == model.Password)
                     {
+                        string role = user.VaiTro;
+
+                        if (role == "Client")
+                        {
+                            var cuaHangStatus = _databaseHelper.GetTrangThaiCuaHang(int.Parse(user.Id));
+                            if (cuaHangStatus == 1) // Chỉ khi cửa hàng đã được duyệt
+                            {
+                                role = "Shop";
+                            }
+                        }
+
+
                         // ✅ Set up claims
                         var claims = new List<Claim>
                 {
                     new Claim(ClaimTypes.NameIdentifier, user.Id),
                     new Claim(ClaimTypes.Name, user.SoDienThoai),
-                    new Claim(ClaimTypes.Role, user.VaiTro) // "Admin" or "Client"
+                    new Claim(ClaimTypes.Role, role) // Đã cập nhật thành "Shop" nếu cần
                 };
 
                         var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
 
-                        // ✅ Sign in using cookie authentication
                         await HttpContext.SignInAsync(
                             CookieAuthenticationDefaults.AuthenticationScheme,
                             new ClaimsPrincipal(claimsIdentity));
 
                         // ✅ Redirect based on role
-                        if (user.VaiTro == "Admin")
+                        if (role == "Admin")
                         {
                             return RedirectToAction("TaiKhoan", "Home", new { area = "Admin" });
                         }
-                        else if (user.VaiTro == "Client" || user.VaiTro == "Shop")
+                        else if (role == "Shop")
+                        {
+                            // Nếu là Shop thì trực tiếp vào trang DanhSachXe
+                            return RedirectToAction("DanhSachXe", "CuaHang", new { area = "Client" });
+                        }
+                        else // Nếu là Client mà chưa có cửa hàng thì vào trang chủ
                         {
                             return RedirectToAction("Index", "Home", new { area = "Client" });
                         }
@@ -81,7 +97,8 @@ namespace ThueXeDapHoiAn.Controllers
             return View(model);
         }
 
-        
+
+
 
     }
 }

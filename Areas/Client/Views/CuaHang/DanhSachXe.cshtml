@@ -1,6 +1,8 @@
-﻿@{
+﻿@model List<ThueXeDapHoiAn.Models.XeModel>
+@{
     Layout = "~/Areas/Client/Views/Shared/_LayoutCuaHang.cshtml";
 }
+
 
 @section Styles {
     <link rel="stylesheet" href="~/css/LayoutClient.css" />
@@ -14,6 +16,30 @@
         <a asp-area="Client" asp-controller="CuaHang" asp-action="DanhSachKhuyenMai">Khuyến mãi</a>
     </nav>
 </header>
+<style>
+    .alert {
+        display: inline-block;
+        margin-bottom: 12px;
+        padding: 8px 18px;
+        border-radius: 6px;
+        font-size: 15px;
+        font-weight: 500;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+        max-width: 100%;
+    }
+
+    .alert-danger {
+        background: #ffeaea;
+        color: #d93025;
+        border: 1px solid #f5c2c7;
+    }
+
+    .alert-success {
+        background: #eaffea;
+        color: #218838;
+        border: 1px solid #b7ebc6;
+    }
+</style>
 
 
 <!-- WRAPPER -->
@@ -29,11 +55,20 @@
     <div class="content_cuahang">
         <div class="container_cuahang">
             <h2>Danh sách xe đạp</h2>
+            @if (TempData["ErrorMessage"] != null)
+            {
+                <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
+            }
+            @if (TempData["SuccessMessage"] != null)
+            {
+                <div class="alert alert-success">@TempData["SuccessMessage"]</div>
+            }
             <table>
                 <thead>
                     <tr>
                         <th>ID</th>
                         <th>Loại xe</th>
+                        <th>Tên xe</th>
                         <th>Giá thuê theo giờ</th>
                         <th>Giá thuê theo ngày</th>
                         <th>Số lượng</th>
@@ -41,28 +76,25 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
-                        <td>1</td>
-                        <td>Mountain Bike</td>
-                        <td>50.000 VND</td>
-                        <td>300.000 VND</td>
-                        <td>10</td>
-                        <td>
-                            <a href="#"><i class="fa-solid fa-pen"></i></a>
-                            <a href="#"><i class="fa-solid fa-trash"></i></a>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>2</td>
-                        <td>City Bike</td>
-                        <td>30.000 VND</td>
-                        <td>200.000 VND</td>
-                        <td>15</td>
-                        <td>
-                            <a href="#"><i class="fa-solid fa-pen"></i></a>
-                            <a href="#"><i class="fa-solid fa-trash"></i></a>
-                        </td>
-                    </tr>
+                    @foreach (var xe in Model)
+                    {
+                        <tr>
+                            <td>@xe.idXe</td>
+                            <td>@xe.LoaiXe?.tenLoaiXe</td>
+                            <td>@xe.tenXe</td>
+                            <td>@string.Format("{0:N0} VND", xe.giaThueTheoGio)</td>
+                            <td>@string.Format("{0:N0} VND", xe.giaThueTheoNgay)</td>
+                            <td>@xe.soLuong</td>
+                            <td>
+                                <a href="@Url.Action("SuaXe", "CuaHang", new { area = "Client", id = xe.idXe })">
+                                    <i class="fa-solid fa-pen"></i>
+                                </a>
+                                <a href="@Url.Action("XoaXe", "CuaHang", new { area = "Client", id = xe.idXe })" onclick="return confirm('Bạn có chắc chắn muốn xóa xe này?')">
+                                    <i class="fa-solid fa-trash"></i>
+                                </a>
+                            </td>
+                        </tr>
+                    }
                 </tbody>
             </table>
         </div>
