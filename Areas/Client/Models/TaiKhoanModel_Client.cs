@@ -2,7 +2,7 @@
 
 namespace ThueXeDapHoiAn.Areas.Client.Models
 {
-    public class TaiKhoanModel
+    public class TaiKhoanModel_Client
     {
         [Key]
         public int IdTaiKhoan { get; set; }
@@ -16,6 +16,6 @@ namespace ThueXeDapHoiAn.Areas.Client.Models
         public bool TrangThaiTaiKhoan { get; set; }
 
         // Nếu cần có quan hệ với DonThueModel
-        public ICollection<DonThueModel> DonThue { get; set; }
+        public ICollection<DonThueModel_Client> DonThue { get; set; }
     }
 }

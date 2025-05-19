@@ -6,7 +6,7 @@ using ThueXeDapHoiAn.Models;
 
 namespace ThueXeDapHoiAn.Areas.Client.Models
 {
-    public class DonThueModel
+    public class DonThueModel_Client
     {
         [Key]
         public int IdDonThue { get; set; }
@@ -34,12 +34,12 @@ namespace ThueXeDapHoiAn.Areas.Client.Models
 
         public UserModel User { get; set; }
 
-        public CuaHangModel CuaHang { get; set; }
+        public CuaHangModel_Client CuaHang { get; set; }
 
-        public KhuyenMaiModel KhuyenMai { get; set; }
+        public KhuyenMaiModel_Client KhuyenMai { get; set; }
 
         // Thêm thuộc tính ChiTietDonThue để thiết lập quan hệ 1-N với ChiTietDonThueModel
-        public ICollection<ChiTietDonThueModel> ChiTietDonThue { get; set; }  // Đây là quan hệ một-nhiều
+        public ICollection<ChiTietDonThueModel_Client> ChiTietDonThue { get; set; }  // Đây là quan hệ một-nhiều
     }
 
 

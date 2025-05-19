@@ -1,6 +1,6 @@
 ﻿namespace ThueXeDapHoiAn.Areas.Client.Models.ViewModels
 {
-    public class DonThueViewModel2
+    public class DonThueViewModel2_Client
     {
         public int IdDonThue { get; set; }
 
@@ -24,6 +24,6 @@
 
         public decimal TongCong { get; set; }
 
-        public ICollection<ChiTietDonThueModel> ChiTietDonThue { get; set; }
+        public ICollection<ChiTietDonThueModel_Client> ChiTietDonThue { get; set; }
     }
 }

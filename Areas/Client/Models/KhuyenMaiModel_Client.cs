@@ -5,7 +5,7 @@ using ThueXeDapHoiAn.Areas.Client.Models.ViewModels;
 using ThueXeDapHoiAn.Models;
 namespace ThueXeDapHoiAn.Areas.Client.Models
 {
-    public class KhuyenMaiModel
+    public class KhuyenMaiModel_Client
     {
         [Key]
         public int IdKhuyenMai { get; set; }
@@ -21,7 +21,7 @@ namespace ThueXeDapHoiAn.Areas.Client.Models
         public DateTime ThoiGianKetThuc { get; set; }
         public bool TrangThaiKhuyenMai { get; set; }
 
-        public CuaHangModel CuaHang { get; set; }
+        public CuaHangModel_Client CuaHang { get; set; }
     }
 
 }

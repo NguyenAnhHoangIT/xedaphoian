@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 using Microsoft.EntityFrameworkCore;
+using ThueXeDapHoiAn.Areas.Client.Models.ViewModels;
 
 namespace ThueXeDapHoiAn.Areas.Client.Controllers
 {
@@ -16,14 +17,46 @@ namespace ThueXeDapHoiAn.Areas.Client.Controllers
         {
             _context = context;
         }
+
+
         [Route("Client")]
         [Route("Client/Index")]
         public IActionResult Index()
         {
+            var dsXe = _context.Xe.ToList();
 
-            var xe = _context.Xe.ToList();
-            return View(xe);
+            var danhGiaJoin = (from dg in _context.DanhGia
+                               join dt in _context.DonThue on dg.IdDonThue equals dt.IdDonThue
+                               select new { dg.DiemDanhGia, dt.IdCuaHang }).ToList();
+
+            var dsCuaHang = _context.CuaHang
+                .ToList()
+                .Select(ch => new CuaHang_Index_ViewModel_Client
+                {
+                    IdCuaHang = ch.IdCuaHang,
+                    TenCuaHang = ch.TenCuaHang,
+                    MoTa = ch.GioiThieu,
+                    HinhAnh = ch.HinhAnh,
+                    DiemTrungBinh = danhGiaJoin
+                        .Where(x => x.IdCuaHang == ch.IdCuaHang)
+                        .Select(x => x.DiemDanhGia)
+                        .DefaultIfEmpty(0)
+                        .Average()
+                })
+                .ToList();
+
+
+            var viewModel = new CuaHang_Xe_ViewModel_Client
+            {
+                DanhSachXe = dsXe,
+                DanhSachCuaHang = dsCuaHang
+            };
+
+            return View(viewModel);
         }
+
+
+
         [Route("Client")]
         [Route("Client/Search")]
         public async Task<IActionResult> Search(string searchTerm)

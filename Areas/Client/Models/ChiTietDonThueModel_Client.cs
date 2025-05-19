@@ -2,7 +2,7 @@
 
 namespace ThueXeDapHoiAn.Areas.Client.Models
 {
-    public class ChiTietDonThueModel
+    public class ChiTietDonThueModel_Client
     {
         public int IdDonThue { get; set; }
         public int IdXe { get; set; }
@@ -25,14 +25,14 @@ namespace ThueXeDapHoiAn.Areas.Client.Models
         public int IdCuaHang { get; set; }
 
         [NotMapped]
-        public DonThueModel DonThue { get; set; }
+        public DonThueModel_Client DonThue { get; set; }
 
         [NotMapped]
-        public XeModel Xe { get; set; }
+        public XeModel_Client Xe { get; set; }
 
-        public ChiTietDonThueModel() { }
+        public ChiTietDonThueModel_Client() { }
 
-        public ChiTietDonThueModel(XeModel xe)
+        public ChiTietDonThueModel_Client(XeModel_Client xe)
         {
             IdXe = xe.IdXe;
             TenXe = xe.TenXe;

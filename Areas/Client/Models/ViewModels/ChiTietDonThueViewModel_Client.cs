@@ -1,6 +1,6 @@
 ﻿namespace ThueXeDapHoiAn.Areas.Client.Models.ViewModels
 {
-    public class ChiTietDonThueViewModel
+    public class ChiTietDonThueViewModel_Client
     {
         public int IdDonThue { get; set; }
         public string TenCuaHang { get; set; }

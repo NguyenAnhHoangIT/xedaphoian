@@ -5,7 +5,7 @@ using ThueXeDapHoiAn.Areas.Client.Models.ViewModels;
 using ThueXeDapHoiAn.Models;
 namespace ThueXeDapHoiAn.Areas.Client.Models
 {
-    public class CuaHangModel
+    public class CuaHangModel_Client
     {
         [Key]
         public int IdCuaHang { get; set; }

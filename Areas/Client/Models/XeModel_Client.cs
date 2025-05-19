@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 namespace ThueXeDapHoiAn.Areas.Client.Models
 {
-    public class XeModel
+    public class XeModel_Client
     {
         [Key]
         public int IdXe { get; set; }
@@ -24,9 +24,9 @@ namespace ThueXeDapHoiAn.Areas.Client.Models
         public string HinhAnh { get; set; }
         public bool TrangThaiLoaiXe { get; set; }
 
-        public CuaHangModel CuaHang { get; set; }
-        public LoaiXeModel LoaiXe { get; set; }
+        public CuaHangModel_Client CuaHang { get; set; }
+        public LoaiXeModel_Client LoaiXe { get; set; }
 
-        public List<ChiTietDonThueModel> ChiTietDonThue { get; set; }
+        public List<ChiTietDonThueModel_Client> ChiTietDonThue { get; set; }
     }
 }

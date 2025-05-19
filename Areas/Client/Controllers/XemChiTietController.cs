@@ -63,7 +63,7 @@ namespace ThueXeDapHoiAn.Areas.Client.Controllers
                 return Json(new { success = false, message = "Xe không tồn tại" });
             }
 
-            var cart = HttpContext.Session.GetJson<List<ChiTietDonThueModel>>("Cart") ?? new List<ChiTietDonThueModel>();
+            var cart = HttpContext.Session.GetJson<List<ChiTietDonThueModel_Client>>("Cart") ?? new List<ChiTietDonThueModel_Client>();
 
             // Kiểm tra nếu giỏ hàng đã có ít nhất 1 xe
             if (cart.Any())
@@ -82,7 +82,7 @@ namespace ThueXeDapHoiAn.Areas.Client.Controllers
             var cartItem = cart.FirstOrDefault(c => c.IdXe == id);
             if (cartItem == null)
             {
-                cart.Add(new ChiTietDonThueModel(xe)); // constructor đã gán IdCuaHang
+                cart.Add(new ChiTietDonThueModel_Client(xe)); // constructor đã gán IdCuaHang
             }
             else
             {
@@ -102,7 +102,7 @@ namespace ThueXeDapHoiAn.Areas.Client.Controllers
         [Route("Client/XoaXe")]
         public IActionResult Delete(int id)
         {
-            var cart = HttpContext.Session.GetJson<List<ChiTietDonThueModel>>("Cart") ?? new List<ChiTietDonThueModel>();
+            var cart = HttpContext.Session.GetJson<List<ChiTietDonThueModel_Client>>("Cart") ?? new List<ChiTietDonThueModel_Client>();
             var cartItem = cart.FirstOrDefault(c => c.IdXe == id);
 
             if (cartItem != null)
@@ -149,7 +149,7 @@ namespace ThueXeDapHoiAn.Areas.Client.Controllers
         [HttpGet]
         public IActionResult DatXe()
         {
-            List<ChiTietDonThueModel> CTDT_Items = HttpContext.Session.GetJson<List<ChiTietDonThueModel>>("Cart") ?? new List<ChiTietDonThueModel>();
+            List<ChiTietDonThueModel_Client> CTDT_Items = HttpContext.Session.GetJson<List<ChiTietDonThueModel_Client>>("Cart") ?? new List<ChiTietDonThueModel_Client>();
 
             string tenCuaHang = "";
             int? idCuaHang = null;
@@ -175,7 +175,7 @@ namespace ThueXeDapHoiAn.Areas.Client.Controllers
             }
 
             // Gán dữ liệu vào ViewModel và trả về View
-            CTDonThueItemViewModel xeVM = new()
+            CTDonThueItemViewModel_Client xeVM = new()
             {
                 CartItems = CTDT_Items,
                 TenCuaHang = tenCuaHang,
@@ -252,7 +252,7 @@ namespace ThueXeDapHoiAn.Areas.Client.Controllers
 
         [HttpPost]
         [Route("thanhtoan/taicuahang")]
-        public async Task<IActionResult> ThanhToan([FromBody] DonThueRequest model)
+        public async Task<IActionResult> ThanhToan([FromBody] DonThueRequest_Client model)
         {
             if (model == null)
             {
@@ -295,7 +295,7 @@ namespace ThueXeDapHoiAn.Areas.Client.Controllers
                     return Json(new { success = false, message = "Mã khuyến mãi không hợp lệ! (Invalid IdKhuyenMai)" });
                 }
 
-                var donThue = new DonThueModel
+                var donThue = new DonThueModel_Client
                 {
                     UserId = model.IdTaiKhoan,
                     IdCuaHang = model.IdCuaHang,
@@ -315,7 +315,7 @@ namespace ThueXeDapHoiAn.Areas.Client.Controllers
                 // Thêm chi tiết đơn thuê
                 foreach (var chiTiet in model.ChiTietDonThue)
                 {
-                    var chiTietModel = new ChiTietDonThueModel
+                    var chiTietModel = new ChiTietDonThueModel_Client
                     {
                         IdDonThue = idDonThueMoi,
                         IdXe = chiTiet.IdXe,
@@ -392,7 +392,7 @@ namespace ThueXeDapHoiAn.Areas.Client.Controllers
 
         [Authorize]
         [HttpPost("/PhuongThucThanhToan/capture-paypal-order")]
-        public async Task<IActionResult> CapturePaypalOrder(string orderID, string tempOrderID, [FromBody] DonThueRequest model, CancellationToken cancellationToken)
+        public async Task<IActionResult> CapturePaypalOrder(string orderID, string tempOrderID, [FromBody] DonThueRequest_Client model, CancellationToken cancellationToken)
         {
             if (string.IsNullOrWhiteSpace(orderID))
             {
@@ -422,7 +422,7 @@ namespace ThueXeDapHoiAn.Areas.Client.Controllers
                 }
 
                 // Tiến hành lưu đơn hàng vào cơ sở dữ liệu
-                var donThue = new DonThueModel
+                var donThue = new DonThueModel_Client
                 {
                     UserId = model.IdTaiKhoan,
                     IdCuaHang = model.IdCuaHang,
@@ -442,7 +442,7 @@ namespace ThueXeDapHoiAn.Areas.Client.Controllers
                 // Lưu chi tiết đơn thuê
                 foreach (var chiTiet in model.ChiTietDonThue)
                 {
-                    var chiTietModel = new ChiTietDonThueModel
+                    var chiTietModel = new ChiTietDonThueModel_Client
                     {
                         IdDonThue = idDonThueMoi,
                         IdXe = chiTiet.IdXe,

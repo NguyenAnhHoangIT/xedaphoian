@@ -1,6 +1,6 @@
 ﻿namespace ThueXeDapHoiAn.Areas.Client.Models
 {
-    public class DonThueRequest
+    public class DonThueRequest_Client
     {
         public int IdTaiKhoan { get; set; }
         public int IdCuaHang { get; set; }
@@ -11,6 +11,6 @@
         public string PhuongThucThanhToan { get; set; }
         public string TrangThaiDon { get; set; }
         public string Mode { get; set; }
-        public List<ChiTietDonThueRequest> ChiTietDonThue { get; set; } // Đây là danh sách chi tiết
+        public List<ChiTietDonThueRequest_Client> ChiTietDonThue { get; set; } // Đây là danh sách chi tiết
     }
 }

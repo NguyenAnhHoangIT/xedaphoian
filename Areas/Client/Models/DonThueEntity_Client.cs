@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace ThueXeDapHoiAn.Areas.Client.Models
 {
-    public class DonThueEntity
+    public class DonThueEntity_Client
     {
         [Key]
         public int IdDonThue { get; set; }
@@ -23,9 +23,9 @@ namespace ThueXeDapHoiAn.Areas.Client.Models
         public string TrangThaiDon { get; set; }
 
         // Navigation properties
-        public TaiKhoanModel User { get; set; }
-        public CuaHangModel CuaHang { get; set; }
-        public KhuyenMaiModel KhuyenMai { get; set; }
-        public ICollection<ChiTietDonThueModel> ChiTietDonThue { get; set; }
+        public TaiKhoanModel_Client User { get; set; }
+        public CuaHangModel_Client CuaHang { get; set; }
+        public KhuyenMaiModel_Client KhuyenMai { get; set; }
+        public ICollection<ChiTietDonThueModel_Client> ChiTietDonThue { get; set; }
     }
 }

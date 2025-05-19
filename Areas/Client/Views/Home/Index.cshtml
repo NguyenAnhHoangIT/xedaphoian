@@ -1,5 +1,5 @@
-﻿@using ThueXeDapHoiAn.Areas.Client.Models
-@model IEnumerable<XeModel>
+﻿@using ThueXeDapHoiAn.Areas.Client.Models.ViewModels
+@model CuaHang_Xe_ViewModel_Client
 @{
     Layout = "~/Areas/Client/Views/Shared/_Layout.cshtml";
 }
@@ -31,22 +31,39 @@
 
             <div class="tab-content">
                 <!-- Shop Listings -->
-                <div class="shop-listing">
+                @foreach (var item in Model.DanhSachCuaHang)
+                {
+                    <div class="shop-listing">
                     <div class="shop-image">
-                        <img src="~/images/avatar-cuahang.jpg" alt="Cửa hàng GIANT">
+                        <img src="~/images/@item.HinhAnh" alt="Cửa hàng GIANT">
                     </div>
                     <div class="shop-details">
-                        <h3 class="shop-name">Cửa hàng GIANT</h3>
-                        <p class="shop-description">GIANT - Đồng hành cùng bạn trên mọi hành trình</p>
+                        <h3 class="shop-name">@item.TenCuaHang</h3>
+                        <p class="shop-description">@item.MoTa</p>
                         <div class="shop-rating">
-                            <div class="stars">
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                            </div>
-                            <span class="rating-score">5.0</span>
+                                @{
+                                    double rating = item.DiemTrungBinh;
+                                    int fullStars = (int)Math.Floor(rating);
+                                    bool hasHalfStar = (rating - fullStars) >= 0.25 && (rating - fullStars) < 0.75;
+                                    int emptyStars = 5 - fullStars - (hasHalfStar ? 1 : 0);
+                                }
+
+                                <div class="stars">
+                                    @for (int i = 0; i < fullStars; i++)
+                                    {
+                                        <i class="fas fa-star"></i>  <!-- full star -->
+                                    }
+                                    @if (hasHalfStar)
+                                    {
+                                        <i class="fas fa-star-half-alt"></i>  <!-- half star -->
+                                    }
+                                    @for (int i = 0; i < emptyStars; i++)
+                                    {
+                                        <i class="far fa-star"></i>  <!-- empty star -->
+                                    }
+                                </div>
+                                <span class="rating-score">@rating.ToString("0.0")</span>
+
                         </div>
                         <p class="shop-distance">1.1km | 5 phút đi bộ</p>
                     </div>
@@ -54,79 +71,7 @@
                         <a asp-area="Client" asp-controller="XemChiTiet" asp-action="ChiTietCuaHang" class="details-link">Chi tiết <i class="fas fa-chevron-right"></i></a>
                     </div>
                 </div>
-
-                <div class="shop-listing">
-                    <div class="shop-image">
-                        <img src="~/images/avatar-cuahang.jpg" alt="Cửa hàng GIANT">
-                    </div>
-                    <div class="shop-details">
-                        <h3 class="shop-name">Cửa hàng GIANT</h3>
-                        <p class="shop-description">GIANT - Đồng hành cùng bạn trên mọi hành trình</p>
-                        <div class="shop-rating">
-                            <div class="stars">
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                            </div>
-                            <span class="rating-score">5.0</span>
-                        </div>
-                        <p class="shop-distance">1.1km | 5 phút đi bộ</p>
-                    </div>
-                    <div class="shop-link">
-                        <a href="#" class="details-link">Chi tiết <i class="fas fa-chevron-right"></i></a>
-                    </div>
-                </div>
-
-                <div class="shop-listing">
-                    <div class="shop-image">
-                        <img src="~/images/avatar-cuahang.jpg" alt="Cửa hàng GIANT">
-                    </div>
-                    <div class="shop-details">
-                        <h3 class="shop-name">Cửa hàng GIANT</h3>
-                        <p class="shop-description">GIANT - Đồng hành cùng bạn trên mọi hành trình</p>
-                        <div class="shop-rating">
-                            <div class="stars">
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                            </div>
-                            <span class="rating-score">5.0</span>
-                        </div>
-                        <p class="shop-distance">1.1km | 5 phút đi bộ</p>
-                    </div>
-                    <div class="shop-link">
-                        <a href="#" class="details-link">Chi tiết <i class="fas fa-chevron-right"></i></a>
-                    </div>
-                </div>
-
-                <div class="shop-listing">
-                    <div class="shop-image">
-                        <img src="~/images/avatar-cuahang.jpg" alt="Cửa hàng GIANT">
-                    </div>
-                    <div class="shop-details">
-                        <h3 class="shop-name">Cửa hàng GIANT</h3>
-                        <p class="shop-description">GIANT - Đồng hành cùng bạn trên mọi hành trình</p>
-                        <div class="shop-rating">
-                            <div class="stars">
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                            </div>
-                            <span class="rating-score">5.0</span>
-                        </div>
-                        <p class="shop-distance">1.1km | 5 phút đi bộ</p>
-                    </div>
-                    <div class="shop-link">
-                        <a href="#" class="details-link">Chi tiết <i class="fas fa-chevron-right"></i></a>
-                    </div>
-                </div>
-
+                }
                 <div class="view-all">
                     <a href="#" class="view-all-link">Tất cả các cửa hàng <i class="fas fa-chevron-right"></i></a>
                 </div>
@@ -141,7 +86,7 @@
         <div class="carousel-container">
             <div class="carousel-track">
                 <!-- Bike Cards -->
-                @foreach (var item in Model)
+                @foreach (var item in Model.DanhSachXe)
                 {
                     <a asp-route-id="@item.IdXe" asp-action="ChiTietXe" asp-controller="XemChiTiet">
                         <div class="bike-card">

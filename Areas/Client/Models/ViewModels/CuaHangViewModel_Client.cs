@@ -1,6 +1,6 @@
 ﻿namespace ThueXeDapHoiAn.Areas.Client.Models.ViewModels
 {
-    public class CuaHangViewModel
+    public class CuaHangViewModel_Client
     {
         public int IdCuaHang { get; set; }
         public int IdTaiKhoan { get; set; }   // string để view hiển thị

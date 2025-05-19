@@ -39,13 +39,13 @@ namespace ThueXeDapHoiAn.Areas.Client.Controllers
                 .Include(d => d.ChiTietDonThue)
                     .ThenInclude(ct => ct.Xe)
                 .Where(d => d.UserId == userId)
-                .Select(d => new DonThueViewModel
+                .Select(d => new DonThueViewModel_Client
                 {
                     IdDonThue = d.IdDonThue,
                     TenCuaHang = d.CuaHang != null ? d.CuaHang.TenCuaHang : "Không xác định",
                     TrangThai = d.TrangThaiDon,
                     DanhSachXe = d.ChiTietDonThue != null
-                        ? d.ChiTietDonThue.Select(ct => new ChiTietDonThueViewModel
+                        ? d.ChiTietDonThue.Select(ct => new ChiTietDonThueViewModel_Client
                         {
                             IdDonThue = d.IdDonThue,
                             TenCuaHang = d.CuaHang.TenCuaHang,
@@ -58,9 +58,9 @@ namespace ThueXeDapHoiAn.Areas.Client.Controllers
                             GhiChu = d.GhiChu,
                             MucGiamGia = d.KhuyenMai != null ? (double)d.KhuyenMai.MucGiamGia : 0.0,
                             DonToiThieu = d.KhuyenMai != null ? d.KhuyenMai.DonToiThieu : 0m,
-                            DanhSachXe = new List<ChiTietDonThueViewModel.ChiTietXe>
+                            DanhSachXe = new List<ChiTietDonThueViewModel_Client.ChiTietXe>
                             {
-                        new ChiTietDonThueViewModel.ChiTietXe
+                        new ChiTietDonThueViewModel_Client.ChiTietXe
                         {
                             IdXe = ct.IdXe,
                             TenXe = ct.Xe != null ? ct.Xe.TenXe : "Không xác định",
@@ -69,7 +69,7 @@ namespace ThueXeDapHoiAn.Areas.Client.Controllers
                         }
                             }
                         }).ToList()
-                        : new List<ChiTietDonThueViewModel>()
+                        : new List<ChiTietDonThueViewModel_Client>()
                 })
                 .OrderByDescending(d => d.IdDonThue) 
                 .ToList();
@@ -108,7 +108,7 @@ namespace ThueXeDapHoiAn.Areas.Client.Controllers
 
             decimal tamTinh = 0;
 
-            var chiTietDonThueList = new List<ChiTietDonThueModel>();
+            var chiTietDonThueList = new List<ChiTietDonThueModel_Client>();
 
             foreach (var ct in donThueEntity.ChiTietDonThue)
             {
@@ -125,7 +125,7 @@ namespace ThueXeDapHoiAn.Areas.Client.Controllers
 
                 tamTinh += giaThue * ct.SoLuong;
 
-                chiTietDonThueList.Add(new ChiTietDonThueModel
+                chiTietDonThueList.Add(new ChiTietDonThueModel_Client
                 {
                     IdDonThue = ct.IdDonThue,
                     IdXe = ct.IdXe,
@@ -141,7 +141,7 @@ namespace ThueXeDapHoiAn.Areas.Client.Controllers
             decimal giamGia = tamTinh * (mucGiamGia / 100);
             decimal tongCong = tamTinh - giamGia;
 
-            var donThueViewModel = new DonThueViewModel2
+            var donThueViewModel = new DonThueViewModel2_Client
             {
                 IdDonThue = donThueEntity.IdDonThue,
                 IdTaiKhoan = userId,

@@ -1,6 +1,6 @@
 ﻿namespace ThueXeDapHoiAn.Areas.Client.Models
 {
-    public class ChiTietDonThueRequest
+    public class ChiTietDonThueRequest_Client
     {
         public int IdXe { get; set; }
         public int SoLuong { get; set; }
