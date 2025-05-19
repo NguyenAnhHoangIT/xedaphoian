@@ -50,7 +50,8 @@ namespace ThueXeDapHoiAn.Controllers
                     new Claim(ClaimTypes.Role, user.VaiTro), // "Admin" or "Client"
                     new Claim("ID", user.Id.ToString()),
                     new Claim("Avatar", user.HinhAnh ?? "avatar-default.jpg"),
-                    new Claim("FullName", $"{user.Ho} {user.Ten}")
+                    new Claim("FullName", $"{user.Ho} {user.Ten}"),
+                    new Claim("HoTen", $"{user.Ho} {user.Ten}")
                 };
 
                         var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);

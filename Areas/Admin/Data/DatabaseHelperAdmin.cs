@@ -84,7 +84,7 @@ namespace ThueXeDapHoiAn.Data
                        xe.gioiThieu, xe.hinhAnh, xe.trangThaiLoaiXe
                 FROM CuaHang ch
                 LEFT JOIN Xe xe ON ch.idCuaHang = xe.idCuaHang AND xe.trangThaiLoaiXe = 1
-                WHERE ch.trangThaiCuaHang = 1
+                WHERE ch.trangThaiCuaHang = 'True'
                 ORDER BY ch.idCuaHang";
 
                 var command = new SqlCommand(query, connection);
