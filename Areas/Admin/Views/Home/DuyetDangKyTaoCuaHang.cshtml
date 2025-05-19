@@ -15,6 +15,7 @@
             <a asp-area="Admin" asp-controller="Home" asp-action="TaiKhoan">Tài Khoản</a>
             <a asp-area="Admin" asp-controller="Home" asp-action="DanhGiaBiBaoCao">Đánh giá bị báo cáo</a>
             <a class="active">Đăng ký tạo cửa hàng</a>
+            <a asp-area="Admin" asp-controller="Home" asp-action="Xe_CuaHang">Xe của các cửa hàng</a>
         </nav>
     </aside>
 
@@ -33,65 +34,123 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
-                        <td>1</td>
-                        <td>Nguyen</td>
-                        <td>Anh</td>
-                        <td>0905271271</td>
-                        <td>
-                            <button class="chitiet">Chi tiết</button>
-                        </td>
-                        <td class="thaotac">
-                            <button class="icon chapnhan">
-                                <span class ="tooltip">Chấp nhận</span>
-                                <i class="fa-solid fa-circle-check"></i>
-                            </button>
-                            <button class="icon tuchoi">
-                                <span class="tooltip">Từ chối</span>
-                                <i class="fa-solid fa-circle-xmark"></i>
-                            </button>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>2</td>
-                        <td>Nguyen</td>
-                        <td>Anh</td>
-                        <td>0901234567</td>
-                        <td>
-                            <button class="chitiet">Chi tiết</i></button>
-                        </td>
-                        <td class="thaotac">
-                            <button class="icon chapnhan">
-                                <span class="tooltip">Chấp nhận</span>
-                                <i class="fa-solid fa-circle-check"></i>
-                            </button>
-                            <button class="icon tuchoi">
-                                <span class="tooltip">Từ chối</span>
-                                <i class="fa-solid fa-circle-xmark"></i>
-                            </button>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>3</td>
-                        <td>Nguyen</td>
-                        <td>Anh</td>
-                        <td>0901234567</td>
-                        <td>
-                            <button class="chitiet">Chi tiết</i></button>
-                        </td>
-                        <td class="thaotac">
-                            <button class="icon chapnhan">
-                                <span class="tooltip">Chấp nhận</span>
-                                <i class="fa-solid fa-circle-check"></i>
-                            </button>
-                            <button class="icon tuchoi">
-                                <span class="tooltip">Từ chối</span>
-                                <i class="fa-solid fa-circle-xmark"></i>
-                            </button>
-                        </td>
-                    </tr>
+                    @foreach (var pendingStores in Model)
+                    {
+                        <tr data-id="@pendingStores.Id">
+                            <td>@pendingStores.IdTaiKhoan</td>
+                            <td>@pendingStores.Ho</td>
+                            <td>@pendingStores.Ten</td>
+                            <td>@pendingStores.TaiKhoanSDT</td>
+                            <td>
+                                <button class="chitiet" onclick='showCuaHangDetails(@Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(pendingStores).Replace("'", "\\'")))'>Chi tiết</button>
+                            </td>
+                            <td class="thaotac">
+                                <button class="icon chapnhan" onclick="chapNhanCuaHang(@pendingStores.Id)">
+                                    <span class="tooltip">Chấp nhận</span>
+                                    <i class="fa-solid fa-circle-check"></i>
+                                </button>
+                                <button class="icon tuchoi" onclick="tuChoiCuaHang(@pendingStores.Id)">
+                                    <span class="tooltip">Từ chối</span>
+                                    <i class="fa-solid fa-circle-xmark"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    }
                 </tbody>
+
             </table>
         </div>
     </div>
 </div>
+<div id="popup" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="closePopup()">&times;</span>
+        <div id="popup-details"></div>
+    </div>
+</div>
+@section Scripts {
+    <script>
+        function showCuaHangDetails(pendingStores) {
+            console.log("Thông tin cửa hàng đăng ký:", pendingStores);
+
+            let content = `
+                <h3>${pendingStores.TenCuaHang}</h3>
+                <img src="/images/${pendingStores.HinhAnh || 'default-store.png'}" alt="${pendingStores.TenCuaHang}" style="max-width:100%; height:auto; margin-bottom: 15px;" />
+                <p><strong>Địa chỉ:</strong> ${pendingStores.DiaChi}</p>
+                <p><strong>Điện thoại:</strong> ${pendingStores.SoDienThoai}</p>
+                <p><strong>Email:</strong> ${pendingStores.Gmail || "Chưa cập nhật"}</p>
+                <p><strong>Giới thiệu:</strong> ${pendingStores.GioiThieu || "Chưa có giới thiệu"}</p>
+                <p><strong>Trạng thái:</strong> ${pendingStores.TrangThai}</p>
+
+                <button onclick="closePopup()" style="margin-top: 15px; background-color: #007bff; color: white; padding: 5px 10px;">Đóng</button>
+            `;
+
+            document.getElementById("popup-details").innerHTML = content;
+            document.getElementById("popup").style.display = "block";
+        }
+        function closePopup() {
+            document.getElementById("popup").style.display = "none";
+        }
+
+        function chapNhanCuaHang(idCuaHang) {
+            if (confirm("Bạn có chắc chắn muốn chấp nhận cửa hàng này?")) {
+                fetch('@Url.Action("ChapNhanCuaHang", "Home", new { area = "Admin" })', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ idCuaHang: idCuaHang })
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            alert("Đã chấp nhận cửa hàng thành công!");
+
+                            // ✅ Xóa hàng tương ứng trong bảng
+                            const row = document.querySelector(`tr[data-id="${idCuaHang}"]`);
+                            if (row) row.remove();
+                        } else {
+                            alert("Không thể chấp nhận cửa hàng.");
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert("Có lỗi xảy ra!");
+                    });
+            }
+        }
+
+
+        function tuChoiCuaHang(idCuaHang) {
+            if (confirm("Bạn có chắc chắn muốn từ chối cửa hàng này?")) {
+                fetch('@Url.Action("TuChoiCuaHang", "Home", new { area = "Admin" })', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ idCuaHang: idCuaHang })
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            alert("Đã từ chối cửa hàng thành công!");
+
+                            // ✅ Xóa hàng tương ứng trong bảng
+                            const row = document.querySelector(`tr[data-id="${idCuaHang}"]`);
+                            if (row) row.remove();
+                        } else {
+                            alert("Không thể từ chối cửa hàng.");
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert("Có lỗi xảy ra!");
+                    });
+            }
+        }
+
+
+
+    </script>
+
+}

@@ -7,7 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Areas\Admin\ViewModels\" />
     <Folder Include="Areas\Client\ViewModels\" />
   </ItemGroup>
 
