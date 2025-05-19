@@ -7,47 +7,50 @@
     <link rel="stylesheet" href="~/css/AdminHome.css" />
     <link rel="stylesheet" href="~/css/ThongTinTaiKhoan.css" />
 }
+@model ThueXeDapHoiAn.Areas.Admin.Models.TaiKhoanModel
+
 <div class="form-container">
     <div class="profile-header">
-        <img src="~/images/avatar-default.jpg" alt="Avatar" class="avatar">
+        <img src="~/images/@Model.HinhAnh" alt="Avatar" class="avatar">
         <div class="profile-info">
-            <h3>Nguyen Anh Hoang</h3>
-            <p>hoang@gmail.com</p>
+            <h3>@Model.Ho @Model.Ten</h3>
+            <p>@Model.SoDienThoai</p>
         </div>
     </div>
 
     <form class="form-grid">
         <div class="form-group">
             <label>Họ</label>
-            <input type="text" name="ho" placeholder="Nhập họ" value="Nguyen">
+            <input type="text" name="ho" value="@Model.Ho" readonly>
         </div>
 
         <div class="form-group">
             <label>Tên</label>
-            <input type="text" name="ten" placeholder="Nhập tên" value="Anh Hoang">
+            <input type="text" name="ten" value="@Model.Ten" readonly>
         </div>
 
         <div class="form-group">
             <label>Số điện thoại</label>
-            <input type="text" name="sdt" placeholder="Nhập số điện thoại" value="0905271271">
+            <input type="text" name="sdt" value="@Model.SoDienThoai" readonly>
         </div>
 
         <div class="form-group">
-            <label>Mật khẩu</label>
-            <div class="password-container">
-                <input id="Password" type="password" name="matkhau" placeholder="Nhập mật khẩu" value="12345678">
-                <button type="button" class="password-toggle" onclick="togglePassword('Password')">
-                    <i class="fa-solid fa-eye"></i>
-                </button>
-            </div>
+            <label>Vai trò</label>
+            <input type="text" name="vaitro" value="@Model.VaiTro" readonly>
         </div>
 
+        <div class="form-group">
+            <label>Trạng thái tài khoản</label>
+            <input type="text" name="trangthai" value="@(Model.TrangThaiTaiKhoan ? "Hoạt động" : "Khóa")" readonly>
+        </div>
         <div class="form-buttons">
-            <button type="submit" class="btn btn-save">Xác nhận lưu</button>
-            <button type="button" class="btn btn-cancel">Huỷ chỉnh sửa</button>
+            <button type="button" id="btnEdit" class="btn btn-edit" onclick="enableEditMode()">Sửa</button>
+            <button type="button" id="btnSave" class="btn btn-save" onclick="saveChanges()" style="display: none;">Lưu</button>
+            <button type="button" id="btnCancel" class="btn btn-cancel" onclick="cancelEdit()" style="display: none;">Huỷ</button>
         </div>
     </form>
 </div>
+
 @section Scripts {
     <script>
         // Simple password toggle functionality
@@ -62,6 +65,65 @@
                 passwordField.type = 'password';
                 icon.className = 'fa-solid fa-eye';
             }
+        }
+        const formElements = ['ho', 'ten', 'sdt'];
+        const backupData = {};
+
+        function enableEditMode() {
+            formElements.forEach(id => {
+                const element = document.getElementById(id);
+                backupData[id] = element.value; // Backup old data
+                element.removeAttribute('readonly');
+                element.classList.add('editable');
+            });
+
+            document.getElementById('btnEdit').style.display = 'none';
+            document.getElementById('btnSave').style.display = 'inline-block';
+            document.getElementById('btnCancel').style.display = 'inline-block';
+        }
+
+        function cancelEdit() {
+            formElements.forEach(id => {
+                const element = document.getElementById(id);
+                element.setAttribute('readonly', true);
+                element.value = backupData[id]; // Restore old data
+                element.classList.remove('editable');
+            });
+
+            document.getElementById('btnEdit').style.display = 'inline-block';
+            document.getElementById('btnSave').style.display = 'none';
+            document.getElementById('btnCancel').style.display = 'none';
+        }
+
+        function saveChanges() {
+            const formData = {
+                IdTaiKhoan: @Model.IdTaiKhoan,
+                Ho: document.getElementById('ho').value,
+                Ten: document.getElementById('ten').value,
+                SoDienThoai: document.getElementById('sdt').value
+            };
+
+            fetch('/Admin/CapNhatThongTinTaiKhoan', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val()
+                },
+                body: JSON.stringify(formData)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert("Cập nhật thông tin thành công!");
+                    cancelEdit();
+                } else {
+                    alert("Cập nhật thất bại.");
+                }
+            })
+            .catch(error => {
+                console.error('Lỗi:', error);
+                alert("Có lỗi xảy ra khi cập nhật.");
+            });
         }
     </script>
 }

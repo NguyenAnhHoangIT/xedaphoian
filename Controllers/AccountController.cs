@@ -45,9 +45,12 @@ namespace ThueXeDapHoiAn.Controllers
                         // ✅ Set up claims
                         var claims = new List<Claim>
                 {
-                    new Claim(ClaimTypes.NameIdentifier, user.Id),
+                    new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
                     new Claim(ClaimTypes.Name, user.SoDienThoai),
-                    new Claim(ClaimTypes.Role, user.VaiTro) // "Admin" or "Client"
+                    new Claim(ClaimTypes.Role, user.VaiTro), // "Admin" or "Client"
+                    new Claim("ID", user.Id.ToString()),
+                    new Claim("Avatar", user.HinhAnh ?? "avatar-default.jpg"),
+                    new Claim("FullName", $"{user.Ho} {user.Ten}")
                 };
 
                         var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);

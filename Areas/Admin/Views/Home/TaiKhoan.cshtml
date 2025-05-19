@@ -15,6 +15,7 @@
             <a class="active">Tài Khoản</a>
             <a asp-area="Admin" asp-controller="Home" asp-action="DanhGiaBiBaoCao">Đánh giá bị báo cáo</a>
             <a asp-area="Admin" asp-controller="Home" asp-action="DuyetDangKyTaoCuaHang">Đăng ký tạo cửa hàng</a>
+            <a asp-area="Admin" asp-controller="Home" asp-action="Xe_CuaHang">Xe của các cửa hàng</a>
         </nav>
     </aside>
 
@@ -36,48 +37,132 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
-                        <td>1</td>
-                        <td>Nguyen</td>
-                        <td>Anh</td>
-                        <td>0905271271</td>
-                        <td>12345678</td>
-                        <td><img src="~/images/avatar-default.jpg" class="taikhoan-avatar" /></td>
-                        <td>Admin</td>
-                        <td>True</td>
-                        <td>
-                            <button class="chinhsua"><i class="fa-solid fa-pen"></i></button>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>2</td>
-                        <td>Nguyen</td>
-                        <td>Anh</td>
-                        <td>0901234567</td>
-                        <td>password123</td>
-                        <td><img src="~/images/avatar-default.jpg" class="taikhoan-avatar" /></td>
-                        <td>Admin</td>
-                        <td>True</td>
-                        <td>
-                            <button class="chinhsua"><i class="fa-solid fa-pen"></i></button>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>3</td>
-                        <td>Nguyen</td>
-                        <td>Anh</td>
-                        <td>0901234567</td>
-                        <td>password123</td>
-                        <td><img src="~/images/avatar-default.jpg" class="taikhoan-avatar" /></td>
-                        <td>Admin</td>
-                        <td>True</td>
-                        <td>
-                            <button class="chinhsua"><i class="fa-solid fa-pen"></i></button>
-                        </td>
-                    </tr>
+                    @foreach (var user in Model)
+                    {
+                        <tr>
+                            <td>@user.IdTaiKhoan</td>
+                            <td>@user.Ho</td>
+                            <td>@user.Ten</td>
+                            <td>@user.SoDienThoai</td>
+                            <td>@user.MatKhau</td>
+                            <td>
+                                <img src="@Url.Content("~/images/" + user.HinhAnh)" class="taikhoan-avatar" />
+                            </td>
+                            <td>@user.VaiTro</td>
+                            <td>@user.TrangThaiTaiKhoan</td>
+                            <td>
+                                <button class="chinhsua"
+                                        data-id="@user.IdTaiKhoan"
+                                        data-ho="@user.Ho"
+                                        data-ten="@user.Ten"
+                                        data-sdt="@user.SoDienThoai"
+                                        data-mk="@user.MatKhau"
+                                        data-vaitro="@user.VaiTro"
+                                        data-trangthai="@user.TrangThaiTaiKhoan">
+                                    <i class="fa-solid fa-pen"></i>
+                                </button>
+
+                            </td>
+                        </tr>
+                    }
                 </tbody>
             </table>
         </div>
     </div>
 </div>
+<div class="custom-modal-overlay" id="editUserModal">
+    <div class="custom-modal">
+        <div class="custom-modal-header">Chỉnh sửa tài khoản</div>
+        <form id="editUserForm">
+            <input type="hidden" id="editIdTaiKhoan" name="IdTaiKhoan" />
+            <label>Họ:</label>
+            <input type="text" id="editHo" name="Ho" class="form-control" />
+
+            <label>Tên:</label>
+            <input type="text" id="editTen" name="Ten" class="form-control" />
+
+            <label>Số điện thoại:</label>
+            <input type="text" id="editSoDienThoai" name="SoDienThoai" class="form-control" />
+
+            <label>Mật khẩu:</label>
+            <input type="text" id="editMatKhau" name="MatKhau" class="form-control" />
+
+            <label>Vai trò:</label>
+            <select id="editVaiTro" name="VaiTro" class="form-control">
+                <option value="Admin">Admin</option>
+                <option value="Client">Client</option>
+                <option value="Shop">Shop</option>
+            </select>
+
+            <label>Trạng thái:</label>
+            <select id="editTrangThaiTaiKhoan" name="TrangThaiTaiKhoan" class="form-control">
+                <option value="True">True</option>
+                <option value="False">false</option>
+            </select>
+
+            <div class="custom-modal-footer">
+                <button type="button" class="close-modal">Hủy</button>
+                <button type="submit" class="save-modal">Lưu</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const modal = document.getElementById('editUserModal');
+            const closeBtn = modal.querySelector('.close-modal');
+
+            // Open modal
+            document.querySelectorAll('.chinhsua').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    document.getElementById('editIdTaiKhoan').value = btn.dataset.id;
+                    document.getElementById('editHo').value = btn.dataset.ho;
+                    document.getElementById('editTen').value = btn.dataset.ten;
+                    document.getElementById('editSoDienThoai').value = btn.dataset.sdt;
+                    document.getElementById('editMatKhau').value = btn.dataset.mk;
+                    document.getElementById('editVaiTro').value = btn.dataset.vaitro;
+                    document.getElementById('editTrangThaiTaiKhoan').value = btn.dataset.trangthai;
+
+                    modal.style.display = 'flex';
+                });
+            });
+
+            // Close modal
+            closeBtn.addEventListener('click', () => {
+                modal.style.display = 'none';
+            });
+
+            // Hide modal on outside click
+            window.addEventListener('click', (e) => {
+                if (e.target === modal) {
+                    modal.style.display = 'none';
+                }
+            });
+
+            // Form submit
+            document.getElementById('editUserForm').addEventListener('submit', function (e) {
+                e.preventDefault();
+
+                fetch('@Url.Action("CapNhatTaiKhoan", "Home", new { area = "Admin" })', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: new URLSearchParams(new FormData(this))
+                })
+                    .then(res => res.json())
+                    .then(data => {
+                        if (data.success) {
+                            location.reload();
+                        } else {
+                            alert("Cập nhật thất bại!");
+                        }
+                    })
+                    .catch(() => alert("Đã xảy ra lỗi!"));
+            });
+        });
+    </script>
+}
+
+
 

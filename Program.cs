@@ -25,8 +25,8 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
 
 
 // Register DatabaseHelper (to interact with the custom `TaiKhoan` table)
-builder.Services.AddSingleton<DatabaseHelper>();
-
+builder.Services.AddScoped<DatabaseHelper>();
+builder.Services.AddScoped<DatabaseHelperAdmin>();
 // Build the app
 var app = builder.Build();
 

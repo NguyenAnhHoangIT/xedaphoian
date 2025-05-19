@@ -6,7 +6,7 @@ namespace ThueXeDapHoiAn.Models
 {
     public class UserModel
     {
-        public string Id { get; set; }
+        public int Id { get; set; }
         public string Ho { get; set; }
         public string Ten { get; set; }
 
