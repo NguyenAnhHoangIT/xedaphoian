@@ -45,8 +45,9 @@ namespace ThueXeDapHoiAn.Controllers
                         // ✅ Set up claims
                         var claims = new List<Claim>
                 {
-                    new Claim(ClaimTypes.NameIdentifier, user.Id),
+                    new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
                     new Claim(ClaimTypes.Name, user.SoDienThoai),
+                    new Claim("HoTen", user.Ho + " " + user.Ten),
                     new Claim(ClaimTypes.Role, user.VaiTro) // "Admin" or "Client"
                 };
 

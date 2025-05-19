@@ -6,7 +6,8 @@ namespace ThueXeDapHoiAn.Models
 {
     public class UserModel
     {
-        public string Id { get; set; }
+        [Key]
+        public int Id { get; set; }
         public string Ho { get; set; }
         public string Ten { get; set; }
 
@@ -19,7 +20,6 @@ namespace ThueXeDapHoiAn.Models
         public string VaiTro { get; set; }
 
         public string TrangThai { get; set; }
-
 
     }
 }

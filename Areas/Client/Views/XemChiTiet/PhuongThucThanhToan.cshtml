@@ -7,7 +7,6 @@
     <link rel="stylesheet" href="~/css/PhuongThucThanhToan.css" />
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 }
-
 <div class="ndung">
     <div class="wrapper">
         <h5 class="title">THUÊ XE ĐẠP</h5>
@@ -21,15 +20,12 @@
                     <div class="wrapper-detail2">
                         <div class="text_left">
                             <p style="width:130px">Họ và tên</p>
-                            <div class="data-box"><p>Đỗ Thành Bảo</p></div>
-                        </div>
-                        <div class="text_left">
-                            <p style="width:130px">Email</p>
-                            <div class="data-box"><p>abc@gmail.com</p></div>
+                            <div class="data-box"><p>@ViewBag.HoTen</p></div>
+                            <div id="idTaiKhoan" style="display:none;"><p>@ViewBag.ID</p></div>
                         </div>
                         <div class="text_left">
                             <p style="width:130px">Số điện thoại</p>
-                            <div class="data-box"><p>0905179135</p></div>
+                            <div class="data-box"><p>@ViewBag.SDT</p></div>
                         </div>
                         <div class="text_left">
                             <p class="label">Ghi chú (tùy chọn)</p>
@@ -40,9 +36,10 @@
                             <p class="label">Mã khuyến mãi (tùy chọn)</p>
                             <div class="promo-container">
                                 <input class="promo-input" type="text">
-                                <a href="#" class="btn-promo">Áp dụng</a>
+                                <button class="btn-promo" type="button">Áp dụng</button>
                             </div>
                         </div>
+
                     </div>
                     <div class="text_left">
                         <p style="width:130px">Thanh toán</p>
@@ -69,56 +66,49 @@
                         <div style="border-bottom: 2px solid #E1E1E1;width:100%;">
                             <div class="chu_hoa">Đơn thuê cho cửa hàng GIANT </div>
                         </div>
-                        <p style="height: fit-content;" class="chu_hoa">Xe đạp đường phố</p>
-                        <div style="display: flex; gap: 40px; margin-top: -10px;">
-                            <p style="margin-left: 60px;">Số lượng</p>
-                            <span style="font-weight: bold;">03 chiếc</span>
-                        </div>
-                        <div style="display: flex;gap:50px;border-bottom: 2px solid #E1E1E1;width:100%;">
-                            <p style="margin-left: 60px;">Đơn giá</p>
-                            <span style="font-weight: bold;">150.00 đ/1h</span>
-                        </div>
-
-                        <p style="height: fit-content;" class="chu_hoa">Xe đạp đường phố</p>
-                        <div style="display: flex; gap: 40px; margin-top: -10px;">
-                            <p style="margin-left: 60px;">Số lượng</p>
-                            <span style="font-weight: bold;">03 chiếc</span>
-                        </div>
-                        <div style="display: flex;gap:50px;border-bottom: 2px solid #E1E1E1;width:100%;">
-                            <p style="margin-left: 60px;">Đơn giá</p>
-                            <span style="font-weight: bold;">150.00 đ/1h</span>
-                        </div>
+                        <div id="rentalInfoDisplay"></div>
 
                         <div style="display: flex;gap:55px;padding-top: 20px;">
                             <p style="margin-left: 30px;">Nhận xe lúc</p>
-                            <span style="font-weight: bold;">18:00, 22/03/2025</span>
+                            <span id="thoiGianNhan" style="font-weight: bold;">--:--, --/--/----</span>
                         </div>
                         <div style="display: flex;gap:58px;border-bottom: 2px solid #E1E1E1;width:100%;">
-                            <p style="margin-left: 30px;">Số giờ thuê</p>
-                            <span style="font-weight: bold;">1 giờ</span>
+                            <p style="margin-left: 30px;">Trả xe lúc </p>
+                            <span id="thoiGianTra" style="font-weight: bold;margin-left:15px">--:--, --/--/----</span>
                         </div>
 
-                        <div style="display: flex;gap:30px;padding-top: 20px;">
-                            <p style="margin-left: 30px;">Mã khuyến mãi </p>
-                            <span style="font-weight: bold;">DISCOUNT</span>
+                        <div id="promoCodeInfo" style="display: none; flex-direction: column; gap: 10px;">
+                            <div style="display: flex; gap:30px; padding-top: 20px;">
+                                <p style="margin-left: 30px;">Mã khuyến mãi</p>
+                                <span id="promoCodeText" class="ma-km-code" style="font-weight: bold;"></span>
+                            </div>
+                            <div id="promoDescription" style="display: flex; border-bottom: 2px solid #E1E1E1; width: 100%;">
+                                <span id="promoContentText" class="ma-km-content" style="font-weight: bold; margin-left: 30px;"></span>
+                            </div>
                         </div>
-                        <div style="display: flex;border-bottom: 2px solid #E1E1E1;width:100%;">
-                            <span style="font-weight: bold;margin-left: 30px;">Giảm 10% cho hóa đơn trên 250.000 đ</span>
+                        <input type="hidden" id="idKhuyenMaiHidden" value="">
+
+                        <div style="display: flex; gap: 74px;">
+                            <p style="margin-left: 30px; padding-top: 20px;">Tạm tính</p>
+                            <span id="tamTinhDisplay" style="padding-top: 20px; font-weight: bold;">--</span>
                         </div>
 
-                        <div style="display: flex;gap:74px">
-                            <p style="margin-left: 30px;padding-top: 20px;">Tạm tính</p>
-                            <span style="padding-top: 20px;font-weight: bold;">350. 000 đ</span>
-                        </div>
                         <div style="display: flex;gap:74px">
                             <p style="margin-left: 30px;">Giảm giá</p>
-                            <span style="font-weight: bold;">- 35. 000 đ</span>
+                            <span id="giamGiaDisplay" style="font-weight: bold;">- 0 đ</span>
                         </div>
-                        <div style="display: flex;gap:61px">
+
+
+                        <div style="display: flex; gap: 61px;">
                             <p style="margin-left: 30px;">Tổng cộng</p>
-                            <span style="font-weight: bold;">350. 000 đ</span>
+                            <span id="tongCongDisplay" style="font-weight: bold;">--</span>
                         </div>
-                        <a asp-area="Client" asp-controller="XemChiTiet" asp-action="ThanhToan" class="btn_thue">Thuê ngay</a>
+                        
+                        <div style="margin-top: 20px;">
+                            <div id="paypal-button-container" class="form-item mt-3" style="max-width:1000px;"></div>
+                            <button id="btnThuNgay" class="btn_thue" style="display: none;">Thuê ngay</button>
+                        </div>
+
                         <a href="DatXe_KhachHang.html" style="text-decoration: none;padding-top: 40px;padding-left: 15px;"> <span style="font-weight: bolder;"><</span> Quay về đặt xe </a>
                     </div>
                 </div>
@@ -128,4 +118,547 @@
 </div> <!-- đóng .ndung -->
 @section Scripts {
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://www.paypal.com/sdk/js?client-id=@ViewBag.PaypalClientId"></script>
+    <script>
+        window.addEventListener('DOMContentLoaded', function () {
+            const totalAmount = localStorage.getItem('totalAmount');
+            const spanTamTinh = document.getElementById('tamTinhDisplay');
+
+            if (totalAmount && spanTamTinh) {
+                const amountNumber = parseFloat(totalAmount);
+                const formatted = amountNumber.toLocaleString('vi-VN', {
+                    minimumFractionDigits: 0,
+                    maximumFractionDigits: 0
+                });
+                spanTamTinh.textContent = `${formatted} đ`;
+            } else {
+                spanTamTinh.textContent = "0 đ";
+            }
+        });
+    </script>
+
+    <script>
+        const bankTransferRadio = document.getElementById('bankTransfer');
+        const storePaymentRadio = document.getElementById('storePayment');
+        const paypalContainer = document.getElementById('paypal-button-container');
+        const btnThuNgay = document.getElementById('btnThuNgay');
+
+        function updateButtons() {
+            if (bankTransferRadio.checked) {
+                paypalContainer.style.display = 'block';
+                btnThuNgay.style.display = 'none';
+            } else if (storePaymentRadio.checked) {
+                paypalContainer.style.display = 'none';
+                btnThuNgay.style.display = 'inline-block';
+            }
+        }
+
+        bankTransferRadio.addEventListener('change', updateButtons);
+        storePaymentRadio.addEventListener('change', updateButtons);
+
+        // Gọi khi trang vừa load để set đúng trạng thái
+        updateButtons();
+    </script>
+
+
+    <script>
+            window.addEventListener('DOMContentLoaded', function () {
+            const container = document.getElementById('rentalInfoDisplay');
+            const rentalInfo = JSON.parse(localStorage.getItem('rentalTimeInfo'));
+
+            if (!rentalInfo || !Array.isArray(rentalInfo.donGiaItems)) return;
+
+            rentalInfo.donGiaItems.forEach(item => {
+                const { tenXe, soLuong, donGia } = item;
+                const mode = rentalInfo.mode === 'hourly' ? 'đ/1h' : 'đ/1 ngày';
+
+                // Tạo các phần tử
+                const tenXeP = document.createElement('p');
+                tenXeP.style.height = 'fit-content';
+                tenXeP.className = 'chu_hoa';
+                tenXeP.textContent = tenXe;
+
+                const soLuongDiv = document.createElement('div');
+                soLuongDiv.style.display = 'flex';
+                soLuongDiv.style.gap = '40px';
+                soLuongDiv.style.marginTop = '-10px';
+                soLuongDiv.innerHTML = `
+                    <p style="margin-left: 60px;">Số lượng</p>
+                    <span style="font-weight: bold;">${soLuong.toString().padStart(2, '0')} chiếc</span>
+                `;
+
+                const donGiaDiv = document.createElement('div');
+                donGiaDiv.style.display = 'flex';
+                donGiaDiv.style.gap = '50px';
+                donGiaDiv.style.borderBottom = '2px solid #E1E1E1';
+                donGiaDiv.style.width = '100%';
+                donGiaDiv.innerHTML = `
+                    <p style="margin-left: 60px;">Đơn giá</p>
+                    <span style="font-weight: bold;">${donGia.toLocaleString('vi-VN')} ${mode}</span>
+                `;
+
+                container.appendChild(tenXeP);
+                container.appendChild(soLuongDiv);
+                container.appendChild(donGiaDiv);
+            });
+        });
+    </script>
+
+
+
+
+
+    <script>
+        window.addEventListener('DOMContentLoaded', function () {
+            const rentalTimeInfo = JSON.parse(localStorage.getItem('rentalTimeInfo'));
+
+            if (rentalTimeInfo) {
+                const nhanText = document.getElementById('thoiGianNhan');
+                const traText = document.getElementById('thoiGianTra');
+
+                // Hàm định dạng ngày giờ, gán mặc định 07:00 nếu chỉ có ngày
+            function formatDate(input) {
+            if (!input) return "--:--, --/--/----";
+
+            const onlyDatePattern = /^\d{4}-\d{2}-\d{2}$/;
+            if (onlyDatePattern.test(input)) {
+                input += "T07:00:00";
+            }
+
+            const date = new Date(input);
+            if (!isNaN(date.getTime())) {
+                const hours = date.getHours().toString().padStart(2, '0');
+                const minutes = date.getMinutes().toString().padStart(2, '0');
+                const day = date.getDate().toString().padStart(2, '0');
+                const month = (date.getMonth() + 1).toString().padStart(2, '0');
+                const year = date.getFullYear();
+                return `${hours}:${minutes}, ${day}/${month}/${year}`;
+            } else {
+                return "--:--, --/--/----";
+            }
+        }
+
+                // Hiển thị thời gian nhận và trả
+                if (nhanText) {
+                    nhanText.innerText = formatDate(rentalTimeInfo.nhanXe); // vẫn cần xử lý chuẩn
+                }
+
+                if (traText) {
+                    if (rentalTimeInfo.mode === 'hourly') {
+                        traText.innerText = rentalTimeInfo.traXe || "--:--, --/--/----"; // hiển thị nguyên văn
+                    } else {
+                        traText.innerText = formatDate(rentalTimeInfo.traXe); // xử lý theo Date
+                    }
+                }
+
+                // Hiển thị đơn giá theo chế độ thuê (theo giờ hoặc theo ngày)
+                const isHourly = rentalTimeInfo.mode === 'hourly';
+
+                document.querySelectorAll('.gia-theo-gio').forEach(el => {
+                    el.style.display = isHourly ? 'inline' : 'none';
+                });
+
+                document.querySelectorAll('.gia-theo-ngay').forEach(el => {
+                    el.style.display = isHourly ? 'none' : 'inline';
+                });
+            }
+        });
+    </script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const applyBtn = document.querySelector('.btn-promo');
+            const promoInput = document.querySelector('.promo-input');
+            const promoInfoDiv = document.getElementById('promoCodeInfo');
+            const promoCodeText = document.getElementById('promoCodeText');
+            const promoContentText = document.getElementById('promoContentText');
+            const tamTinhSpan = document.getElementById('tamTinhDisplay');
+            const tongCongSpan = document.getElementById('tongCongDisplay');
+            const giamGiaSpan = document.getElementById('giamGiaDisplay');
+
+            // Hàm cập nhật tổng cộng và giảm giá
+            function updateTongCong(tamTinh, tienGiam) {
+                // Tính tổng cộng sau khi giảm giá
+                const tongCong = tamTinh - tienGiam;
+
+                // Cập nhật hiển thị cho Tạm tính, Giảm giá, và Tổng cộng
+                tamTinhSpan.textContent = `${tamTinh.toLocaleString('vi-VN')} đ`;
+                giamGiaSpan.textContent = `- ${tienGiam.toLocaleString('vi-VN')} đ`;
+                tongCongSpan.textContent = `${tongCong.toLocaleString('vi-VN')} đ`;
+            }
+
+            // Hàm reset lại hiển thị khi không áp dụng mã giảm giá
+            function resetTongCong() {
+                const tamTinhText = tamTinhSpan.textContent.replace(/\D/g, '');
+                const tamTinh = parseFloat(tamTinhText);
+
+                if (isNaN(tamTinh)) {
+                    tongCongSpan.textContent = "--";
+                    giamGiaSpan.textContent = "- 0 đ";
+                    return;
+                }
+
+                updateTongCong(tamTinh, 0); // Không giảm giá, chỉ hiển thị Tạm tính và Tổng cộng
+                promoInfoDiv.style.display = "none";
+            }
+
+            // Gọi hàm reset khi trang mới tải và lấy totalAmount từ localStorage
+            function loadTotalAmountFromLocalStorage() {
+                const totalAmount = localStorage.getItem('totalAmount');
+                if (totalAmount) {
+                    const tamTinh = parseFloat(totalAmount);
+                    updateTongCong(tamTinh, 0); // Hiển thị tổng cộng ban đầu từ localStorage
+                } else {
+                    resetTongCong(); // Nếu không có giá trị totalAmount, reset lại
+                }
+            }
+
+            // Gọi hàm loadTotalAmountFromLocalStorage khi trang mới tải
+            loadTotalAmountFromLocalStorage();
+
+            // Lắng nghe sự kiện khi nhấn nút Áp dụng
+            applyBtn.addEventListener('click', async function () {
+                const maKM = promoInput.value.trim();
+
+                if (!maKM) {
+                    alert("Vui lòng nhập mã khuyến mãi.");
+                    resetTongCong();
+                    return;
+                }
+
+                const rentalInfo = JSON.parse(localStorage.getItem('rentalTimeInfo'));
+                const donGiaItems = rentalInfo?.donGiaItems;
+
+                if (!donGiaItems || donGiaItems.length === 0) {
+                    alert("Không tìm thấy thông tin cửa hàng.");
+                    resetTongCong();
+                    return;
+                }
+
+                const idCuaHang = donGiaItems[0].idCuaHang;
+
+                try {
+                    const res = await fetch(`/api/khuyenmai/check?maKhuyenMai=${encodeURIComponent(maKM)}&idCuaHang=${idCuaHang}`);
+
+                    if (!res.ok) throw new Error();
+
+                    const data = await res.json();
+
+                    if (data.success) {
+                        // Hiển thị thông tin mã khuyến mãi
+                        promoCodeText.textContent = data.maKhuyenMai;
+                        promoContentText.textContent = data.moTa;
+                        promoInfoDiv.style.display = "flex";
+                        document.getElementById('idKhuyenMaiHidden').value = data.idKhuyenMai;
+
+                        // Tính toán giảm giá
+                        const mucGiamGia = data.mucGiamGia; // Mức giảm giá dưới dạng phần trăm
+                        const tamTinhText = tamTinhSpan.textContent.replace(/\D/g, '');
+                        const tamTinh = parseFloat(tamTinhText);
+
+                        const tienGiam = Math.round(tamTinh * mucGiamGia / 100); // Tiền giảm giá
+                        updateTongCong(tamTinh, tienGiam); // Cập nhật lại hiển thị
+
+                        alert("Thêm mã giảm giá thành công");
+                    } else {
+                        alert(data.message);
+                        resetTongCong(); // Reset lại khi mã giảm giá không hợp lệ
+                    }
+                } catch (err) {
+                    alert("Mã không hợp lệ hoặc không áp dụng cho cửa hàng này.");
+                    resetTongCong(); // Reset lại khi có lỗi trong quá trình kiểm tra mã
+                }
+            });
+        });
+    </script>
+
+    <script>
+        // Hàm chuẩn hóa chuỗi ngày tháng về dạng ISO
+        function parseToISOString(dateStr) {
+            if (!dateStr) return null;
+
+            // Thử parse định dạng kiểu Việt Nam: "17:00, 10/05/2025"
+            const vietnamFormat = /(\d{1,2}):(\d{2}),\s*(\d{1,2})\/(\d{1,2})\/(\d{4})/;
+            const match = dateStr.match(vietnamFormat);
+            if (match) {
+                const [_, hour, minute, day, month, year] = match;
+                // Giữ nguyên local time thay vì toISOString
+                return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}T${hour.padStart(2, '0')}:${minute.padStart(2, '0')}:00`;
+            }
+
+            // Fallback nếu không match định dạng Việt Nam
+            let d = new Date(dateStr);
+            if (!isNaN(d.getTime())) {
+                // Chuyển sang dạng yyyy-MM-ddTHH:mm:ss
+                return d.getFullYear() + "-" +
+                       String(d.getMonth() + 1).padStart(2, '0') + "-" +
+                       String(d.getDate()).padStart(2, '0') + "T" +
+                       String(d.getHours()).padStart(2, '0') + ":" +
+                       String(d.getMinutes()).padStart(2, '0') + ":00";
+            }
+
+            return null;
+        }
+
+        document.getElementById('btnThuNgay').addEventListener('click', function (e) {
+            e.preventDefault();
+
+            let rentalTimeInfo = JSON.parse(localStorage.getItem('rentalTimeInfo'));
+            if (!rentalTimeInfo) {
+                alert("Thiếu thông tin thời gian thuê! Vui lòng chọn lại thời gian.");
+                return;
+            }
+
+            let idTaiKhoan = document.querySelector('#idTaiKhoan p').innerText;
+            if (!idTaiKhoan) {
+                alert("Thiếu thông tin tài khoản! Vui lòng đăng nhập.");
+                return;
+            }
+
+            let idCuaHang = rentalTimeInfo.donGiaItems && rentalTimeInfo.donGiaItems.length > 0
+                ? rentalTimeInfo.donGiaItems[0].idCuaHang
+                : null;
+            if (!idCuaHang) {
+                alert("Thiếu thông tin cửa hàng! Vui lòng chọn cửa hàng.");
+                return;
+            }
+
+            let ngayNhanXe = parseToISOString(rentalTimeInfo.nhanXe);
+            let ngayTraXe = parseToISOString(rentalTimeInfo.traXe);
+
+            if (!ngayNhanXe || !ngayTraXe) {
+                alert("Dữ liệu ngày nhận hoặc trả xe không hợp lệ!");
+                return;
+            }
+
+            const idKhuyenMai = document.getElementById('idKhuyenMaiHidden')?.value || null;
+
+            let ghiChuTextArea = document.querySelector('textarea.textarea');
+            let ghiChu = ghiChuTextArea ? ghiChuTextArea.value.trim() : null;
+
+            let phuongThucThanhToan = 'COD';
+            let thoiGianTao = new Date().toISOString();
+            let trangThaiDon = 'Đang chờ duyệt';
+
+            // Lấy mode từ rentalTimeInfo nếu có
+            let mode = rentalTimeInfo.mode || null;  // Lấy giá trị mode từ rentalTimeInfo lưu trong localStorage
+
+            // Thêm thông tin chi tiết vào đơn
+            let chiTietDonThue = rentalTimeInfo.donGiaItems.map(item => ({
+                IdXe: item.idXe,
+                SoLuong: item.soLuong,
+                DonGia: item.donGia
+            }));
+
+            console.log("Thông tin gửi đi:");
+            console.log("idTaiKhoan:", idTaiKhoan);
+            console.log("idCuaHang:", idCuaHang);
+            console.log("ngayNhanXe:", ngayNhanXe);
+            console.log("ngayTraXe:", ngayTraXe);
+            console.log("idKhuyenMai:", idKhuyenMai);
+            console.log("ghiChu:", ghiChu);
+            console.log("phuongThucThanhToan:", phuongThucThanhToan);
+            console.log("thoiGianTao:", thoiGianTao);
+            console.log("trangThaiDon:", trangThaiDon);
+            console.log("chiTietDonThue:", chiTietDonThue);
+            console.log("mode:", mode);  // In mode ra để kiểm tra
+
+            fetch('/thanhtoan/taicuahang', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    idTaiKhoan: idTaiKhoan,
+                    idCuaHang: idCuaHang,
+                    ngayNhanXe: ngayNhanXe,
+                    ngayTraXe: ngayTraXe,
+                    idKhuyenMai: idKhuyenMai,
+                    ghiChu: ghiChu,
+                    phuongThucThanhToan: phuongThucThanhToan,
+                    thoiGianTao: thoiGianTao,
+                    trangThaiDon: trangThaiDon,
+                    chiTietDonThue: chiTietDonThue, // gửi chi tiết đơn thuê
+                    mode: mode  // Gửi mode vào API
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log(data);
+                if (data.success) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Đặt thuê thành công!',
+                        text: 'Bạn sẽ được chuyển về trang chủ.',
+                        confirmButtonText: 'OK'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            // Chuyển hướng về trang chủ
+                            window.location.href = '/Client/Index';
+                        }
+                    });
+                } else {
+                    alert("Có lỗi xảy ra khi đặt thuê!");
+                }
+            })
+            .catch(error => {
+                console.error('Lỗi:', error);
+                alert('Có lỗi xảy ra khi giao dịch!');
+            });
+        });
+    </script>
+
+
+    <script>
+        // Hàm xử lý tạo DonThueRequest
+        function buildDonThueRequest(phuongThucThanhToan = 'Banking') {
+            let rentalTimeInfo = JSON.parse(localStorage.getItem('rentalTimeInfo'));
+            if (!rentalTimeInfo) {
+                throw new Error("Thiếu thông tin thời gian thuê! Vui lòng chọn lại thời gian.");
+            }
+
+            let idTaiKhoan = document.querySelector('#idTaiKhoan p').innerText;
+            if (!idTaiKhoan) {
+                throw new Error("Thiếu thông tin tài khoản! Vui lòng đăng nhập.");
+            }
+
+            let idCuaHang = rentalTimeInfo.donGiaItems?.[0]?.idCuaHang;
+            if (!idCuaHang) {
+                throw new Error("Thiếu thông tin cửa hàng!");
+            }
+
+            let ngayNhanXe = parseToISOString(rentalTimeInfo.nhanXe);
+            let ngayTraXe = parseToISOString(rentalTimeInfo.traXe);
+            if (!ngayNhanXe || !ngayTraXe) {
+                throw new Error("Dữ liệu ngày nhận hoặc trả xe không hợp lệ!");
+            }
+
+            let idKhuyenMai = document.getElementById('idKhuyenMaiHidden')?.value || null;
+            let ghiChu = document.querySelector('textarea.textarea')?.value.trim() || null;
+            let trangThaiDon = 'Đang chờ duyệt';
+            let mode = rentalTimeInfo.mode || null;
+
+            let chiTietDonThue = rentalTimeInfo.donGiaItems.map(item => ({
+                IdXe: item.idXe,
+                SoLuong: item.soLuong,
+                DonGia: item.donGia
+            }));
+
+            return {
+                idTaiKhoan: idTaiKhoan,
+                idCuaHang: idCuaHang,
+                ngayNhanXe: ngayNhanXe,
+                ngayTraXe: ngayTraXe,
+                idKhuyenMai: idKhuyenMai,
+                ghiChu: ghiChu,
+                phuongThucThanhToan: phuongThucThanhToan,
+                trangThaiDon: trangThaiDon,
+                chiTietDonThue: chiTietDonThue,
+                mode: mode
+            };
+        }
+
+        window.onload = () => {
+            let orderID = localStorage.getItem('tempOrderID');
+            if (!orderID) {
+                orderID = "tempOrder-" + new Date().getTime();
+                localStorage.setItem('tempOrderID', orderID);
+            }
+        };
+
+        paypal.Buttons({
+            style: {
+                layout: 'horizontal',
+                color: 'blue',
+                shape: 'rect',
+                label: 'pay',
+                height: 40,
+                tagline: false
+            },
+            createOrder: (data, actions) => {
+                const tongCongText = document.getElementById('tongCongDisplay').textContent.replace(/\D/g, '');
+                const tongTien = parseFloat(tongCongText);
+
+                if (isNaN(tongTien) || tongTien <= 0) {
+                    Swal.fire("Lỗi", "Tổng tiền không hợp lệ.", "error");
+                    return;
+                }
+
+                return fetch("/PhuongThucThanhToan/create-paypal-order", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({ tongTien: tongTien })
+                })
+                .then(async (response) => {
+                    const text = await response.text();
+                    console.log("Phản hồi tạo đơn:", text);
+
+                    try {
+                        const json = JSON.parse(text);
+                        if (!response.ok) throw new Error(json.message || 'Lỗi không xác định');
+                        return json;
+                    } catch (err) {
+                        throw new Error(`Lỗi xử lý phản hồi từ máy chủ: ${err.message}`);
+                    }
+                })
+                .then(order => order.id)
+                .catch(error => {
+                    Swal.fire("Lỗi khi tạo đơn hàng", error.message, "error");
+                    console.error(error);
+                });
+            },
+            onApprove: (data, actions) => {
+                const orderID = localStorage.getItem('tempOrderID');
+                if (!orderID) {
+                    Swal.fire("Lỗi", "Không tìm thấy đơn hàng tạm thời.", "error");
+                    return;
+                }
+
+                let donThueRequest;
+                try {
+                    donThueRequest = buildDonThueRequest('Banking');
+                } catch (error) {
+                    Swal.fire("Lỗi", error.message, "error");
+                    return;
+                }
+
+                return fetch(`/PhuongThucThanhToan/capture-paypal-order?orderId=${data.orderID}&tempOrderID=${orderID}`, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify(donThueRequest)
+                })
+                .then(async (response) => {
+                    const text = await response.text();
+                    if (!text) {
+                        throw new Error("Phản hồi từ máy chủ rỗng.");
+                    }
+
+                    try {
+                        const json = JSON.parse(text);
+                        if (!response.ok) throw new Error(json.message || "Xác nhận thanh toán thất bại");
+                        return json;
+                    } catch (err) {
+                        throw new Error(`Lỗi xác nhận thanh toán: ${err.message}`);
+                    }
+                })
+                .then(() => {
+                    Swal.fire("Thành công", "Thanh toán thành công!", "success").then(() => {
+                        window.location.href = "/Client/Index";
+                    });
+                })
+                .catch(error => {
+                    Swal.fire("Lỗi khi xác nhận thanh toán", error.message, "error");
+                    console.error(error);
+                });
+            }
+        }).render('#paypal-button-container');
+    </script>
+
+
+
 }

@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using ThueXeDapHoiAn.Areas.Client.Models.ViewModels;
 using ThueXeDapHoiAn.Models;
 
 public class AppDbContext : DbContext

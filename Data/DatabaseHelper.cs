@@ -1,6 +1,7 @@
 ﻿using System.Data;
 using System.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
+using ThueXeDapHoiAn.Areas.Client.Models.ViewModels;
 using ThueXeDapHoiAn.Models;
 
 namespace ThueXeDapHoiAn.Data
@@ -28,7 +29,7 @@ namespace ThueXeDapHoiAn.Data
                 {
                     return new UserModel
                     {
-                        Id = reader["idTaiKhoan"].ToString(),
+                        Id = Convert.ToInt32(reader["idTaiKhoan"]),
                         Ho = reader["ho"].ToString(),
                         Ten = reader["ten"].ToString(),
                         SoDienThoai = reader["soDienThoai"].ToString(),

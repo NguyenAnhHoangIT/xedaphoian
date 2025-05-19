@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
+using Microsoft.EntityFrameworkCore;
 
 namespace ThueXeDapHoiAn.Areas.Client.Controllers
 {
@@ -10,11 +11,28 @@ namespace ThueXeDapHoiAn.Areas.Client.Controllers
     [Authorize(Roles = "Client,Shop")]
     public class HomeController : Controller
     {
+        private readonly AppDbContextClient _context;
+        public HomeController(AppDbContextClient context)
+        {
+            _context = context;
+        }
         [Route("Client")]
         [Route("Client/Index")]
         public IActionResult Index()
         {
-            return View();
+
+            var xe = _context.Xe.ToList();
+            return View(xe);
+        }
+        [Route("Client")]
+        [Route("Client/Search")]
+        public async Task<IActionResult> Search(string searchTerm)
+        {
+            var xe = await _context.Xe.Where(p => p.TenXe.Contains(searchTerm) || p.GioiThieu.Contains(searchTerm))
+                .ToListAsync();
+            ViewBag.Keyword = searchTerm;
+            return View(xe);
+
         }
 
         [Route("Client")]

@@ -1,4 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.EntityFrameworkCore;
+using ThueXeDapHoiAn.Areas.Client.Data;
 using ThueXeDapHoiAn.Data;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -23,10 +25,18 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
         options.AccessDeniedPath = "/Account/AccessDenied"; // Redirect if forbidden
     });
 
-
+builder.Services.AddDbContext<AppDbContextClient>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("Default")));
 // Register DatabaseHelper (to interact with the custom `TaiKhoan` table)
-builder.Services.AddSingleton<DatabaseHelper>();
+builder.Services.AddScoped<DatabaseHelperClient>();
+builder.Services.AddScoped<DatabaseHelper>();
 
+//đăng kí PaypalClient dạng Singleton()
+builder.Services.AddSingleton(x => new PaypalClient(
+        builder.Configuration["PaypalOptions:AppId"],
+        builder.Configuration["PaypalOptions:AppSecret"],
+        builder.Configuration["PaypalOptions:Mode"]
+));
 // Build the app
 var app = builder.Build();
 

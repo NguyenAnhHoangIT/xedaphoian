@@ -1,15 +1,18 @@
-﻿@{
+﻿@using ThueXeDapHoiAn.Areas.Client.Models.ViewModels
+@model List<DonThueViewModel>
+@{
     Layout = "~/Areas/Client/Views/Shared/_Layout.cshtml";
 }
 
 @section Styles {
-    <link rel="stylesheet" href="~/css/LayoutClient.css" />
-    <link rel="stylesheet" href="~/css/DonThue.css" />
+<link rel="stylesheet" href="~/css/LayoutClient.css" />
+<link rel="stylesheet" href="~/css/DonThue.css" />
 }
 
 <div class="ndung-container">
     <div class="ndung">
         <h5 class="qly">QUẢN LÝ ĐƠN THUÊ</h5>
+        <div id="alert-box" class="alert alert-success" style="display:none;"></div>
         <div class="wrapper-table">
             <div class="table-responsive">
                 <table class="table table-hover">
@@ -23,49 +26,44 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
-                            <td scope="row">DT01</td>
-                            <td>Xe đạp leo núi</td>
-                            <td>Shop A</td>
-                            <td class="status-col"><span class="status cho-duyet">Chờ duyệt đơn</span></td>
-                            <td><a asp-area="Client" asp-controller="DonThue" asp-action="ChiTietDonThueChuaDuyet"><button class="btn btn-warning">Xem</button></a></td>
-                        </tr>
-                        <tr>
-                            <td scope="row">DT02</td>
-                            <td>Xe đạp đôi</td>
-                            <td>Shop B</td>
-                            <td class="status-col"><span class="status da-duyet">Đã duyệt đơn</span></td>
-                            <td><button class="btn btn-warning">Xem</button></td>
-                        </tr>
-                        <tr>
-                            <td scope="row">DT03</td>
-                            <td>Xe cổ điển</td>
-                            <td>Shop B</td>
-                            <td class="status-col"><span class="status hoan-thanh">Hoàn thành</span></td>
-                            <td><a <a asp-area="Client" asp-controller="DonThue" asp-action="ChiTietDonThue"><button class="btn btn-warning">Xem</button></a></td>
-                        </tr>
-                        <tr>
-                            <td scope="row">DT04</td>
-                            <td>Xe cổ điển</td>
-                            <td>Shop B</td>
-                            <td class="status-col"><span class="status dang-thue">Đang thuê</span></td>
-                            <td><button class="btn btn-warning">Xem</button></td>
-                        </tr>
-                        <tr>
-                            <td scope="row">DT05</td>
-                            <td>Xe cổ điển</td>
-                            <td>Shop B</td>
-                            <td class="status-col"><span class="status qua-han">Quá hạn</span></td>
-                            <td><button class="btn btn-warning">Xem</button></td>
-                        </tr>
-                        <tr>
-                            <td scope="row">DT06</td>
-                            <td>Xe cổ điển</td>
-                            <td>Shop B</td>
-                            <td class="status-col"><span class="status da-huy">Đã hủy</span></td>
-                            <td><button class="btn btn-warning">Xem</button></td>
-                        </tr>
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td scope="row">@item.IdDonThue</td>
+                                <td>
+                                    @foreach (var don in item.DanhSachXe)
+                                    {
+                                        foreach (var xe in don.DanhSachXe)
+                                        {
+                                            <div>@xe.TenXe</div>
+                                        }
+                                    }
+                                </td>
+                                <td>@item.TenCuaHang</td>
+                                <td class="status-col">
+                                    @{
+                                        string statusClass = item.TrangThai switch
+                                        {
+                                            "Đang chờ duyệt" => "cho-duyet",
+                                            "Đã duyệt đơn" => "da-duyet",
+                                            "Hoàn thành" => "hoan-thanh",
+                                            "Đang thuê" => "dang-thue",
+                                            "Quá hạn" => "qua-han",
+                                            "Đã hủy" => "da-huy",
+                                            _ => ""
+                                        };
+                                    }
+                                    <span class="status @statusClass">@item.TrangThai</span>
+                                </td>
+                                <td>
+                                    <a asp-area="Client" asp-controller="DonThue" asp-action="ChiTietDonThueChuaDuyet" asp-route-id="@item.IdDonThue">
+                                        <button class="btn btn-warning">Xem</button>
+                                    </a>
+                                </td>
+                            </tr>
+                        }
                     </tbody>
+
                 </table>
             </div>
         </div>
