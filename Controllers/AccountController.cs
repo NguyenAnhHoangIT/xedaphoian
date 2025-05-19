@@ -51,7 +51,8 @@ namespace ThueXeDapHoiAn.Controllers
                     new Claim("ID", user.Id.ToString()),
                     new Claim("Avatar", user.HinhAnh ?? "avatar-default.jpg"),
                     new Claim("FullName", $"{user.Ho} {user.Ten}"),
-                    new Claim("HoTen", $"{user.Ho} {user.Ten}")
+                    new Claim("HoTen", $"{user.Ho} {user.Ten}"),
+                    new Claim("idTaiKhoan", user.Id.ToString())
                 };
 
                         var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);

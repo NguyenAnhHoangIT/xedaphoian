@@ -2,7 +2,7 @@
 
 namespace ThueXeDapHoiAn.Areas.Client.Models
 {
-    public class DanhGiaModel
+    public class DanhGiaModel_Client
     {
         [Key]
         public int IdDanhGia { get; set; }

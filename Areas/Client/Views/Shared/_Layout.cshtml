@@ -1,4 +1,5 @@
-﻿<!DOCTYPE html>
+﻿﻿
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -7,6 +8,52 @@
     <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     @await RenderSectionAsync("Styles", required: false)
+    <style>
+        .notification-item {
+            padding: 12px 16px;
+            border-bottom: 1px solid #ddd;
+            background-color: #fff;
+            transition: background-color 0.3s ease;
+            cursor: default;
+        }
+
+            .notification-item:hover {
+                background-color: #f0f8ff; /* màu xanh nhẹ khi hover */
+            }
+
+        .notification-title {
+            font-weight: 600;
+            font-size: 16px;
+            color: #333;
+            /* bỏ margin-bottom để không xuống dòng */
+            margin: 0;
+            white-space: nowrap;
+        }
+
+        .notification-content {
+            font-size: 14px;
+            color: #555;
+            font-weight: bold;
+            line-height: 1.4;
+            margin-left: 10px; /* khoảng cách giữa title và content */
+            white-space: nowrap;
+        }
+
+        /* Container bao quanh title và content để hiển thị flex */
+        .notification-item > div:first-child {
+            display: flex;
+            align-items: center;
+        }
+
+        .notification-time {
+            font-size: 12px;
+            color: #999;
+            margin-top: 6px; /* cách ra dưới */
+            font-style: italic;
+        }
+
+
+    </style>
 </head>
 <body>
     <div class="container">
@@ -17,7 +64,7 @@
                     <!-- Logo -->
                     <div class="logo">
                         <a asp-area="Client" asp-controller="Home" asp-action="Index">
-                            <img src="~/images/logo2.png" class="logo-img"/>
+                            <img src="~/images/logo2.png" class="logo-img" />
                             <span>THUEXEDAPHOIAN</span>
                         </a>
                     </div>
@@ -41,7 +88,7 @@
                         <a asp-action="DatXe" asp-controller="XemChiTiet" class="icon-link">
                             <i class="fas fa-shopping-cart"></i>
                         </a>
-                        
+
                         <div class="notification-wrapper">
                             <a class="icon-link notification-bell" href="javascript:void(0)">
                                 <i class="fas fa-bell"></i>
@@ -59,7 +106,12 @@
                         <!-- User Profile Dropdown -->
                         <div class="user-profile">
                             <img src="~/images/avatar-default.jpg" alt="User Avatar" class="user-avatar">
-                            <span class="user-name">Ho Ten</span>
+                            @{
+                                // Lấy claim "HoTen" từ User Claims
+                                var hoTenClaim = User.Claims.FirstOrDefault(c => c.Type == "HoTen");
+                                var hoTen = hoTenClaim != null ? hoTenClaim.Value : "Khách";
+                            }
+                            <span class="user-name">@hoTen</span>
                             <i class="fas fa-chevron-down dropdown-arrow"></i>
 
                             <div class="dropdown-menu">
@@ -78,7 +130,7 @@
 
         @Html.Partial("_NotificationPartial")
         @RenderBody()
-        
+
         <!-- Footer -->
         <footer class="footer">
             <div class="footer-container">
@@ -92,7 +144,7 @@
                             <p><i class="fas fa-phone"></i> (+84)3951649980</p>
                             <p><i class="fas fa-envelope"></i> hoanghaibao@gmail.com</p>
                         </div>
-                        
+
                     </div>
 
                     <!-- Contact Info -->
@@ -125,54 +177,78 @@
         </footer>
     </div>
 
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    // Mobile menu toggle
-    const menuToggle = document.querySelector('.mobile-menu-toggle');
-    const mobileMenu = document.querySelector('.mobile-menu');
-    if (menuToggle && mobileMenu) {
-        menuToggle.addEventListener('click', function() {
-            mobileMenu.classList.toggle('show');
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Mobile menu toggle
+            const menuToggle = document.querySelector('.mobile-menu-toggle');
+            const mobileMenu = document.querySelector('.mobile-menu');
+            if (menuToggle && mobileMenu) {
+                menuToggle.addEventListener('click', function () {
+                    mobileMenu.classList.toggle('show');
+                });
+            }
+
+            // User Profile Dropdown Toggle
+            const userProfile = document.querySelector('.user-profile');
+            const dropdownMenu = document.querySelector('.dropdown-menu');
+            if (userProfile && dropdownMenu) {
+                userProfile.addEventListener('click', function (e) {
+                    e.stopPropagation();
+                    dropdownMenu.classList.toggle('show');
+                });
+            }
+
+            // Notification Box Toggle and Data Load
+            const bell = document.querySelector('.notification-bell');
+            const notificationBox = document.querySelector('.notification-box');
+            if (bell && notificationBox) {
+                bell.addEventListener('click', function (e) {
+                    e.stopPropagation();
+                    const isVisible = notificationBox.classList.toggle('show');
+                    bell.classList.toggle('active');
+
+                    if (isVisible) {
+                        fetch('/Client/GetThongBao')
+                        .then(res => res.json())
+                        .then(data => {
+                          console.log(data); // debug xem dữ liệu trả về
+
+                          const content = data.length
+                            ? data.map(tb => `
+                                <div class="notification-item">
+                                  <div class="notification-title">${tb.tieuDe}</div>
+                                  <div class="notification-content">${tb.noiDung}</div>
+                                  <div class="notification-time">${tb.thoiGian}</div>
+                                </div>
+                              `).join('')
+                            : '<div class="notification-empty">Không có thông báo mới</div>';
+
+                          notificationBox.innerHTML = `
+                            <div class="notification-header"><h3>Thông báo</h3></div>
+                            <div class="notification-list">${content}</div>
+                          `;
+                        })
+                        .catch(err => {
+                          notificationBox.innerHTML = '<div class="notification-error">Lỗi khi tải thông báo</div>';
+                        });
+                    }
+                });
+            }
+
+            // Close dropdowns/boxes if clicked outside
+            document.addEventListener('click', function () {
+                if (dropdownMenu) dropdownMenu.classList.remove('show');
+                if (notificationBox) notificationBox.classList.remove('show');
+                if (bell) bell.classList.remove('active');
+            });
         });
-    }
-
-    // User Profile Dropdown Toggle
-    const userProfile = document.querySelector('.user-profile');
-    const dropdownMenu = document.querySelector('.dropdown-menu');
-    if (userProfile && dropdownMenu) {
-        userProfile.addEventListener('click', function(e) {
-            e.stopPropagation(); // Prevent click bubbling
-            dropdownMenu.classList.toggle('show');
-        });
-    }
-
-    // Notification Box Toggle
-    const bell = document.querySelector('.notification-bell');
-    const notificationBox = document.querySelector('.notification-box');
-
-    if (bell && notificationBox) {
-        bell.addEventListener('click', function(e) {
-            e.stopPropagation(); // Prevent the event from bubbling to the document click listener
-            notificationBox.classList.toggle('show');
-             // Toggle the active class on the icon to change its color
-            bell.classList.toggle('active');
-        });
-    }
+    </script>
 
 
-    // Close dropdowns/boxes if clicked outside
-    document.addEventListener('click', function() {
-        if (dropdownMenu) dropdownMenu.classList.remove('show');
-        if (notificationBox) notificationBox.classList.remove('show');
-        if (bell) bell.classList.remove('active');
-    });
-});
-</script>
 
-  
-  <!-- Tab functionality -->
-  <script src="~/js/Index.js"></script>
-  
+    <!-- Tab functionality -->
+    <script src="~/js/Index.js"></script>
+
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

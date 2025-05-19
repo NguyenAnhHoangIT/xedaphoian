@@ -27,12 +27,62 @@ namespace ThueXeDapHoiAn.Areas.Client.Controllers
             _context = context;
             _databaseHelper = databaseHelper;
         }
+
         [Route("Client")]
         [Route("Client/ChiTietCuaHang")]
-        public IActionResult ChiTietCuaHang()
+        public async Task<IActionResult> ChiTietCuaHang(int id)
         {
-            return View();
+            var cuaHang = await _context.CuaHang.FindAsync(id);
+            if (cuaHang == null)
+            {
+                return NotFound();
+            }
+
+            var danhSachXe = await _context.Xe
+                .Where(x => x.IdCuaHang == id)
+                .ToListAsync();
+
+            var diemTrungBinh = await (
+                from dg in _context.DanhGia
+                join dt in _context.DonThue on dg.IdDonThue equals dt.IdDonThue
+                where dt.IdCuaHang == id
+                select (double?)dg.DiemDanhGia
+            ).AverageAsync();
+
+            var viewModel = new ChiTietCuaHangViewModel_Client
+            {
+                CuaHang = cuaHang,
+                DanhSachXe = danhSachXe,
+                DiemTrungBinh = diemTrungBinh
+            };
+
+            return View(viewModel);
         }
+
+        [HttpGet]
+        public async Task<IActionResult> GetXeTheoLoai(int idCuaHang, List<int> idLoaiXe)
+        {
+            var xeQuery = _context.Xe.AsQueryable();
+
+            xeQuery = xeQuery.Where(x => x.IdCuaHang == idCuaHang);
+
+            if (idLoaiXe != null && idLoaiXe.Any())
+            {
+                xeQuery = xeQuery.Where(x => idLoaiXe.Contains(x.IdLoaiXe));
+            }
+
+            var danhSachXe = await xeQuery.Select(x => new
+            {
+                x.IdXe,
+                x.TenXe,
+                x.GioiThieu,
+                x.GiaThueTheoGio,
+                x.HinhAnh
+            }).ToListAsync();
+
+            return Json(danhSachXe);
+        }
+
 
         [Route("Client")]
         [Route("Client/ChiTietXe")]

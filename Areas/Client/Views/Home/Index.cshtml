@@ -7,6 +7,7 @@
 @section Styles {
 <link rel="stylesheet" href="~/css/LayoutClient.css" />
 <link rel="stylesheet" href="~/css/IndexClient.css" />
+
 }
 <!-- Hero Section -->
 <section class="hero-section">
@@ -35,7 +36,7 @@
                 {
                     <div class="shop-listing">
                     <div class="shop-image">
-                        <img src="~/images/@item.HinhAnh" alt="Cửa hàng GIANT">
+                        <img src="~/images/CuaHang/@item.HinhAnh" alt="Cửa hàng GIANT">
                     </div>
                     <div class="shop-details">
                         <h3 class="shop-name">@item.TenCuaHang</h3>
@@ -68,9 +69,11 @@
                         <p class="shop-distance">1.1km | 5 phút đi bộ</p>
                     </div>
                     <div class="shop-link">
-                        <a asp-area="Client" asp-controller="XemChiTiet" asp-action="ChiTietCuaHang" class="details-link">Chi tiết <i class="fas fa-chevron-right"></i></a>
+                        <a asp-area="Client" asp-controller="XemChiTiet" asp-action="ChiTietCuaHang" asp-route-id="@item.IdCuaHang" class="details-link">Chi tiết <i class="fas fa-chevron-right"></i></a>
                     </div>
                 </div>
+
+
                 }
                 <div class="view-all">
                     <a href="#" class="view-all-link">Tất cả các cửa hàng <i class="fas fa-chevron-right"></i></a>
@@ -97,7 +100,7 @@
                                 <h3 class="bike-name">@item.TenXe</h3>
                                 <p class="bike-description">@item.GioiThieu</p>
                                 <p class="bike-price">Giá thuê chỉ từ</p>
-                                <p class="bike-price">@item.GiaThueTheoGio</p>
+                                <p class="bike-price">@item.GiaThueTheoGio.ToString("N0") đ/chiếc</p>
                             </div>
                         </div>
                     </a>

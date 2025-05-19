@@ -16,8 +16,8 @@ public class AppDbContextClient : DbContext
     public DbSet<ChiTietDonThueModel_Client> ChiTietDonThue { get; set; }
     public DbSet<DonThueModel_Client> DonThue { get; set; }
     public DbSet<KhuyenMaiModel_Client> KhuyenMai { get; set; }
-    public DbSet<DanhGiaModel> DanhGia { get; set; }
-
+    public DbSet<DanhGiaModel_Client> DanhGia { get; set; }
+    public DbSet<ThongBaoModel_Client> ThongBao { get; set; }
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
@@ -41,6 +41,7 @@ public class AppDbContextClient : DbContext
         modelBuilder.Entity<DonThueModel_Client>()
             .Property(d => d.UserId)
             .HasColumnName("idTaiKhoan");
+
     }
 
 }

@@ -56,6 +56,26 @@ namespace ThueXeDapHoiAn.Areas.Client.Controllers
         }
 
 
+        [HttpGet("Client/GetThongBao")]
+        public IActionResult GetThongBao()
+        {
+            var idTaiKhoan = int.Parse(User.FindFirstValue("idTaiKhoan"));
+            var thongBaoList = _context.ThongBao
+            .Where(tb => tb.IdTaiKhoanNhan == idTaiKhoan) // sửa thành idTaiKhoanNhan
+            .OrderByDescending(tb => tb.ThoiGianTao)
+            .Take(5)
+            .Select(tb => new
+            {
+                tb.TieuDe,
+                tb.NoiDung,
+                ThoiGian = tb.ThoiGianTao.ToString("dd/MM/yyyy HH:mm")
+            })
+            .ToList();
+
+
+            return Json(thongBaoList);
+        }
+
 
         [Route("Client")]
         [Route("Client/Search")]

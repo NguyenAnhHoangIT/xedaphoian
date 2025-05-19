@@ -37,11 +37,11 @@
             <div>
                 <div style="display:flex;gap:10px">
                     <p class="text">Theo giờ</p>
-                    <p>@Model.GiaThueTheoGio đ/1h</p>
+                    <p>@Model.GiaThueTheoGio.ToString("N0") đ/1h.</p>
                 </div>
                 <div style="display:flex;gap:10px">
                     <p class="text">Theo ngày</p>
-                    <p>@Model.GiaThueTheoNgay đ/ 1 ngày</p>
+                    <p>@Model.GiaThueTheoNgay.ToString("N0") đ/ 1 ngày</p>
                 </div>
             </div>
             <p style="width: 460px;" class="title">@ViewBag.GioiThieuCuaHang</p>
