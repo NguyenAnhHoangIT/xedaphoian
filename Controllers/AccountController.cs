@@ -39,10 +39,19 @@ namespace ThueXeDapHoiAn.Controllers
 
                 if (user != null)
                 {
-                    // Verify the password manually
+                    // Verify password manually
                     if (user.MatKhau == model.Password)
                     {
-                        // ✅ Set up claims
+                        string role = user.VaiTro;
+
+                        if (role == "Client")
+                        {
+                            var cuaHangStatus = _databaseHelper.GetTrangThaiCuaHang(int.Parse(user.Id));
+                            if (cuaHangStatus == "True") // Chỉ khi cửa hàng đã được duyệt
+                            {
+                                role = "Shop";
+                            }
+                        }
                         var claims = new List<Claim>
                 {
                     new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
@@ -53,21 +62,21 @@ namespace ThueXeDapHoiAn.Controllers
                     new Claim("FullName", $"{user.Ho} {user.Ten}"),
                     new Claim("HoTen", $"{user.Ho} {user.Ten}"),
                     new Claim("idTaiKhoan", user.Id.ToString())
+                    new Claim(ClaimTypes.Role, role) // Đã cập nhật thành "Shop" nếu cần
                 };
 
                         var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
 
-                        // ✅ Sign in using cookie authentication
                         await HttpContext.SignInAsync(
                             CookieAuthenticationDefaults.AuthenticationScheme,
                             new ClaimsPrincipal(claimsIdentity));
 
                         // ✅ Redirect based on role
-                        if (user.VaiTro == "Admin")
+                        if (role == "Admin")
                         {
                             return RedirectToAction("TaiKhoan", "Home", new { area = "Admin" });
                         }
-                        else if (user.VaiTro == "Client" || user.VaiTro == "Shop")
+                        else // Nếu là Client mà chưa có cửa hàng thì vào trang chủ
                         {
                             return RedirectToAction("Index", "Home", new { area = "Client" });
                         }
@@ -86,7 +95,8 @@ namespace ThueXeDapHoiAn.Controllers
             return View(model);
         }
 
-        
+
+
 
     }
 }

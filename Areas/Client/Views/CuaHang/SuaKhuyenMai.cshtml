@@ -1,0 +1,79 @@
+﻿@model ThueXeDapHoiAn.Models.KhuyenMaiModel_cuaHang
+@{
+    Layout = "~/Areas/Client/Views/Shared/_LayoutCuaHang.cshtml";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/LayoutClient.css" />
+    <style>
+        .edit-km-form {
+            width: 90%;
+            max-width: 600px;
+            margin: 40px auto;
+            background-color: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+        .edit-km-form h2 { text-align: center; color: #27ae60; margin-bottom: 30px; font-size: 30px; font-weight: 700; }
+        .edit-km-form label { font-weight: 600; margin-top: 16px; display: block; color: #222; }
+        .edit-km-form input, .edit-km-form select {
+            width: 100%; padding: 13px 18px; margin-top: 7px; border-radius: 8px; border: 1.5px solid #d1e7dd;
+            margin-bottom: 20px; font-size: 17px; background: #fafdff; transition: border-color 0.2s;
+        }
+        .edit-km-form input:focus, .edit-km-form select:focus { border-color: #27ae60; outline: none; background: #f4fff7; }
+        .edit-km-form .submit-btn {
+            width: 100%; padding: 15px; background: linear-gradient(90deg, #27ae60 60%, #32cd32 100%);
+            color: #fff; border: none; border-radius: 8px; font-size: 18px; font-weight: 700; cursor: pointer;
+            box-shadow: 0 2px 8px rgba(44, 204, 113, 0.13); transition: background 0.2s, transform 0.15s; margin-top: 10px;
+        }
+        .edit-km-form .submit-btn:hover { background: linear-gradient(90deg, #219150 60%, #28b463 100%); transform: translateY(-2px) scale(1.02); }
+        media (max-width: 600px) {
+            .edit-km-form { padding: 18px 8px 20px 8px; max-width: 98vw; }
+        }
+    </style>
+}
+
+<div class="edit-km-form">
+    @{
+        var mucGiamGia = (int)(Model.mucGiamGia * 100);
+    }
+    <h2>Sửa mã khuyến mãi</h2>
+    <form asp-action="SuaKhuyenMai" asp-controller="CuaHang" asp-area="Client" method="post">
+        <input type="hidden" name="idKhuyenMai" value="@Model.idKhuyenMai" />
+
+        <label>Mã khuyến mãi <span style="color:#e74c3c">*</span></label>
+        <input type="text" name="maKhuyenMai" value="@Model.maKhuyenMai"  />
+
+        <label>Mức giảm giá (%) <span style="color:#e74c3c">*</span></label>
+        <input type="number" name="mucGiamGia" value="@mucGiamGia" min="1" max="100" />
+
+        <label>Đơn tối thiểu (VNĐ) <span style="color:#e74c3c">*</span></label>
+        <input type="number" name="donToiThieu" value="@Model.donToiThieu" min="0"  />
+
+        <label>Số lượng <span style="color:#e74c3c">*</span></label>
+        <input type="number" name="soLuong" value="@Model.soLuong" min="1"  />
+
+        <label>Thời gian bắt đầu <span style="color:#e74c3c">*</span></label>
+        <input type="datetime-local" name="thoiGianBatDau" value="@(Model.thoiGianBatDau.ToString("yyyy-MM-ddTHH:mm"))"  />
+
+        <label>Thời gian kết thúc <span style="color:#e74c3c">*</span></label>
+        <input type="datetime-local" name="thoiGianKetThuc" value="@(Model.thoiGianKetThuc.ToString("yyyy-MM-ddTHH:mm"))"  />
+
+        <label>Trạng thái</label>
+        <select name="trangThaiKhuyenMai">
+            @if (Model.trangThaiKhuyenMai)
+            {
+                <option value="true" selected>Kích hoạt</option>
+                <option value="false">Vô hiệu</option>
+            }
+            else
+            {
+                <option value="true">Kích hoạt</option>
+                <option value="false" selected>Vô hiệu</option>
+            }
+        </select>
+
+        <button type="submit" class="submit-btn">Lưu thay đổi</button>
+    </form>
+</div>

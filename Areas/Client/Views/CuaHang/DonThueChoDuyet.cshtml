@@ -1,4 +1,5 @@
-﻿@{
+﻿@model IEnumerable<ThueXeDapHoiAn.Models.DonThueModel_cuaHang>
+@{
     Layout = "~/Areas/Client/Views/Shared/_LayoutCuaHang.cshtml";
 }
 
@@ -26,74 +27,83 @@
         </nav>
     </aside>
 
-    <div class="content_cuahang">
-        <div class="container_cuahang">
-            <h2>Danh sách đơn chờ duyệt</h2>
-            <table>
-                <thead>
-                    <tr>
-                        <th>ID đơn thuê</th>
-                        <th>Tên khách hàng</th>
-                        <th>Loại xe đặt</th>
-                        <th>Số giờ/ngày thuê</th>
-                        <th>Ngày nhận</th>
-                        <th>Tổng tiền</th>
-                        <th></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>1</td>
-                        <td>Nguyễn Văn Hải</td>
-                        <td>Xe địa hình x2</td>
-                        <td>2 giờ</td>
-                        <td>3h 15/05/2025</td>
-                        <td>300.000</td>
-                        <td>
-                            <a href="#"><i class="fa-solid fa-check-circle" style="color: green;"></i></a>
-                            <a href="#"><i class="fa-solid fa-times-circle" style="color: red;"></i></a>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>2</td>
-                        <td>Trần Thị Mai</td>
-                        <td>Xe đạp điện x1</td>
-                        <td>1 ngày</td>
-                        <td>8h 16/05/2025</td>
-                        <td>500.000</td>
-                        <td>
-                            <a href="#"><i class="fa-solid fa-check-circle" style="color: green;"></i></a>
-                            <a href="#"><i class="fa-solid fa-times-circle" style="color: red;"></i></a>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>3</td>
-                        <td>Nguyễn Văn Hải</td>
-                        <td>Xe địa hình x2</td>
-                        <td>2 giờ</td>
-                        <td>3h 15/05/2025</td>
-                        <td>300.000</td>
-                        <td>
-                            <a href="#"><i class="fa-solid fa-check-circle" style="color: green;"></i></a>
-                            <a href="#"><i class="fa-solid fa-times-circle" style="color: red;"></i></a>
-                        </td>
-                    </tr>
+    <div class="container_cuahang">
+        <h2>Danh sách đơn chờ duyệt</h2>
+        <table>
+            <!-- ...existing code... -->
+            <thead>
+                <tr>
+                    <th>ID đơn thuê</th>
+                    <th>Tên khách hàng</th>
+                    <th>Tên xe</th>
+                    <th>Ngày nhận</th>
+                    <th>Số giờ/ngày thuê</th> <!-- Thêm cột mới -->
+                    <th>Tổng tiền</th>
+                    <th>Hành động</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var don in Model)
+                {
+                    var chiTietList = (IEnumerable<dynamic>)don.ChiTietDonThue;
+                    var thoiGianThue = (don.ngayTraXe - don.ngayNhanXe).TotalHours;
+                    bool tinhTheoNgay = thoiGianThue > 23;
+
+                    // Tính số ngày hoặc số giờ, làm tròn lên
+                    var soNgay = (int)Math.Ceiling((don.ngayTraXe - don.ngayNhanXe).TotalDays);
+                    var soGio = (int)Math.Ceiling(thoiGianThue);
+
+                    decimal tongTien = 0;
+                    foreach (var ct in chiTietList)
+                    {
+                        if (tinhTheoNgay)
+                        {
+                            tongTien += (ct.giaThueTheoNgay ?? 0) * ct.soLuong * soNgay;
+                        }
+                        else
+                        {
+                            tongTien += (ct.giaThueTheoGio ?? 0) * ct.soLuong * soGio;
+                        }
+                    }
+
+                    if (don.KhuyenMai != null && don.KhuyenMai.mucGiamGia > 0)
+                    {
+                        tongTien = tongTien * (1 - Convert.ToDecimal(don.KhuyenMai.mucGiamGia));
+                    }
+
+                    var xeInfo = string.Join("<br/>", chiTietList.Select((Func<dynamic, string>)(ct =>
+                    $"{ct.Xe.tenXe} ({ct.Xe.LoaiXe.tenLoaiXe}) x{ct.soLuong} - {(tinhTheoNgay ? ct.giaThueTheoNgay : ct.giaThueTheoGio):N0} VND"
+                    )));
+
+                    var soGioNgay = tinhTheoNgay
+                    ? soNgay + " ngày"
+                    : soGio + " giờ";
 
                     <tr>
-                        <td>4</td>
-                        <td>Nguyễn Văn Hải</td>
-                        <td>Xe địa hình x2</td>
-                        <td>2 giờ</td>
-                        <td>3h 15/05/2025</td>
-                        <td>300.000</td>
+                        <td>@don.idDonThue</td>
+                        <td>@don.TaiKhoan.ten</td>
+                        <td>@Html.Raw(xeInfo)</td>
+                        <td>@don.ngayNhanXe.ToString("HH\\h dd/MM/yyyy")</td>
+                        <td>@soGioNgay</td>
+                        <td>@string.Format("{0:N0} VND", @tongTien)</td>
+                        <!-- ...existing code... -->
                         <td>
-                            <a href="#"><i class="fa-solid fa-check-circle" style="color: green;"></i></a>
-                            <a href="#"><i class="fa-solid fa-times-circle" style="color: red;"></i></a>
+                            <form asp-action="DuyetDonThue" asp-controller="CuaHang" asp-area="Client" method="post" style="display:inline;" onsubmit="return confirm('Bạn có chắc chắn muốn DUYỆT đơn thuê này không?');">
+                                <input type="hidden" name="id" value="@don.idDonThue" />
+                                <button type="submit" style="background:none;border:none;padding:0;">
+                                    <i class="fa-solid fa-check-circle" style="color: green; font-size: 20px;"></i>
+                                </button>
+                            </form>
+                            <form asp-action="HuyDonThue" asp-controller="CuaHang" asp-area="Client" method="post" style="display:inline;" onsubmit="return confirm('Bạn có chắc chắn muốn HUỶ đơn thuê này không?');">
+                                <input type="hidden" name="id" value="@don.idDonThue" />
+                                <button type="submit" style="background:none;border:none;padding:0;">
+                                    <i class="fa-solid fa-times-circle" style="color: red; font-size: 20px;"></i>
+                                </button>
+                            </form>
                         </td>
                     </tr>
-
-                </tbody>
-            </table>
-        </div>
+                }
+            </tbody>
+        </table>
     </div>
 </div>

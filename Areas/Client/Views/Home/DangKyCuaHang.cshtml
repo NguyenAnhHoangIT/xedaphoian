@@ -10,7 +10,8 @@
     <div class="register-card">
         <h3 class="form-title">Đăng Ký Cửa Hàng</h3>
 
-        <form action="#" method="post" enctype="multipart/form-data">
+        <form asp-action="DangKyCuaHang" asp-controller="Home" asp-area="Client" method="post" enctype="multipart/form-data">
+            @Html.AntiForgeryToken()
             <div class="form-group">
                 <label for="tenCuaHang">Tên cửa hàng</label>
                 <input type="text" id="tenCuaHang" name="tenCuaHang" class="form-control" placeholder="Nhập tên cửa hàng">

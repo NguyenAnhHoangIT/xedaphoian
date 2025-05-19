@@ -1,4 +1,5 @@
-﻿@{
+﻿@model IEnumerable<ThueXeDapHoiAn.Models.DonThueModel_cuaHang>
+@{
     Layout = "~/Areas/Client/Views/Shared/_LayoutCuaHang.cshtml";
 }
 
@@ -28,7 +29,7 @@
 
     <div class="content_cuahang">
         <div class="container_cuahang">
-            <h2>Danh sách đơn chờ duyệt</h2>
+            <h2>Danh sách đơn hoàn thành</h2>
             <table>
                 <thead>
                     <tr>
@@ -36,50 +37,45 @@
                         <th>Tên khách hàng</th>
                         <th>Loại xe đặt</th>
                         <th>Số giờ/ngày thuê</th>
-                        <th>Ngày nhận</th>
+                        <th>Ngày trả</th>
                         <th>Tổng tiền</th>
                         <th>Trạng thái</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
-                        <td>1</td>
-                        <td>Nguyễn Văn Hải</td>
-                        <td>Xe địa hình x2</td>
-                        <td>2 giờ</td>
-                        <td>3h 15/05/2025</td>
-                        <td>300.000</td>
-                        <td> Hoàn thành <a href="#"><i class="fa-solid fa-check-circle" style="color: green;"></i></a></td>
-                    </tr>
-                    <tr>
-                        <td>2</td>
-                        <td>Trần Thị Mai</td>
-                        <td>Xe đạp điện x1</td>
-                        <td>1 ngày</td>
-                        <td>8h 16/05/2025</td>
-                        <td>500.000</td>
-                        <td> Hoàn thành <a href="#"><i class="fa-solid fa-check-circle" style="color: green;"></i></a></td>
-                    </tr>
-                    <tr>
-                        <td>3</td>
-                        <td>Nguyễn Văn Hải</td>
-                        <td>Xe địa hình x2</td>
-                        <td>2 giờ</td>
-                        <td>3h 15/05/2025</td>
-                        <td>300.000</td>
-                        <td> Hoàn thành <a href="#"><i class="fa-solid fa-check-circle" style="color: green;"></i></a></td>
-                    </tr>
+                    @foreach (var don in Model)
+                    {
+                        var chiTietList = don.ChiTietDonThue;
+                        var thoiGianThue = (don.ngayTraXe - don.ngayNhanXe).TotalHours;
+                        bool tinhTheoNgay = thoiGianThue > 23;
+                        var soNgay = (int)Math.Ceiling((don.ngayTraXe - don.ngayNhanXe).TotalDays);
+                        var soGio = (int)Math.Ceiling(thoiGianThue);
 
-                    <tr>
-                        <td>4</td>
-                        <td>Nguyễn Văn Hải</td>
-                        <td>Xe địa hình x2</td>
-                        <td>2 giờ</td>
-                        <td>3h 15/05/2025</td>
-                        <td>300.000</td>
-                        <td> Hoàn thành <a href="#"><i class="fa-solid fa-check-circle" style="color: green;"></i></a></td>
-                    </tr>
+                        var xeInfo = string.Join("<br/>", chiTietList.Select(ct =>
+                        $"{ct.Xe.tenXe} x{ct.soLuong}"
+                        ));
 
+                        var soGioNgay = tinhTheoNgay ? soNgay + " ngày" : soGio + " giờ";
+
+                        decimal tongTien = 0;
+                        foreach (var ct in chiTietList)
+                        {
+                            if (tinhTheoNgay)
+                                tongTien += (ct.giaThueTheoNgay ?? 0) * ct.soLuong * soNgay;
+                            else
+                                tongTien += (ct.giaThueTheoGio ?? 0) * ct.soLuong * soGio;
+                        }
+
+                        <tr>
+                            <td>@don.idDonThue</td>
+                            <td>@don.TaiKhoan.ten</td>
+                            <td>@Html.Raw(xeInfo)</td>
+                            <td>@soGioNgay</td>
+                            <td>@don.ngayTraXe.ToString("HH\\h dd/MM/yyyy")</td>
+                            <td>@string.Format("{0:N0} VND", @tongTien)</td>
+                            <td>Hoàn thành <i class="fa-solid fa-check-circle" style="color: green;"></i></td>
+                        </tr>
+                    }
                 </tbody>
             </table>
         </div>

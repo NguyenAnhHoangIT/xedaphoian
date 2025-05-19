@@ -17,9 +17,9 @@
                 <div class="header-content">
                     <!-- Logo -->
                     <div class="logo">
-                        <a href="/home/index">
+                        <a>
                             <img src="~/images/logo2.png" class="logo-img" />
-                            <span>THUEXEDAPHOIAN</span>
+                            <span>@ViewBag.TenCuaHang</span>
                         </a>
                     </div>
 
@@ -52,8 +52,8 @@
 
                         <!-- User Profile Dropdown -->
                         <div class="user-profile">
-                            <img src="~/images/avatar-default.jpg" alt="User Avatar" class="user-avatar">
-                            <span class="user-name">Ho Ten</span>
+                            <img src="@ViewBag.AvatarCuaHang" alt="User Avatar" class="user-avatar">
+                            <span class="user-name">@ViewBag.TenCuaHang</span>
                             <i class="fas fa-chevron-down dropdown-arrow"></i>
 
                             <div class="dropdown-menu">

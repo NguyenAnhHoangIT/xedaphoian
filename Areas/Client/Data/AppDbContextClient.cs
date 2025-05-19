@@ -5,9 +5,19 @@ using ThueXeDapHoiAn.Areas.Client.Models;
 using ThueXeDapHoiAn.Areas.Client.Models.ViewModels;
 using ThueXeDapHoiAn.Models;
 
-public class AppDbContextClient : DbContext
+namespace ThueXeDapHoiAn.Data
 {
-    public AppDbContextClient(DbContextOptions<AppDbContextClient> options) : base(options) { }
+    public class AppDbContextClient : DbContext
+    {
+        public AppDbContextClient(DbContextOptions<AppDbContextClient> options) : base(options) { }
+
+        public DbSet<CuaHangModel_cuaHang> CuaHang { get; set; }
+        public DbSet<XeModel_cuaHang> Xe { get; set; }
+        public DbSet<LoaiXeModel_cuaHang> LoaiXe { get; set; }
+        public DbSet<TaiKhoanModel_cuaHang> TaiKhoan { get; set; }
+        public DbSet<KhuyenMaiModel_cuaHang> KhuyenMai { get; set; }
+        public DbSet<DonThueModel_cuaHang> DonThue { get; set; }
+        public DbSet<ChiTietDonThueModel_cuaHang> ChiTietDonThue { get; set; }
 
     public DbSet<UserModel> TaiKhoan { get; set; }  // Your custom user table
     public DbSet<CuaHangModel_Client> CuaHang { get; set; }
@@ -18,8 +28,8 @@ public class AppDbContextClient : DbContext
     public DbSet<KhuyenMaiModel_Client> KhuyenMai { get; set; }
     public DbSet<DanhGiaModel_Client> DanhGia { get; set; }
     public DbSet<ThongBaoModel_Client> ThongBao { get; set; }
-    protected override void OnModelCreating(ModelBuilder modelBuilder)
-    {
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
         base.OnModelCreating(modelBuilder);
 
         // Cấu hình composite key cho ChiTietDonThueModel
@@ -41,7 +51,12 @@ public class AppDbContextClient : DbContext
         modelBuilder.Entity<DonThueModel_Client>()
             .Property(d => d.UserId)
             .HasColumnName("idTaiKhoan");
+            // Cấu hình composite primary key cho ChiTietDonThue
+            modelBuilder.Entity<ChiTietDonThueModel_cuaHang>()
+                .HasKey(ct => new { ct.idDonThue, ct.idXe });
 
+            base.OnModelCreating(modelBuilder);
+        }
     }
 
 }

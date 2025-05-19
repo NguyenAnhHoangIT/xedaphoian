@@ -14,6 +14,36 @@ namespace ThueXeDapHoiAn.Data
         {
             _connectionString = configuration.GetConnectionString("Default");
         }
+        public bool HasCuaHang(int idTaiKhoan)
+        {
+            using (SqlConnection conn = new SqlConnection(_connectionString))
+            {
+                conn.Open();
+                var cmd = new SqlCommand("SELECT COUNT(*) FROM CuaHang WHERE idTaiKhoan = @id", conn);
+                cmd.Parameters.AddWithValue("@id", idTaiKhoan);
+
+                int count = (int)cmd.ExecuteScalar();
+                return count > 0;
+            }
+        }
+        public string GetTrangThaiCuaHang(int idTaiKhoan)
+        {
+            using (SqlConnection conn = new SqlConnection(_connectionString))
+            {
+                conn.Open();
+                var cmd = new SqlCommand("SELECT trangThaiCuaHang FROM CuaHang WHERE idTaiKhoan = @id", conn);
+                cmd.Parameters.AddWithValue("@id", idTaiKhoan);
+
+                var result = cmd.ExecuteScalar();
+                if (result != null && result != DBNull.Value)
+                {
+                    return result.ToString(); // Trả về string, ví dụ: "1", "0", "true", "false", ...
+                }
+
+                return null; // Không có cửa hàng
+            }
+        }
+
 
         public UserModel GetUserByPhoneNumber(string phoneNumber)
         {

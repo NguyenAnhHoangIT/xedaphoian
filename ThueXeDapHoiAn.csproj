@@ -8,6 +8,8 @@
 
   <ItemGroup>
     <Folder Include="Areas\Client\ViewModels\" />
+    <Folder Include="wwwroot\images\cuahang\" />
+    <Folder Include="wwwroot\images\xe\" />
   </ItemGroup>
 
   <ItemGroup>
