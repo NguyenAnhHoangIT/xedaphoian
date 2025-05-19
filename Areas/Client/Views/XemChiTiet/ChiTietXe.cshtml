@@ -11,7 +11,7 @@
     <div class="wrapper">
         <div style="margin-left: 20px;">
             <!-- Ảnh lớn -->
-            <img id="mainImage" src="~/images/xe1.jpg" style="width: 430px; height: 280px; border-radius: 6px;" alt="Ảnh chính">
+            <img id="mainImage" src="~/images/@Model.HinhAnh" style="width: 430px; height: 280px; border-radius: 6px;" alt="Ảnh chính">
 
             <!-- Ảnh nhỏ bên dưới -->
             <div style="margin-top: 10px; display: flex; gap: 10px;">
@@ -21,29 +21,30 @@
             </div>
         </div>
         <div style="margin-right: 250px;">
-            <p class="title">Xe đạp đường phố (Hybrid-Bike)</p>
+            <p class="title">@Model.TenXe</p>
             <p class="title">Chọn khung giờ</p>
             <div style="display: flex;gap:6px;align-items: center;">
                 <p class="text">từ</p>
-                <input type="datetime-local" class="form-control" id="thoigianGio">
+                <input type="datetime-local" class="form-control" id="thoigianGioFrom">
                 <p class="text">đến</p>
-                <input type="datetime-local" class="form-control" id="thoigianGio">
+                <input type="datetime-local" class="form-control" id="thoigianGioTo">
             </div>
+            <div id="errorMessage" style="color: red; display: none;">Thời gian "từ" không được lớn hơn thời gian "đến".</div>
             <div style="display: flex;gap:20px">
                 <p class="text">Tình trạng</p>
-                <p >Còn 22 chiếc </p>
+                <p class="tinhtrang-soxe" style="display: none;">Còn 22 chiếc</p>
             </div>
-            <div style="display: flex;gap:60px">
+            <div>
                 <div style="display:flex;gap:10px">
                     <p class="text">Theo giờ</p>
-                    <p >150.000 đ/1h</p>
+                    <p>@Model.GiaThueTheoGio đ/1h</p>
                 </div>
                 <div style="display:flex;gap:10px">
                     <p class="text">Theo ngày</p>
-                    <p >300.000 đ/ 1 ngày</p>
+                    <p>@Model.GiaThueTheoNgay đ/ 1 ngày</p>
                 </div>
             </div>
-            <p style="width: 460px;" class="title">Những dòng xe đạp cho thuê tại GIANT thường xuyên được bảo dưỡng định kỳ trước khi đưa tới tay khách hàng sử dụng.</p>
+            <p style="width: 460px;" class="title">@ViewBag.GioiThieuCuaHang</p>
             <div class="so-luong-group">
                 <p class="text">Số lượng</p>
                 <div class="quantity-wrapper">
@@ -53,9 +54,15 @@
                 </div>
             </div>
             <div style="display: flex;gap:40px;margin-top: 30px">
-                <button type="submit" style="height: 40px;background-color:#00FF84;color: #00175D;width: 200px;border-radius: 8px;cursor:pointer;">Thêm vào giỏ hàng</button>
+                <form id="add-to-cart-form" data-id="@Model.IdXe">
+                    <button type="submit" class="add-to-cart"
+                            style="display: inline-block; height: 40px; background-color: #00FF84; color: #00175D; width: 200px; border-radius: 8px; line-height: 40px; text-align: center; font-weight: bold; border: none; cursor: pointer;">
+                        Thêm vào giỏ hàng
+                    </button>
+                </form>
+
                 <button type="submit" style="height: 40px;background-color:#00175D;color: white;width: 200px;border-radius: 8px;cursor:pointer;"
-                    onclick=" window.location.href='@Url.Action("DatXe", "XemChiTiet", new { area = "Client" })'">
+                        onclick=" window.location.href='@Url.Action("DatXe", "XemChiTiet", new { area = "Client" })'">
                     Thuê ngay
                 </button>
             </div>
@@ -67,18 +74,7 @@
         <div>
             <div style="margin-left: 20px;">
                 <p class="title">CHI TIẾT SẢN PHẨM</p>
-                <p class="text">Xe đạp đường phố (Hybrid-Bike) là sự kết hợp hoàn hảo giữa xe đạp địa hình (MTB) và xe đạp đua (Road Bike), mang lại trải nghiệm êm ái, linh hoạt trên nhiều loại địa hình. Đây là dòng xe lý tưởng cho những ai muốn khám phá thành phố, đạp xe dạo phố hoặc di chuyển hàng ngày một cách tiện lợi.</p>
-            </div>
-            <div style="margin-left: 20px;">
-                <p class="title">THÔNG SỐ KỸ THUẬT</p>
-                <div>
-                    <p class="text"> - Khung xe: Hợp kim nhôm/Thép cao cấp</p>
-                    <p class="text"> - Trọng lượng: ~10-15kg</p>
-                    <p class="text"> - Kích thước bánh xe: 26 inch / 27.5 inch</p>
-                    <p class="text"> - Hệ thống truyền động: Shimano 7 - 24 tốc độ</p>
-                    <p class="text"> - Phanh: Phanh đĩa hoặc phanh vành</p>
-                    <p class="text"> - Tải trọng tối đa: 120kg</p>
-                </div>
+                <p class="text">@Model.GioiThieu</p>
             </div>
         </div>
     </div>
@@ -185,7 +181,7 @@
         <section class="bike-list" style="margin-left: 20px;">
             <a href="#">
                 <div class="xe-card">
-                <img src="~/images/xe2.jpg" alt="Xe đạp đua">
+                    <img src="~/images/xe2.jpg" alt="Xe đạp đua">
                     <div class="xe-card-body">
                         <p class="tenXe">Xe đạp đua <span class="loai">(Hybrid-Bike)</span></p>
                         <p class="moTa">Tốc độ cao, nhẹ nhàng, linh hoạt, hiệu suất cao</p>
@@ -196,7 +192,7 @@
 
             <a href="#">
                 <div class="xe-card">
-                <img src="~/images/xe2.jpg" alt="Xe đạp đua">
+                    <img src="~/images/xe2.jpg" alt="Xe đạp đua">
                     <div class="xe-card-body">
                         <p class="tenXe">Xe đạp đua <span class="loai">(Hybrid-Bike)</span></p>
                         <p class="moTa">Tốc độ cao, nhẹ nhàng, linh hoạt, hiệu suất cao</p>
@@ -207,7 +203,7 @@
 
             <a href="#">
                 <div class="xe-card">
-                <img src="~/images/xe3.png" alt="Xe trẻ em">
+                    <img src="~/images/xe3.png" alt="Xe trẻ em">
                     <div class="xe-card-body">
                         <p class="tenXe">Xe đạp trẻ em</p>
                         <p class="moTa">An toàn, thiết kế dễ thương, phù hợp trẻ nhỏ</p>
@@ -291,4 +287,102 @@
         document.getElementById("mainImage").src = el.src;
         }
     </script>
+
+
+    <script>
+        document.querySelectorAll('#thoigianGioFrom, #thoigianGioTo').forEach(input => {
+            input.addEventListener('change', () => {
+                const thoigianFrom = document.getElementById('thoigianGioFrom').value;
+                const thoigianTo = document.getElementById('thoigianGioTo').value;
+
+                // Kiểm tra nếu thời gian "từ" lớn hơn thời gian "đến"
+                if (thoigianFrom && thoigianTo && new Date(thoigianFrom) > new Date(thoigianTo)) {
+                    document.getElementById('errorMessage').style.display = 'block'; // Hiển thị thông báo lỗi
+                } else {
+                    document.getElementById('errorMessage').style.display = 'none'; // Ẩn thông báo lỗi
+                    // Nếu không có lỗi, thực hiện kiểm tra tình trạng xe
+                    if (thoigianFrom && thoigianTo) {
+                        fetch(`/Client/XemChiTiet/KiemTraTinhTrang?tu=${thoigianFrom}&den=${thoigianTo}&idXe=@Model.IdXe`)
+                            .then(res => res.json())
+                            .then(data => {
+                                document.querySelector('.tinhtrang-soxe').textContent = `Còn ${data.soLuongConLai} chiếc`;
+                            });
+                    }
+                }
+            });
+        });
+    </script>
+
+
+    <script>
+              // Lấy các phần tử
+        const thoigianGioFrom = document.getElementById('thoigianGioFrom');
+        const thoigianGioTo = document.getElementById('thoigianGioTo');
+        const errorMessage = document.getElementById('errorMessage');
+
+        // Hàm kiểm tra và hiển thị cảnh báo
+        function checkTime() {
+            const fromTime = new Date(thoigianGioFrom.value);
+            const toTime = new Date(thoigianGioTo.value);
+
+            if (fromTime > toTime) {
+                errorMessage.style.display = 'block'; // Hiển thị cảnh báo
+            } else {
+                errorMessage.style.display = 'none'; // Ẩn cảnh báo
+            }
+        }
+
+        // Gắn sự kiện khi người dùng thay đổi giá trị trong các ô nhập liệu
+        thoigianGioFrom.addEventListener('change', checkTime);
+        thoigianGioTo.addEventListener('change', checkTime);
+    </script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        const fromInput = document.getElementById("thoigianGioFrom");
+        const toInput = document.getElementById("thoigianGioTo");
+        const statusElement = document.querySelector(".tinhtrang-soxe");
+
+        function checkInputs() {
+            if (fromInput.value && toInput.value) {
+                statusElement.style.display = "block";
+            } else {
+                statusElement.style.display = "none";
+            }
+        }
+
+        fromInput.addEventListener("input", checkInputs);
+        toInput.addEventListener("input", checkInputs);
+    </script>
+
+    <script>
+        $(document).ready(function () {
+            $('#add-to-cart-form').submit(function (e) {
+                e.preventDefault(); // Ngăn form submit thật
+
+                var id = $(this).data("id");
+
+                $.ajax({
+                    type: "POST",
+                    url: "/Client/ThemXe",
+                    data: { id: id },
+                    success: function (result) {
+                        if (result.success) {
+                            // Nếu thành công, hiển thị thông báo thành công
+                            Swal.fire("Thành công", result.message, "success");
+                        } else {
+                            // Nếu có lỗi (success = false), hiển thị thông báo lỗi
+                            Swal.fire("Lỗi", result.message, "error");
+                        }
+                    },
+                    error: function () {
+                        // Lỗi khi gọi AJAX
+                        Swal.fire("Lỗi", "Không thể thêm xe vào giỏ!", "error");
+                    }
+                });
+            });
+        });
+    </script>
+
+
 }

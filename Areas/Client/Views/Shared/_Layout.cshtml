@@ -23,11 +23,14 @@
                     </div>
 
                     <!-- Search -->
-                    <div class="search-bar">
-                        <i class="fa-solid fa-search search-icon"></i>
-                        <input type="text" placeholder="Search...">
-                    </div>
-                     
+                    <form asp-controller="Home" asp-action="Search" method="post">
+                        <div class="search-bar">
+                            <button type="submit" style="background:none; border:none; padding:0; cursor:pointer;">
+                                <i class="fa-solid fa-search search-icon"></i>
+                            </button>
+                            <input type="text" name="searchTerm" placeholder="Search...">
+                        </div>
+                    </form>
                     <!-- Navigation -->
                     <nav class="navigation">
                         <a asp-area="Client" asp-controller="Home" asp-action="Index" class="nav-link">Trang chủ</a>
@@ -35,7 +38,7 @@
                         <a href="#" class="nav-link">Xe đạp</a>
                     </nav>
                     <div class="header-icons">
-                        <a href="/cart" class="icon-link">
+                        <a asp-action="DatXe" asp-controller="XemChiTiet" class="icon-link">
                             <i class="fas fa-shopping-cart"></i>
                         </a>
                         
@@ -73,6 +76,7 @@
             </div>
         </header>
 
+        @Html.Partial("_NotificationPartial")
         @RenderBody()
         
         <!-- Footer -->

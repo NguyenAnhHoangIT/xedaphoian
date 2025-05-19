@@ -20,6 +20,5 @@ namespace ThueXeDapHoiAn.Models
 
         public string TrangThai { get; set; }
 
-
     }
 }

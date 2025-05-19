@@ -1,4 +1,7 @@
-﻿@{
+﻿@using ThueXeDapHoiAn.Areas.Client.Models.ViewModels
+@using System.Globalization
+@model CTDonThueItemViewModel_Client
+@{
     Layout = "~/Areas/Client/Views/Shared/_Layout.cshtml";
 }
 
@@ -7,13 +10,29 @@
     <link rel="stylesheet" href="~/css/LayoutClient.css" />
     <link rel="stylesheet" href="~/css/DatXe.css" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <style>
+        .btn-delete {
+            background-color: #ff4d4d;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 14px;
+            transition: background-color 0.3s ease;
+        }
 
+            .btn-delete:hover {
+                background-color: #e60000;
+            }
+    </style>
 }
 <main class="ndung py-4">
     <div class="container">
         <h5 class="title text-primary">CHI TIẾT ĐƠN THUÊ</h5>
-        <p class="name_store">Cửa hàng GIANT</p>
-
+        <p class="name_store">Cửa hàng @Model.TenCuaHang</p>
+        <p class="idCuaHang" style="display:none;">IdCuaHang: @Model.IdCuaHang</p>
         <div class="thoigian row p-3 bg-white rounded shadow-sm mb-4">
             <div class="col-md-4 mb-3">
                 <p class="pthoigian fw-bold">Thời gian thuê</p>
@@ -25,69 +44,90 @@
                 <div class="row mb-3">
                     <div class="col-12 col-md-6">
                         <label class="form-label fw-bold">Nhận xe</label>
-                        <input type="text" class="form-control" id="thoigianGio">
+                        <input type="datetime-local" class="form-control" id="thoigianGio">
                     </div>
                     <div class="col-6 col-md-3">
                         <label class="form-label fw-bold">Số giờ thuê</label>
-                        <select class="form-select">
-                            <option>1</option>
-                            <option>2</option>
-                            <option>3</option>
-                            <option>4</option>
-                            <option>5</option>
-                        </select>
+                        <select class="form-select" id="soGioThue"></select>
                     </div>
                 </div>
                 <div>
-                    <p class="fw-bold">Trả xe: <span class="text-muted">19:00, 21/03/2025</span></p>
+                    <p class="fw-bold">Trả xe: <span class="text-muted" id="traXeText">--:--, --/--/----</span></p>
                 </div>
             </div>
+
 
             <div id="khungTheoNgay" class="col-md-8 d-none">
                 <div class="row mb-3">
                     <div class="col-12 col-md-6">
                         <label class="form-label fw-bold">Ngày nhận xe</label>
-                        <input type="text" class="form-control" id="ngayNhan">
+                        <input type="date" class="form-control" id="ngayNhan">
                     </div>
                     <div class="col-12 col-md-6">
                         <label class="form-label fw-bold">Ngày trả xe</label>
-                        <input type="text" class="form-control" id="ngayTra">
+                        <input type="date" class="form-control" id="ngayTra">
                     </div>
                 </div>
+                <div id="loiNgay" class="text-danger fw-bold"></div>
             </div>
         </div>
 
         <div class="donThue bg-white p-3 rounded shadow-sm">
-            <table class="table table-bordered text-center align-middle">
-                <tbody>
-                    <tr>
-                        <td><img src="~/images/xe1.jpg" class="img-fluid rounded" style="max-width:150px;"></td>
-                        <td>Xe đạp đường phố (Hybrid-Bike)</td>
-                        <td>Đơn giá: 150.000 đ/1h</td>
-                        <td>
-                            <div class="quantity-control d-flex justify-content-center align-items-center gap-2">
-                                <button class="btn btn-warning btn-sm">-</button>
-                                <input class="form-control text-center" type="text" value="1" style="width:60px;">
-                                <button class="btn btn-success btn-sm">+</button>
-                            </div>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
+            @if (Model.CartItems.Count > 0)
+            {
+                <table class="table table-bordered text-center align-middle">
+                    <tbody>
 
-            <div class="d-flex justify-content-between mt-4">
-                <p class="fw-bold">Tạm tính:</p>
-                <span class="fw-bold text-primary">300.000 đ</span>
-            </div>
+                        @foreach (var item in Model.CartItems)
+                        {
+                            <tr class="item-row" data-id="@item.IdXe" data-name="@item.TenXe">
+                                <td><img src="~/images/@item.HinhAnh" class="img-fluid rounded" style="max-width:150px;"></td>
+                                <td class="ten-xe">@item.TenXe</td>
 
-            <div class="d-flex justify-content-between mt-2">
-                <p class="fw-bold">Tổng tiền:</p>
-                <span class="fw-bold text-primary">300.000 đ</span>
-            </div>
+                                <td class="gia-theo-gio" data-price="@item.GiaThueTheoGio">
+                                    Đơn giá: @item.GiaThueTheoGio đ/1h
+                                </td>
+                                <td class="gia-theo-ngay d-none" data-price="@item.GiaThueTheoNgay">
+                                    Đơn giá: @item.GiaThueTheoNgay đ/1ngày
+                                </td>
+
+                                <td>
+                                    <div class="quantity-control d-flex justify-content-center align-items-center gap-2">
+                                        <button class="btn btn-warning btn-sm btn-decrease">-</button>
+                                        <input class="form-control text-center quantity-input" type="text" value="@item.SoLuong" style="width:60px;">
+                                        <button class="btn btn-success btn-sm btn-increase">+</button>
+                                    </div>
+                                </td>
+
+                                <td>
+                                    <form asp-action="Delete" asp-controller="XemChiTiet" asp-route-id="@item.IdXe" method="post" style="display:inline;">
+                                        <button type="submit" class="btn-delete">Xóa</button>
+                                    </form>
+                                </td>
+                            </tr>
+                        }
+
+                    </tbody>
+                </table>
+
+                <div class="d-flex justify-content-between mt-4">
+                    <p class="fw-bold">Tạm tính:</p>
+                    <span class="fw-bold text-primary" id="tamTinh">0 đ</span>
+                </div>
+
+                <div class="d-flex justify-content-between mt-2">
+                    <p class="fw-bold">Tổng tiền:</p>
+                    <span class="fw-bold text-primary" id="grandTotal">0 đ</span>
+                </div>
+            }
+            else
+            {
+                <h4>Bạn chưa có sản phẩm nào hết</h4>
+            }
         </div>
 
         <div class="text-end mt-4">
-            <a asp-area="Client" asp-controller="XemChiTiet" asp-action="PhuongThucThanhToan" class="btn btn-primary px-4 py-2" >
+            <a asp-area="Client" asp-controller="XemChiTiet" asp-action="PhuongThucThanhToan" class="btn btn-primary px-4 py-2">
                 Tiến hành đặt xe
             </a>
         </div>
@@ -131,7 +171,7 @@
           khungTheoGio.classList.add("d-none");
           khungTheoNgay.classList.remove("d-none");
         });
-      </script>
+    </script>
     <script>
         const btnDivGio = document.querySelector("#btnGio .btn-thue");
         const btnDivNgay = document.querySelector("#btnNgay .btn-thue");
@@ -154,4 +194,371 @@
             btnDivGio.classList.remove("active");
         });
     </script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            // Định dạng giá thuê theo giờ
+            document.querySelectorAll(".gia-theo-gio").forEach(td => {
+                const price = parseFloat(td.dataset.price);
+                if (!isNaN(price)) {
+                    const formatted = price.toLocaleString('vi-VN') + " đ/1h";
+                    td.textContent = "Đơn giá: " + formatted;
+                }
+            });
+
+            // Định dạng giá thuê theo ngày
+            document.querySelectorAll(".gia-theo-ngay").forEach(td => {
+                const price = parseFloat(td.dataset.price);
+                if (!isNaN(price)) {
+                    const formatted = price.toLocaleString('vi-VN') + " đ/1ngày";
+                    td.textContent = "Đơn giá: " + formatted;
+                }
+            });
+        });
+    </script>
+
+
+    <script>
+        let isHourly = true; // Mặc định là thuê theo giờ
+
+        window.onload = function () {
+        const inputThoiGian = document.getElementById("thoigianGio");
+        const selectGio = document.getElementById("soGioThue");
+        const traXeText = document.getElementById("traXeText");
+        const btnGio = document.getElementById("btnGio");
+        const btnNgay = document.getElementById("btnNgay");
+        const ngayNhanInput = document.getElementById("ngayNhan");
+        const ngayTraInput = document.getElementById("ngayTra");
+
+            // Tạo option cho số giờ thuê
+            for (let i = 1; i <= 23; i++) {
+                const option = document.createElement("option");
+                option.value = i;
+                option.textContent = i;
+                selectGio.appendChild(option);
+            }
+
+            function tinhGioTraXe() {
+                const thoiGianGio = inputThoiGian.value;
+                const soGio = parseInt(selectGio.value);
+                if (!thoiGianGio || isNaN(soGio)) {
+                    traXeText.textContent = "--:--, --/--/----";
+                    return;
+                }
+                const thoiGian = new Date(thoiGianGio);
+                thoiGian.setHours(thoiGian.getHours() + soGio);
+
+                const gio = thoiGian.getHours().toString().padStart(2, "0");
+                const phut = thoiGian.getMinutes().toString().padStart(2, "0");
+                const ngay = thoiGian.getDate().toString().padStart(2, "0");
+                const thang = (thoiGian.getMonth() + 1).toString().padStart(2, "0");
+                const nam = thoiGian.getFullYear();
+
+                traXeText.textContent = `${gio}:${phut}, ${ngay}/${thang}/${nam}`;
+            }
+
+            inputThoiGian.addEventListener("change", function () {
+                tinhGioTraXe();
+                updateAllItemTotals();
+                updateGrandTotal();
+            });
+            selectGio.addEventListener("change", function () {
+                tinhGioTraXe();
+                updateAllItemTotals();
+                updateGrandTotal();
+            });
+            ngayNhanInput.addEventListener("change", function () {
+                updateAllItemTotals();
+                updateGrandTotal();
+            });
+
+            ngayTraInput.addEventListener("change", function () {
+                updateAllItemTotals();
+                updateGrandTotal();
+            });
+
+            btnGio.addEventListener("click", function (e) {
+                e.preventDefault();
+                isHourly = true;
+                togglePriceType(true);
+            });
+
+            btnNgay.addEventListener("click", function (e) {
+                e.preventDefault();
+                isHourly = false;
+                togglePriceType(false);
+            });
+
+
+            function togglePriceType(hourMode) {
+                isHourly = hourMode;
+
+                document.querySelectorAll(".gia-theo-gio").forEach(el => el.classList.toggle("d-none", !hourMode));
+                document.querySelectorAll(".gia-theo-ngay").forEach(el => el.classList.toggle("d-none", hourMode));
+
+                document.querySelectorAll(".item-total").forEach(el => el.classList.toggle("d-none", !hourMode));
+                document.querySelectorAll(".item-total-theo-ngay").forEach(el => el.classList.toggle("d-none", hourMode));
+
+                btnGio.querySelector(".btn-thue").classList.toggle("active", hourMode);
+                btnNgay.querySelector(".btn-thue").classList.toggle("active", !hourMode);
+
+                updateAllItemTotals();
+                updateGrandTotal();
+            }
+
+            function updateAllItemTotals() {
+                let tamTinh = 0;
+
+                document.querySelectorAll(".item-row").forEach(row => {
+                    const qtyInput = row.querySelector(".quantity-input");
+                    const qty = parseInt(qtyInput.value) || 1;
+                    const priceCell = row.querySelector(isHourly ? ".gia-theo-gio" : ".gia-theo-ngay");
+                    const unitPrice = parseFloat(priceCell.getAttribute("data-price")) || 0;
+
+                    const itemSubtotal = unitPrice * qty;
+                    tamTinh += itemSubtotal;
+
+                    // Lưu tạm tính của từng item (có thể dùng nếu muốn hiển thị)
+                    const totalCell = row.querySelector(isHourly ? ".item-total .total-price" : ".item-total-theo-ngay .total-price");
+                    if (totalCell) {
+                        totalCell.setAttribute("data-value", itemSubtotal);
+                        totalCell.textContent = itemSubtotal.toLocaleString('vi-VN') + ' đ';
+                    }
+                });
+
+                // Hiển thị tạm tính
+                const tamTinhElement = document.getElementById("tamTinh");
+                if (tamTinhElement) {
+                    tamTinhElement.textContent = tamTinh.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' });
+                }
+
+                // Lưu tạm tính vào localStorage nếu cần dùng lại
+                localStorage.setItem('tamTinh', tamTinh);
+            }
+
+            function updateGrandTotal() {
+                const tamTinh = parseFloat(localStorage.getItem('tamTinh')) || 0;
+
+                const soGioThue = parseInt(document.getElementById("soGioThue")?.value) || 1;
+                const ngayNhanValue = document.getElementById("ngayNhan")?.value;
+                const ngayTraValue = document.getElementById("ngayTra")?.value;
+
+                let soNgayThue = 1;
+                if (ngayNhanValue && ngayTraValue) {
+                    const date1 = new Date(ngayNhanValue);
+                    const date2 = new Date(ngayTraValue);
+
+                    // Lấy ngày theo đúng giờ 00:00:00 để tránh sai số do giờ
+                    date1.setHours(0, 0, 0, 0);
+                    date2.setHours(0, 0, 0, 0);
+
+                    const diffTime = date2.getTime() - date1.getTime();
+                    soNgayThue = Math.floor(diffTime / (1000 * 60 * 60 * 24)) + 1;
+
+                    if (soNgayThue < 1) soNgayThue = 1;
+                }
+
+                let tongTien = isHourly ? tamTinh * soGioThue : tamTinh * soNgayThue;
+
+                const formatted = tongTien.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' });
+                document.getElementById("grandTotal").textContent = formatted;
+
+                const totalAmountElement = document.getElementById("totalAmount");
+                if (totalAmountElement) {
+                    totalAmountElement.textContent = formatted;
+                }
+
+                localStorage.setItem('totalAmount', tongTien);
+            }
+
+
+
+            document.querySelectorAll(".item-row").forEach(row => {
+                const input = row.querySelector(".quantity-input");
+
+                row.querySelector(".btn-increase").addEventListener("click", () => {
+                    input.value = parseInt(input.value) + 1;
+                    updateAllItemTotals();
+                    updateGrandTotal();
+            });
+
+                row.querySelector(".btn-decrease").addEventListener("click", () => {
+                    input.value = Math.max(1, parseInt(input.value) - 1);
+                    updateAllItemTotals();
+                    updateGrandTotal();
+                });
+
+                input.addEventListener("change", () => {
+                    if (isNaN(input.value) || parseInt(input.value) < 1) input.value = 1;
+                    updateAllItemTotals();
+                    updateGrandTotal();
+                });
+            });
+
+            togglePriceType(true); // Gọi khi trang tải
+        }
+
+        function saveRentalInfo() {
+            let rentalInfo = {};
+
+            if (!isHourly) {  // Chế độ theo ngày
+                const ngayNhan = document.getElementById('ngayNhan')?.value;
+                const ngayTra = document.getElementById('ngayTra')?.value;
+
+                if (ngayNhan && ngayTra) {
+                    rentalInfo = {
+                        mode: 'daily',
+                        nhanXe: ngayNhan + "T07:00:00",  // Thêm thời gian cố định
+                        traXe: ngayTra + "T07:00:00"     // Thêm thời gian cố định
+                    };
+                } else {
+                    alert("Vui lòng chọn đầy đủ ngày nhận và ngày trả xe!");
+                    return false;
+                }
+            } else {  // Chế độ theo giờ
+                const thoiGianGio = document.getElementById('thoigianGio')?.value;
+                if (thoiGianGio) {
+                    const traXeText = document.getElementById('traXeText').textContent;
+                    rentalInfo = {
+                        mode: 'hourly',
+                        nhanXe: thoiGianGio,
+                        traXe: traXeText
+                    };
+                } else {
+                    alert("Vui lòng chọn thời gian nhận xe!");
+                    return false;
+                }
+            }
+
+            // ✅ Lưu đơn giá theo từng sản phẩm
+                const idCuaHang = document.querySelector(".idCuaHang")?.textContent.replace("IdCuaHang: ", ""); // Lấy ID cửa hàng
+                const donGiaItems = [];
+                document.querySelectorAll('.item-row').forEach(row => {
+                    const productId = row.getAttribute("data-id"); // Lấy id xe
+                    const tenXe = row.getAttribute("data-name") || ""; // Lấy tên xe từ data attribute
+                    const gia = isHourly
+                        ? parseFloat(row.querySelector('.gia-theo-gio')?.dataset.price || 0)
+                        : parseFloat(row.querySelector('.gia-theo-ngay')?.dataset.price || 0); // Lấy giá
+                    const soLuong = parseInt(row.querySelector('.quantity-input')?.value) || 1;
+
+                    donGiaItems.push({
+                        idXe: productId,
+                        tenXe: tenXe,
+                        donGia: gia,
+                        soLuong: soLuong,
+                        idCuaHang: idCuaHang  // Gán ID cửa hàng vào rentalInfo
+                    });
+                });
+
+                // Gán donGiaItems vào rentalInfo
+                rentalInfo.donGiaItems = donGiaItems;
+
+                // Lưu rentalInfo vào localStorage
+                localStorage.setItem('rentalTimeInfo', JSON.stringify(rentalInfo));
+                return true;
+            }
+
+            document.querySelector('.btn-primary').addEventListener('click', function (event) {
+                event.preventDefault();
+
+                if (!isHourly) {
+                    const ngayNhanValue = document.getElementById("ngayNhan")?.value;
+                    const ngayTraValue = document.getElementById("ngayTra")?.value;
+                    const loiNgay = document.getElementById("loiNgay");
+
+                    if (ngayNhanValue && ngayTraValue) {
+                        const ngayNhan = new Date(ngayNhanValue);
+                        const ngayTra = new Date(ngayTraValue);
+
+                        if (ngayNhan > ngayTra) {
+                            loiNgay.textContent = "Lỗi: Ngày nhận xe không được lớn hơn ngày trả xe!";
+                            return;
+                        } else {
+                            loiNgay.textContent = "";
+                        }
+                    } else {
+                        alert("Vui lòng chọn đầy đủ ngày nhận và ngày trả xe!");
+                        return;
+                    }
+                } else {
+                    const thoiGianGio = document.getElementById("thoigianGio")?.value;
+                    if (!thoiGianGio) {
+                        alert("Vui lòng chọn thời gian nhận xe!");
+                        return;
+                    }
+            }
+
+            let totalAmount = 0;
+            document.querySelectorAll('.item-row').forEach(function (row) {
+                const soLuong = parseInt(row.querySelector('.quantity-input').value) || 0;
+                const giaTheoGio = isHourly ? parseFloat(row.querySelector('.gia-theo-gio').dataset.price) : null;
+                const giaTheoNgay = !isHourly ? parseFloat(row.querySelector('.gia-theo-ngay').dataset.price) : null;
+
+            if (isHourly && giaTheoGio) {
+                const soGioThue = parseInt(document.getElementById("soGioThue").value) || 1;
+                totalAmount += giaTheoGio * soLuong * soGioThue;
+            } else if (!isHourly && giaTheoNgay) {
+                const ngayNhanValue = document.getElementById("ngayNhan").value;
+                const ngayTraValue = document.getElementById("ngayTra").value;
+
+                if (ngayNhanValue && ngayTraValue) {
+                    const date1 = new Date(ngayNhanValue);
+                    const date2 = new Date(ngayTraValue);
+
+                    // Reset giờ để tính ngày chính xác
+                    date1.setHours(0, 0, 0, 0);
+                    date2.setHours(0, 0, 0, 0);
+
+                    const diffTime = date2.getTime() - date1.getTime();
+                    let soNgayThue = Math.floor(diffTime / (1000 * 60 * 60 * 24)) + 1;
+
+                    if (soNgayThue < 1) soNgayThue = 1;
+
+                    totalAmount += giaTheoNgay * soLuong * soNgayThue;
+                }
+            }
+        });
+
+        localStorage.setItem('totalAmount', totalAmount);
+
+            // Lưu thông tin thuê xe
+            if (saveRentalInfo()) {
+                window.location.href = '/Client/PhuongThucThanhToan';
+            }
+        });
+    </script>
+
+
+
+
+
+
+
+    <script>
+        const inputNgayNhan = document.getElementById("ngayNhan");
+        const inputNgayTra = document.getElementById("ngayTra");
+        const loiNgay = document.getElementById("loiNgay");
+
+        function kiemTraNgay() {
+            const ngayNhan = new Date(inputNgayNhan.value);
+            const ngayTra = new Date(inputNgayTra.value);
+
+            if (inputNgayNhan.value && inputNgayTra.value) {
+                if (ngayNhan > ngayTra) {
+                    loiNgay.textContent = "Lỗi: Ngày nhận xe không được lớn hơn ngày trả xe!";
+                } else {
+                    loiNgay.textContent = "";
+                }
+            }
+        }
+
+        inputNgayNhan.addEventListener("change", kiemTraNgay);
+        inputNgayTra.addEventListener("change", kiemTraNgay);
+    </script>
+
+
+
+
+
+
 }

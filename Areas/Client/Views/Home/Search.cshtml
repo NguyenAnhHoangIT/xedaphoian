@@ -1,0 +1,46 @@
+﻿@using ThueXeDapHoiAn.Areas.Client.Models
+@model IEnumerable<XeModel_Client>
+@{
+    ViewData["Title"] = @ViewBag.Keyword;
+    Layout = "~/Areas/Client/Views/Shared/_Layout.cshtml";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/LayoutClient.css" />
+    <link rel="stylesheet" href="~/css/ChiTietCuaHang.css" />
+
+}
+<div style="text-align: center;
+    margin: 30px 0 20px;
+    padding: 10px;
+    border-radius: 10px;">
+    <h4 style="font-size:20px"> Kết quả tìm kiếm cho từ "@ViewBag.Keyword"</h4>
+</div>
+<main class="main-content">
+    <aside class="filter-sidebar">
+        <h2>Lọc theo loại xe</h2>
+        <label><input type="checkbox"> Xe địa hình</label>
+        <label><input type="checkbox"> Xe đua</label>
+        <label><input type="checkbox"> Xe trẻ em</label>
+    </aside>
+
+    <section class="bike-list">
+        @foreach (var item in Model)
+        {
+            <a asp-route-id="@item.IdXe" asp-action="ChiTietXe" asp-controller="XemChiTiet">
+                <div class="xe-card">
+                    <img src="~/images/@item.HinhAnh" alt="Xe trẻ em">
+                    <div class="xe-card-body">
+                        <p class="tenXe">@item.TenXe</p>
+                        <p class="moTa">@item.GioiThieu</p>
+                        <p class="gia">Theo giờ:<span>@item.GiaThueTheoGio đ/1h</span></p>
+                        <p class="gia">Theo ngày:<span>@item.GiaThueTheoNgay đ/1 ngày</span></p>
+                    </div>
+                </div>
+            </a>
+        }
+
+    </section>
+</main>
+
+
