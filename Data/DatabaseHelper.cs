@@ -25,7 +25,7 @@ namespace ThueXeDapHoiAn.Data
                 return count > 0;
             }
         }
-        public int? GetTrangThaiCuaHang(int idTaiKhoan)
+        public string GetTrangThaiCuaHang(int idTaiKhoan)
         {
             using (SqlConnection conn = new SqlConnection(_connectionString))
             {
@@ -36,7 +36,7 @@ namespace ThueXeDapHoiAn.Data
                 var result = cmd.ExecuteScalar();
                 if (result != null && result != DBNull.Value)
                 {
-                    return Convert.ToInt32(result); // Trạng thái: 1 hoặc 0
+                    return result.ToString(); // Trả về string, ví dụ: "1", "0", "true", "false", ...
                 }
 
                 return null; // Không có cửa hàng

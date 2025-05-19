@@ -47,14 +47,11 @@ namespace ThueXeDapHoiAn.Controllers
                         if (role == "Client")
                         {
                             var cuaHangStatus = _databaseHelper.GetTrangThaiCuaHang(int.Parse(user.Id));
-                            if (cuaHangStatus == 1) // Chỉ khi cửa hàng đã được duyệt
+                            if (cuaHangStatus == "True") // Chỉ khi cửa hàng đã được duyệt
                             {
                                 role = "Shop";
                             }
                         }
-
-
-                        // ✅ Set up claims
                         var claims = new List<Claim>
                 {
                     new Claim(ClaimTypes.NameIdentifier, user.Id),
@@ -72,11 +69,6 @@ namespace ThueXeDapHoiAn.Controllers
                         if (role == "Admin")
                         {
                             return RedirectToAction("TaiKhoan", "Home", new { area = "Admin" });
-                        }
-                        else if (role == "Shop")
-                        {
-                            // Nếu là Shop thì trực tiếp vào trang DanhSachXe
-                            return RedirectToAction("DanhSachXe", "CuaHang", new { area = "Client" });
                         }
                         else // Nếu là Client mà chưa có cửa hàng thì vào trang chủ
                         {

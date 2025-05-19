@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace ThueXeDapHoiAn.Models
 {
     [Table("DonThue")]
-    public class DonThueModel
+    public class DonThueModel_cuaHang
     {
         [Key]
         public int idDonThue { get; set; }
@@ -22,13 +22,13 @@ namespace ThueXeDapHoiAn.Models
 
         // Navigation
         [ForeignKey("idTaiKhoan")]
-        public virtual TaiKhoanModel TaiKhoan { get; set; }
+        public virtual TaiKhoanModel_cuaHang TaiKhoan { get; set; }
 
         // Không cần Xe ở đây (DonThue không có idXe)
         // public virtual XeModel Xe { get; set; }
 
-        public virtual ICollection<ChiTietDonThueModel> ChiTietDonThue { get; set; }
+        public virtual ICollection<ChiTietDonThueModel_cuaHang> ChiTietDonThue { get; set; }
         [ForeignKey("idKhuyenMai")]
-        public virtual KhuyenMaiModel KhuyenMai { get; set; }
+        public virtual KhuyenMaiModel_cuaHang KhuyenMai { get; set; }
     }
 }

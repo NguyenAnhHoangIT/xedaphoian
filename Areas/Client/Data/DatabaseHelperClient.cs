@@ -14,7 +14,7 @@ namespace ThueXeDapHoiAn.Data
             _context = context;
         }
 
-        public async Task<CuaHangModel> GetCuaHangByUserId(int userId)
+        public async Task<CuaHangModel_cuaHang> GetCuaHangByUserId(int userId)
         {
             return await _context.CuaHang.FirstOrDefaultAsync(c => c.idTaiKhoan == userId);
         }

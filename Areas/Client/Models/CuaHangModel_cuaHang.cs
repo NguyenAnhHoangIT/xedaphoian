@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace ThueXeDapHoiAn.Models
 {
     [Table("CuaHang")]
-    public class CuaHangModel
+    public class CuaHangModel_cuaHang
     {
         [Key]
         public int idCuaHang { get; set; }
@@ -23,6 +23,6 @@ namespace ThueXeDapHoiAn.Models
 
         public string hinhAnh { get; set; }
 
-        public bool trangThaiCuaHang { get; set; }
+        public string trangThaiCuaHang { get; set; }
     }
 }

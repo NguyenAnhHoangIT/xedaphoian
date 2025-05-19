@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace ThueXeDapHoiAn.Models
 {
     [Table("ChiTietDonThue")]
-    public class ChiTietDonThueModel
+    public class ChiTietDonThueModel_cuaHang
     {
         [Key, Column(Order = 0)]
         public int idDonThue { get; set; }
@@ -18,10 +18,10 @@ namespace ThueXeDapHoiAn.Models
         public decimal? giaThueTheoNgay { get; set; }
 
         [ForeignKey("idDonThue")]
-        public virtual DonThueModel DonThue { get; set; }
+        public virtual DonThueModel_cuaHang DonThue { get; set; }
 
         [ForeignKey("idXe")]
-        public virtual XeModel Xe { get; set; }
+        public virtual XeModel_cuaHang Xe { get; set; }
     }
 
 }

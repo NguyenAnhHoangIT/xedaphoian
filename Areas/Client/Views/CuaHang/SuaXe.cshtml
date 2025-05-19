@@ -1,7 +1,7 @@
-﻿@model ThueXeDapHoiAn.Models.XeModel
+﻿@model ThueXeDapHoiAn.Models.XeModel_cuaHang
 @{
     Layout = "~/Areas/Client/Views/Shared/_LayoutCuaHang.cshtml";
-    var loaiXeList = ViewBag.LoaiXeList as List<ThueXeDapHoiAn.Models.LoaiXeModel>;
+    var loaiXeList = ViewBag.LoaiXeList as List<ThueXeDapHoiAn.Models.LoaiXeModel_cuaHang>;
 }
 
 @section Styles {
@@ -53,10 +53,10 @@
         <input type="hidden" name="idXe" value="@Model.idXe" />
 
         <label>Tên xe <span style="color:red">*</span></label>
-        <input type="text" name="tenXe" value="@Model.tenXe" required />
+        <input type="text" name="tenXe" value="@Model.tenXe"  />
 
         <label>Loại xe <span style="color:red">*</span></label>
-        <select class="custom-select" name="idLoaiXe" required>
+        <select class="custom-select" name="idLoaiXe" >
             <option value="">Chọn loại xe</option>
             @if (loaiXeList != null)
             {
@@ -75,13 +75,13 @@
         </select>
 
         <label>Số lượng <span style="color:red">*</span></label>
-        <input type="number" name="soLuong" value="@Model.soLuong" min="1" required />
+        <input type="number" name="soLuong" value="@Model.soLuong" min="1"  />
 
         <label>Giá thuê theo giờ <span style="color:red">*</span></label>
-        <input type="number" name="giaThueTheoGio" value="@Model.giaThueTheoGio" min="0" required />
+        <input type="number" name="giaThueTheoGio" value="@Model.giaThueTheoGio" min="0"  />
 
         <label>Giá thuê theo ngày <span style="color:red">*</span></label>
-        <input type="number" name="giaThueTheoNgay" value="@Model.giaThueTheoNgay" min="0" required />
+        <input type="number" name="giaThueTheoNgay" value="@Model.giaThueTheoNgay" min="0"  />
 
         <label>Giới thiệu</label>
         <input type="text" name="gioiThieu" value="@Model.gioiThieu" />

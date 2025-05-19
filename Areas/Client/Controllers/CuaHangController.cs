@@ -7,6 +7,7 @@ using System.Security.Claims;
 using ThueXeDapHoiAn.Data;
 using ThueXeDapHoiAn.Models;
 using Microsoft.Data.SqlClient;
+using Microsoft.AspNetCore.Mvc.Filters;
 
 namespace ThueXeDapHoiAn.Areas.Client.Controllers
 {
@@ -39,10 +40,29 @@ namespace ThueXeDapHoiAn.Areas.Client.Controllers
 
             return View(cuaHang); // Truyền model sang view
         }
+
+        public override void OnActionExecuting(ActionExecutingContext context)
+        {
+            var userIdStr = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (!string.IsNullOrEmpty(userIdStr))
+            {
+                int userId = int.Parse(userIdStr);
+                var cuaHang = _context.CuaHang.FirstOrDefault(c => c.idTaiKhoan == userId);
+                if (cuaHang != null)
+                {
+                    ViewBag.TenCuaHang = cuaHang.tenCuaHang;
+                    ViewBag.AvatarCuaHang = string.IsNullOrEmpty(cuaHang.hinhAnh)
+                        ? "/images/avatar-default.jpg"
+                        : (cuaHang.hinhAnh.StartsWith("/images/") ? cuaHang.hinhAnh : "/images/cuahang/" + cuaHang.hinhAnh);
+                }
+            }
+            base.OnActionExecuting(context);
+        }
+
         [HttpPost]
         [Authorize(Roles = "Shop")]
         [Route("Client/Shop/ThongTinCuaHang")]
-        public async Task<IActionResult> CapNhatThongTin(CuaHangModel model, IFormFile hinhAnh)
+        public async Task<IActionResult> CapNhatThongTin(CuaHangModel_cuaHang model, IFormFile hinhAnh)
         {
             var userIdStr = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (string.IsNullOrEmpty(userIdStr)) return Unauthorized();
@@ -125,7 +145,7 @@ namespace ThueXeDapHoiAn.Areas.Client.Controllers
         [HttpPost]
         [Authorize(Roles = "Shop")]
         [Route("Client/Shop/ThemXe")]
-        public async Task<IActionResult> ThemXe(XeModel model, IFormFile hinhAnh)
+        public async Task<IActionResult> ThemXe(XeModel_cuaHang model, IFormFile hinhAnh)
         {
             var userIdStr = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (string.IsNullOrEmpty(userIdStr)) return Unauthorized();
@@ -147,7 +167,7 @@ namespace ThueXeDapHoiAn.Areas.Client.Controllers
                 }
             }
 
-            var xe = new XeModel
+            var xe = new XeModel_cuaHang
             {
                 tenXe = model.tenXe,
                 idLoaiXe = model.idLoaiXe,
@@ -216,7 +236,7 @@ namespace ThueXeDapHoiAn.Areas.Client.Controllers
         [HttpPost]
         [Authorize(Roles = "Shop")]
         [Route("Client/Shop/SuaXe")]
-        public async Task<IActionResult> SuaXe(XeModel model, IFormFile hinhAnh)
+        public async Task<IActionResult> SuaXe(XeModel_cuaHang model, IFormFile hinhAnh)
         {
             // Lấy tên ảnh cũ từ database
             string fileName = null;
@@ -427,7 +447,7 @@ namespace ThueXeDapHoiAn.Areas.Client.Controllers
         [HttpPost]
         [Authorize(Roles = "Shop")]
         [Route("Client/Shop/ThemMaKhuyenMai")]
-        public async Task<IActionResult> ThemMaKhuyenMai(KhuyenMaiModel model)
+        public async Task<IActionResult> ThemMaKhuyenMai(KhuyenMaiModel_cuaHang model)
         {
             var userIdStr = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (string.IsNullOrEmpty(userIdStr)) return Unauthorized();
@@ -435,6 +455,8 @@ namespace ThueXeDapHoiAn.Areas.Client.Controllers
 
             var cuaHang = await _context.CuaHang.FirstOrDefaultAsync(c => c.idTaiKhoan == userId);
             if (cuaHang == null) return NotFound("Không tìm thấy cửa hàng");
+
+            var mucGiamGia = model.mucGiamGia / 100.0;
 
             var connectionString = _context.Database.GetConnectionString();
             using (var conn = new SqlConnection(connectionString))
@@ -448,7 +470,7 @@ namespace ThueXeDapHoiAn.Areas.Client.Controllers
                 (@idCuaHang, @maKhuyenMai, @mucGiamGia, @donToiThieu, @soLuong, @thoiGianBatDau, @thoiGianKetThuc)";
                 cmd.Parameters.AddWithValue("@idCuaHang", cuaHang.idCuaHang);
                 cmd.Parameters.AddWithValue("@maKhuyenMai", model.maKhuyenMai);
-                cmd.Parameters.AddWithValue("@mucGiamGia", model.mucGiamGia);
+                cmd.Parameters.AddWithValue("@mucGiamGia", mucGiamGia);
                 cmd.Parameters.AddWithValue("@donToiThieu", model.donToiThieu);
                 cmd.Parameters.AddWithValue("@soLuong", model.soLuong);
                 cmd.Parameters.AddWithValue("@thoiGianBatDau", model.thoiGianBatDau);
@@ -498,8 +520,9 @@ namespace ThueXeDapHoiAn.Areas.Client.Controllers
         [HttpPost]
         [Authorize(Roles = "Shop")]
         [Route("Client/Shop/SuaKhuyenMai")]
-        public async Task<IActionResult> SuaKhuyenMai(KhuyenMaiModel model)
+        public async Task<IActionResult> SuaKhuyenMai(KhuyenMaiModel_cuaHang model)
         {
+            var mucGiamGia = model.mucGiamGia / 100.0;
             var connectionString = _context.Database.GetConnectionString();
             using (var conn = new SqlConnection(connectionString))
             {
@@ -515,7 +538,7 @@ namespace ThueXeDapHoiAn.Areas.Client.Controllers
                 thoiGianKetThuc = @thoiGianKetThuc
             WHERE idKhuyenMai = @idKhuyenMai";
                 cmd.Parameters.AddWithValue("@maKhuyenMai", model.maKhuyenMai);
-                cmd.Parameters.AddWithValue("@mucGiamGia", model.mucGiamGia);
+                cmd.Parameters.AddWithValue("@mucGiamGia", mucGiamGia);
                 cmd.Parameters.AddWithValue("@donToiThieu", model.donToiThieu);
                 cmd.Parameters.AddWithValue("@soLuong", model.soLuong);
                 cmd.Parameters.AddWithValue("@thoiGianBatDau", model.thoiGianBatDau);
@@ -528,6 +551,8 @@ namespace ThueXeDapHoiAn.Areas.Client.Controllers
             TempData["SuccessMessage"] = "Cập nhật mã khuyến mãi thành công!";
             return RedirectToAction("DanhSachKhuyenMai");
         }
+
+
 
     }
 }

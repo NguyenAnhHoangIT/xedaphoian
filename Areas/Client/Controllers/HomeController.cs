@@ -85,14 +85,13 @@ namespace ThueXeDapHoiAn.Areas.Client.Controllers
                 var fileExtension = Path.GetExtension(hinhAnh.FileName);
                 fileName = Path.GetFileNameWithoutExtension(hinhAnh.FileName) + "-" + Guid.NewGuid() + fileExtension;
 
-                var path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images", fileName);
-
-                // Kiểm tra thư mục "images" có tồn tại không, nếu không thì tạo
-                var directory = Path.GetDirectoryName(path);
-                if (!Directory.Exists(directory))
+                // Đường dẫn lưu vào thư mục /images/cuahang
+                var folderPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images", "cuahang");
+                if (!Directory.Exists(folderPath))
                 {
-                    Directory.CreateDirectory(directory);
+                    Directory.CreateDirectory(folderPath);
                 }
+                var path = Path.Combine(folderPath, fileName);
 
                 using (var stream = new FileStream(path, FileMode.Create))
                 {
@@ -100,7 +99,7 @@ namespace ThueXeDapHoiAn.Areas.Client.Controllers
                 }
             }
 
-            var cuaHang = new CuaHangModel
+            var cuaHang = new CuaHangModel_cuaHang
             {
                 idTaiKhoan = userId,
                 tenCuaHang = form["tenCuaHang"],
@@ -108,8 +107,8 @@ namespace ThueXeDapHoiAn.Areas.Client.Controllers
                 soDienThoai = form["soDienThoai"],
                 gmail = form["gmail"],
                 gioiThieu = form["gioiThieu"],
-                hinhAnh = fileName != null ? "/images/" + fileName : null, // Đảm bảo đường dẫn là "/images/{fileName}"
-                trangThaiCuaHang = false // chưa duyệt
+                hinhAnh = fileName != null ? "/images/cuahang/" + fileName : null, // Đảm bảo đường dẫn là "/images/cuahang/{fileName}"
+                trangThaiCuaHang = "False" // chưa duyệt
             };
 
             _context.CuaHang.Add(cuaHang);
@@ -123,7 +122,8 @@ namespace ThueXeDapHoiAn.Areas.Client.Controllers
 
             await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(identity));
 
-            return RedirectToAction("ThongTinCuaHang", "CuaHang", new { area = "Client" });
+            TempData["ThongBao"] = "Cửa hàng của bạn đang chờ admin duyệt.";
+            return RedirectToAction("Index", "Home", new { area = "Client" });
         }
 
         [Authorize]
@@ -141,13 +141,13 @@ namespace ThueXeDapHoiAn.Areas.Client.Controllers
 
             if (cuaHang != null)
             {
-                if (!cuaHang.trangThaiCuaHang)
+                if (cuaHang.trangThaiCuaHang != "True")
                 {
-                    TempData["ThongBao"] = "  Cửa hàng của bạn đang chờ admin duyệt.";
+                    TempData["ThongBao"] = "Cửa hàng của bạn đang chờ admin duyệt.";
                     return RedirectToAction("Index", "Home", new { area = "Client" });
                 }
 
-                return RedirectToAction("ThongTinCuaHang", "CuaHang", new { area = "Client" });
+                return RedirectToAction("DanhSachXe", "CuaHang", new { area = "Client" });
             }
 
             return RedirectToAction("DangKyCuaHang", "Home", new { area = "Client" });

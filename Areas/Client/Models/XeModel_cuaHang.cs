@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace ThueXeDapHoiAn.Models
 {
     [Table("Xe")]
-    public class XeModel
+    public class XeModel_cuaHang
     {
         // Khóa chính
         [Key]
@@ -43,10 +43,10 @@ namespace ThueXeDapHoiAn.Models
 
         // Liên kết với bảng CuaHang
         [ForeignKey("idCuaHang")]
-        public virtual CuaHangModel CuaHang { get; set; }
+        public virtual CuaHangModel_cuaHang CuaHang { get; set; }
 
         // Liên kết với bảng LoaiXe
         [ForeignKey("idLoaiXe")]
-        public virtual LoaiXeModel LoaiXe { get; set; }
+        public virtual LoaiXeModel_cuaHang LoaiXe { get; set; }
     }
 }

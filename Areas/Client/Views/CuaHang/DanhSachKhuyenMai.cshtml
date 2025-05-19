@@ -1,4 +1,4 @@
-﻿@model IEnumerable<ThueXeDapHoiAn.Models.KhuyenMaiModel>
+﻿@model IEnumerable<ThueXeDapHoiAn.Models.KhuyenMaiModel_cuaHang>
 
 @{
     Layout = "~/Areas/Client/Views/Shared/_LayoutCuaHang.cshtml";
@@ -55,10 +55,11 @@
                 <tbody>
                     @foreach (var km in Model)
                     {
+                        var mucGiamGia = km.mucGiamGia *100;
                         <tr>
                             <td>@km.idKhuyenMai</td>
                             <td>@km.maKhuyenMai</td>
-                            <td>@km.mucGiamGia %</td>
+                            <td>@mucGiamGia %</td>
                             <td>@km.donToiThieu.ToString("N0")</td>
                             <td>@km.soLuong</td>
                             <td>@(km.trangThaiKhuyenMai ? "Kích hoạt" : "Vô hiệu")</td>
