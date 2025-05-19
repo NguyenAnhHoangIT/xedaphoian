@@ -1,0 +1,12 @@
+﻿@using ThueXeDapHoiAn.Areas.Client.Models
+@model IEnumerable<LoaiXeModel_Client>
+<aside class="filter-sidebar">
+    <h2>Lọc theo loại xe</h2>
+    @foreach (var item in Model)
+    {
+        <label>
+            <input type="checkbox" class="filter-checkbox" value="@item.IdLoaiXe" />
+            @item.TenLoaiXe
+        </label>
+    }
+</aside>

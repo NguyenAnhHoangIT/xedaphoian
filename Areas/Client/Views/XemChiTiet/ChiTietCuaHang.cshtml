@@ -1,115 +1,161 @@
-﻿@{
+﻿@using ThueXeDapHoiAn.Areas.Client.Models.ViewModels
+@model ChiTietCuaHangViewModel_Client
+@{
     Layout = "~/Areas/Client/Views/Shared/_Layout.cshtml";
 }
 
 @section Styles {
-    <link rel="stylesheet" href="~/css/LayoutClient.css" />
-    <link rel="stylesheet" href="~/css/ChiTietCuaHang.css" />
+<link rel="stylesheet" href="~/css/LayoutClient.css" />
+<link rel="stylesheet" href="~/css/ChiTietCuaHang.css" />
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
 
 }
-
+<style>
+    .stars i {
+        color: gold; /* hoặc #f5c518 */
+        font-size: 1.2rem;
+        margin-right: 2px;
+    }
+</style>
 <div class="banner">
     <div>
         <div style="display: flex;">
-            <h5 style="color: white;font-size: 20px;margin-left: 40px;">CỬA HÀNG GIANT</h5>
-            <div class="stars">
-                <img src="~/images/star2.png" alt="star" class="star-icon">
-                <img src="~/images/star2.png" alt="star" class="star-icon">
-                <img src="~/images/star2.png" alt="star" class="star-icon">
-                <img src="~/images/star2.png" alt="star" class="star-icon">
-                <img src="~/images/star2.png" alt="star" class="star-icon">
+            <h5 style="color: white;font-size: 20px;margin-left: 40px;">@Model.CuaHang.TenCuaHang</h5>
+            @{
+                var diem = Model.DiemTrungBinh ?? 0;
+                var soSaoDay = (int)Math.Floor(diem);
+                var coSaoLe = diem - soSaoDay >= 0.5;
+                var soSaoTrong = 5 - soSaoDay - (coSaoLe ? 1 : 0);
+            }
+        </div>
+        <div class="stars">
+            @{
+                double rating = Model.DiemTrungBinh ?? 0; // đề phòng null
+                int fullStars = (int)Math.Floor(rating);
+                bool hasHalfStar = (rating - fullStars) >= 0.25 && (rating - fullStars) < 0.75;
+                int emptyStars = 5 - fullStars - (hasHalfStar ? 1 : 0);
+            }
+
+            <div style="margin-left:40px" class="stars text-warning">
+                @for (int i = 0; i < fullStars; i++)
+                {
+                    <i class="fas fa-star"></i>  <!-- full star -->
+                }
+                @if (hasHalfStar)
+                {
+                    <i class="fas fa-star-half-alt"></i>  <!-- half star -->
+                }
+                @for (int i = 0; i < emptyStars; i++)
+                {
+                    <i class="far fa-star"></i>  <!-- empty star -->
+                }
             </div>
         </div>
         <p style="margin-left: 40px;" class="text">
-            GIANT – Đồng hành cùng bạn trên mọi hành trình!
-            Chúng tôi cam kết mang đến dịch vụ cho thuê xe đạp chất lượng cao với đội xe luôn được bảo dưỡng định kỳ, đảm bảo an toàn và thoải mái cho khách hàng.
+            @Model.CuaHang.GioiThieu
         </p>
         <div style="display: flex;gap:5px">
-            <p style="color: white;margin-left: 40px;">Địa chỉ: 180 Trần Cao Vân, Hội An</p>
-            <p style="color: white;margin-left: 30px;">SĐT liên hệ: 0123456789</p>
+            <p style="color: white;margin-left: 40px;">Địa chỉ: @Model.CuaHang.DiaChi</p>
+            <p style="color: white;margin-left: 30px;">SĐT liên hệ: @Model.CuaHang.SoDienThoai</p>
         </div>
     </div>
-    <img src="~/images/avatar-cuahang.jpg" alt="Banner">
+    <img src="~/images/CuaHang/@Model.CuaHang.HinhAnh" alt="Banner">
 </div>
 
 <main class="main-content">
-    <aside class="filter-sidebar">
-        <h2>Lọc theo loại xe</h2>
-        <label><input type="checkbox"> Xe địa hình</label>
-        <label><input type="checkbox"> Xe đua</label>
-        <label><input type="checkbox"> Xe trẻ em</label>
-    </aside>
+
+    <vc:loai-xe></vc:loai-xe>
 
     <section class="bike-list">
-        <a asp-area="Client" asp-controller="XemChiTiet" asp-action="ChiTietXe">
-            <div class="xe-card">
-                <img src="https://images.unsplash.com/photo-1485965120184-e220f721d03e?ixlib=rb-4.0.3&auto=format&fit=crop&q=80" alt="Xe đạp địa hình">
-                <div class="xe-card-body">
-                    <p class="tenXe">Xe đạp địa hình <span class="loai">(MTB)</span></p>
-                    <p class="moTa">Chinh phục mọi địa hình, mạnh mẽ và bền bỉ</p>
-                    <p class="gia">Giá thuê: <span>100.000 đ/chiếc</span></p>
+        @foreach (var xe in Model.DanhSachXe)
+        {
+            <a asp-area="Client" asp-controller="XemChiTiet" asp-action="ChiTietXe" asp-route-id="@xe.IdXe">
+                <div class="xe-card">
+                    <img src="~/images/@xe.HinhAnh" alt="Xe đạp đua">
+                    <div class="xe-card-body">
+                        <p class="tenXe">@xe.TenXe</p>
+                        <p class="moTa">@xe.GioiThieu</p>
+                        <p class="gia">Giá thuê chỉ từ:</p>
+                        <span>@xe.GiaThueTheoGio.ToString("N0") đ/chiếc</span>
+                    </div>
                 </div>
-            </div>
-        </a>
-
-
-        <a asp-area="Client" asp-controller="XemChiTiet" asp-action="ChiTietXe">
-            <div class="xe-card">
-                <img src="https://images.unsplash.com/photo-1485965120184-e220f721d03e?ixlib=rb-4.0.3&auto=format&fit=crop&q=80" alt="Xe đạp đua">
-                <div class="xe-card-body">
-                    <p class="tenXe">Xe đạp đua <span class="loai">(Hybrid-Bike)</span></p>
-                    <p class="moTa">Tốc độ cao, nhẹ nhàng, linh hoạt, hiệu suất cao</p>
-                    <p class="gia">Giá thuê: <span>150.000 đ/chiếc</span></p>
-                </div>
-            </div>
-        </a>
-
-        <a href="#">
-            <div class="xe-card">
-                <img src="https://images.unsplash.com/photo-1485965120184-e220f721d03e?ixlib=rb-4.0.3&auto=format&fit=crop&q=80" alt="Xe trẻ em">
-                <div class="xe-card-body">
-                    <p class="tenXe">Xe đạp trẻ em</p>
-                    <p class="moTa">An toàn, thiết kế dễ thương, phù hợp trẻ nhỏ</p>
-                    <p class="gia">Giá thuê: <span>70.000 đ/chiếc</span></p>
-                </div>
-            </div>
-        </a>
-
-        <a href="#">
-            <div class="xe-card">
-                <img src="https://images.unsplash.com/photo-1485965120184-e220f721d03e?ixlib=rb-4.0.3&auto=format&fit=crop&q=80" alt="Xe đạp địa hình">
-                <div class="xe-card-body">
-                    <p class="tenXe">Xe đạp địa hình <span class="loai">(MTB)</span></p>
-                    <p class="moTa">Chinh phục mọi địa hình, mạnh mẽ và bền bỉ</p>
-                    <p class="gia">Giá thuê: <span>100.000 đ/chiếc</span></p>
-                </div>
-            </div>
-        </a>
-
-
-        <a href="#">
-            <div class="xe-card">
-                <img src="https://images.unsplash.com/photo-1485965120184-e220f721d03e?ixlib=rb-4.0.3&auto=format&fit=crop&q=80" alt="Xe đạp đua">
-                <div class="xe-card-body">
-                    <p class="tenXe">Xe đạp đua <span class="loai">(Hybrid-Bike)</span></p>
-                    <p class="moTa">Tốc độ cao, nhẹ nhàng, linh hoạt, hiệu suất cao</p>
-                    <p class="gia">Giá thuê: <span>150.000 đ/chiếc</span></p>
-                </div>
-            </div>
-        </a>
-
-        <a href="#">
-            <div class="xe-card">
-                <img src="https://images.unsplash.com/photo-1485965120184-e220f721d03e?ixlib=rb-4.0.3&auto=format&fit=crop&q=80" alt="Xe trẻ em">
-                <div class="xe-card-body">
-                    <p class="tenXe">Xe đạp trẻ em</p>
-                    <p class="moTa">An toàn, thiết kế dễ thương, phù hợp trẻ nhỏ</p>
-                    <p class="gia">Giá thuê: <span>70.000 đ/chiếc</span></p>
-                </div>
-            </div>
-        </a>
+            </a>
+        }
 
     </section>
 </main>
+@section Scripts {
+    <script>
+        const idCuaHang = new URLSearchParams(window.location.search).get("id");
+
+        // Hàm dựng HTML của từng xe
+        function createXeCard(xe) {
+            return `
+                <a href="/Client/ChiTietXe?id=${xe.idXe}">
+                    <div class="xe-card">
+                        <img src="/images/${xe.hinhAnh}" alt="${xe.tenXe}">
+                        <div class="xe-card-body">
+                            <p class="tenXe">${xe.tenXe}</p>
+                            <p class="moTa">${xe.gioiThieu}</p>
+                            <p class="gia">Giá thuê chỉ từ:</p>
+                            <span>${Number(xe.giaThueTheoGio).toLocaleString()} đ/chiếc</span>
+                        </div>
+                    </div>
+                </a>
+            `;
+        }
+
+        async function fetchXeTheoLoai() {
+            const checkedValues = Array.from(document.querySelectorAll(".filter-checkbox:checked"))
+                .map(cb => cb.value);
+
+            const url = new URL("/Client/XemChiTiet/GetXeTheoLoai", window.location.origin);
+            if (idCuaHang) {
+                url.searchParams.append("idCuaHang", idCuaHang);
+            }
+
+            checkedValues.forEach(id => url.searchParams.append("idLoaiXe", id));
+
+            try {
+                const res = await fetch(url.toString());
+                if (!res.ok) throw new Error("Lỗi mạng: " + res.status);
+
+                const data = await res.json();
+                const container = document.querySelector(".bike-list");
+
+                if (!container) {
+                    console.error("Không tìm thấy phần tử .bike-list");
+                    return;
+                }
+
+                container.innerHTML = "";
+
+                if (data.length === 0) {
+                    container.innerHTML = "<p>Không có xe phù hợp.</p>";
+                    return;
+                }
+
+                container.innerHTML = data.map(createXeCard).join("");
+            } catch (error) {
+                console.error("Lỗi khi lấy dữ liệu xe:", error);
+                const container = document.querySelector(".bike-list");
+                if (container) {
+                    container.innerHTML = "<p>Đã xảy ra lỗi khi tải dữ liệu xe. Vui lòng thử lại sau.</p>";
+                }
+            }
+        }
+
+        // Gắn sự kiện khi checkbox thay đổi
+        document.addEventListener("DOMContentLoaded", () => {
+            document.querySelectorAll(".filter-checkbox").forEach(cb => {
+                cb.addEventListener("change", fetchXeTheoLoai);
+            });
+
+            fetchXeTheoLoai(); // Tải danh sách lần đầu khi trang được load
+        });
+    </script>
+
+
+}
 
 
