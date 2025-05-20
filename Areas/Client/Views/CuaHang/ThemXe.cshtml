@@ -1,4 +1,4 @@
-﻿@model ThueXeDapHoiAn.Models.XeModel_cuaHang
+﻿@model ThueXeDapHoiAn.Areas.Client.Models.XeModel_Client
 
 @{
     Layout = "~/Areas/Client/Views/Shared/_LayoutCuaHang.cshtml";
@@ -42,7 +42,7 @@
                         {
                             foreach (var loaiXe in ViewBag.LoaiXeList)
                             {
-                                <option value="@loaiXe.idLoaiXe">@loaiXe.tenLoaiXe</option>
+                                <option value="@loaiXe.IdLoaiXe">@loaiXe.TenLoaiXe</option>
                             }
                         }
                     </select>

@@ -27,6 +27,7 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
 
 builder.Services.AddDbContext<AppDbContextClient>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("Default")));
+
 // Register DatabaseHelper (to interact with the custom `TaiKhoan` table)
 builder.Services.AddScoped<DatabaseHelperClient>();
 builder.Services.AddScoped<DatabaseHelper>();
@@ -60,10 +61,6 @@ app.UseRouting();
 // Add authentication/authorization middleware if required
 app.UseAuthentication();
 app.UseAuthorization();
-
-app.MapControllerRoute(
-    name: "Areas",
-    pattern: "{area:exists}/{controller=Home}/{action=Index}/{id?}");
 
 app.MapControllerRoute(
     name: "default",

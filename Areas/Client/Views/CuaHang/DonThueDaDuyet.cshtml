@@ -1,4 +1,4 @@
-﻿@model IEnumerable<ThueXeDapHoiAn.Models.DonThueModel_cuaHang>
+﻿@model IEnumerable<ThueXeDapHoiAn.Areas.Client.Models.DonThueModel_Client>
 @{
     Layout = "~/Areas/Client/Views/Shared/_LayoutCuaHang.cshtml";
 }
@@ -45,13 +45,13 @@
                 @foreach (var don in Model)
                 {
                     var chiTietList = don.ChiTietDonThue;
-                    var thoiGianThue = (don.ngayTraXe - don.ngayNhanXe).TotalHours;
+                    var thoiGianThue = (don.NgayTraXe - don.NgayNhanXe).TotalHours;
                     bool tinhTheoNgay = thoiGianThue > 23;
-                    var soNgay = (int)Math.Ceiling((don.ngayTraXe - don.ngayNhanXe).TotalDays);
+                    var soNgay = (int)Math.Ceiling((don.NgayTraXe - don.NgayNhanXe).TotalDays);
                     var soGio = (int)Math.Ceiling(thoiGianThue);
 
                     var xeInfo = string.Join("<br/>", chiTietList.Select(ct =>
-                    $"{ct.Xe.tenXe} x{ct.soLuong}"
+                    $"{ct.Xe.TenXe} x{ct.SoLuong}"
                     ));
 
                     var soGioNgay = tinhTheoNgay ? soNgay + " ngày" : soGio + " giờ";
@@ -61,17 +61,17 @@
                     foreach (var ct in chiTietList)
                     {
                         if (tinhTheoNgay)
-                            tongTien += (ct.giaThueTheoNgay ?? 0) * ct.soLuong * soNgay;
+                            tongTien += (ct.GiaThueTheoNgay ?? 0) * ct.SoLuong * soNgay;
                         else
-                            tongTien += (ct.giaThueTheoGio ?? 0) * ct.soLuong * soGio;
+                            tongTien += (ct.GiaThueTheoGio ?? 0) * ct.SoLuong * soGio;
                     }
 
                     <tr>
-                        <td>@don.idDonThue</td>
-                        <td>@don.TaiKhoan.ten</td>
+                        <td>@don.IdDonThue</td>
+                        <td>@don.User.Ten</td>
                         <td>@Html.Raw(xeInfo)</td>
                         <td>@soGioNgay</td>
-                        <td>@don.ngayNhanXe.ToString("HH\\h dd/MM/yyyy")</td>
+                        <td>@don.NgayNhanXe.ToString("HH\\h dd/MM/yyyy")</td>
                         <td>@string.Format("{0:N0} VND", @tongTien)</td>
                         <td>Đã duyệt <i class="fa-solid fa-check-circle" style="color: green;"></i></td>
                     </tr>

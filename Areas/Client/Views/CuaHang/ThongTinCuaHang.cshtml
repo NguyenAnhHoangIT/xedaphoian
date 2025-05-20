@@ -1,4 +1,4 @@
-﻿@model ThueXeDapHoiAn.Models.CuaHangModel_cuaHang
+﻿@model ThueXeDapHoiAn.Areas.Client.Models.CuaHangModel_Client
 
 @{
     Layout = "~/Areas/Client/Views/Shared/_LayoutCuaHang.cshtml";
@@ -36,40 +36,40 @@
             <form asp-area="Client" asp-controller="CuaHang" asp-action="CapNhatThongTin" method="post" enctype="multipart/form-data" class="form-grid">
                 <div class="profile-header" style="grid-column: span 2;">
                     <div class="avatar-upload" onclick="document.getElementById('avatarInput').click();">
-                        <img src="~/images/cuahang/@Model.hinhAnh" alt="Avatar" class="avatar" id="avatarPreview">
+                        <img src="~/images/cuahang/@Model.HinhAnh" alt="Avatar" class="avatar" id="avatarPreview">
                         <span class="edit-icon"><i class="fa fa-camera"></i></span>
                         <input type="file" id="avatarInput" name="hinhAnh" accept="image/*" onchange="previewAvatar(event)">
                     </div>
                     <div class="profile-info">
-                        <h3>@Model.tenCuaHang</h3>
-                        <p>@Model.gmail</p>
+                        <h3>@Model.TenCuaHang</h3>
+                        <p>@Model.Gmail</p>
                     </div>
                 </div>
 
                 <div class="form-group">
                     <label>Tên cửa hàng</label>
-                    <input type="text" name="tenCuaHang" placeholder="Nhập tên cửa hàng" value="@Model.tenCuaHang" />
+                    <input type="text" name="tenCuaHang" placeholder="Nhập tên cửa hàng" value="@Model.TenCuaHang" />
                 </div>
 
                 <div class="form-group">
                     <label>Địa chỉ</label>
-                    <input type="text" name="diaChi" placeholder="Nhập địa chỉ" value="@Model.diaChi" />
+                    <input type="text" name="diaChi" placeholder="Nhập địa chỉ" value="@Model.DiaChi" />
                 </div>
 
                 <div class="form-group">
                     <label>Số điện thoại</label>
-                    <input type="text" name="soDienThoai" placeholder="Nhập số điện thoại" value="@Model.soDienThoai" />
+                    <input type="text" name="soDienThoai" placeholder="Nhập số điện thoại" value="@Model.SoDienThoai" />
                 </div>
 
                 <div class="form-group">
                     <label>Liên hệ</label>
-                    <input type="email" name="gmail" placeholder="Nhập email liên hệ" value="@Model.gmail" />
+                    <input type="email" name="gmail" placeholder="Nhập email liên hệ" value="@Model.Gmail" />
                 </div>
 
                 <div class="form-group" style="grid-column: span 2;">
                     <label>Giới thiệu</label>
                     <textarea name="gioiThieu" rows="4"
-                              style="padding: 10px 14px; border: 1px solid #e2e8f0; border-radius: 8px; background: #f9fafb; font-size: 15px; outline: none; resize: none;">@Model.gioiThieu</textarea>
+                              style="padding: 10px 14px; border: 1px solid #e2e8f0; border-radius: 8px; background: #f9fafb; font-size: 15px; outline: none; resize: none;">@Model.GioiThieu</textarea>
                 </div>
 
                 <div class="form-buttons">

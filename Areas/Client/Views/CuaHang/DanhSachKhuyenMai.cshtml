@@ -1,4 +1,4 @@
-﻿@model IEnumerable<ThueXeDapHoiAn.Models.KhuyenMaiModel_cuaHang>
+﻿@model IEnumerable<ThueXeDapHoiAn.Areas.Client.Models.KhuyenMaiModel_Client>
 
 @{
     Layout = "~/Areas/Client/Views/Shared/_LayoutCuaHang.cshtml";
@@ -55,19 +55,19 @@
                 <tbody>
                     @foreach (var km in Model)
                     {
-                        var mucGiamGia = km.mucGiamGia *100;
+                        var mucGiamGia = km.MucGiamGia *100;
                         <tr>
-                            <td>@km.idKhuyenMai</td>
-                            <td>@km.maKhuyenMai</td>
+                            <td>@km.IdKhuyenMai</td>
+                            <td>@km.MaKhuyenMai</td>
                             <td>@mucGiamGia %</td>
-                            <td>@km.donToiThieu.ToString("N0")</td>
-                            <td>@km.soLuong</td>
-                            <td>@(km.trangThaiKhuyenMai ? "Kích hoạt" : "Vô hiệu")</td>
+                            <td>@km.DonToiThieu.ToString("N0")</td>
+                            <td>@km.SoLuong</td>
+                            <td>@(km.TrangThaiKhuyenMai ? "Kích hoạt" : "Vô hiệu")</td>
                             <td>
-                                <a href="@Url.Action("SuaKhuyenMai", "CuaHang", new { area = "Client", idKhuyenMai = km.idKhuyenMai })">
+                                <a href="@Url.Action("SuaKhuyenMai", "CuaHang", new { area = "Client", idKhuyenMai = km.IdKhuyenMai })">
                                     <i class="fa-solid fa-pen"></i>
                                 </a>
-                                <a href="@Url.Action("XoaKhuyenMai", "CuaHang", new { area = "Client", id = km.idKhuyenMai })" onclick="return confirm('Bạn có chắc chắn muốn xóa khuyến mãi này?')">
+                                <a href="@Url.Action("XoaKhuyenMai", "CuaHang", new { area = "Client", id = km.IdKhuyenMai })" onclick="return confirm('Bạn có chắc chắn muốn xóa khuyến mãi này?')">
                                     <i class="fa-solid fa-trash"></i>
                                 </a>
                             </td>

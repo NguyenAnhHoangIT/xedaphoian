@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ThueXeDapHoiAn.Areas.Client.Models;
+using ThueXeDapHoiAn.Data;
 
 namespace ThueXeDapHoiAn.Areas.Client.ViewComponents
 {

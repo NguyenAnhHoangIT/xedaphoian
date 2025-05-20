@@ -46,7 +46,7 @@ namespace ThueXeDapHoiAn.Controllers
 
                         if (role == "Client")
                         {
-                            var cuaHangStatus = _databaseHelper.GetTrangThaiCuaHang(int.Parse(user.Id));
+                            var cuaHangStatus = _databaseHelper.GetTrangThaiCuaHang(int.Parse(user.Id.ToString()));
                             if (cuaHangStatus == "True") // Chỉ khi cửa hàng đã được duyệt
                             {
                                 role = "Shop";
@@ -61,7 +61,7 @@ namespace ThueXeDapHoiAn.Controllers
                     new Claim("Avatar", user.HinhAnh ?? "avatar-default.jpg"),
                     new Claim("FullName", $"{user.Ho} {user.Ten}"),
                     new Claim("HoTen", $"{user.Ho} {user.Ten}"),
-                    new Claim("idTaiKhoan", user.Id.ToString())
+                    new Claim("idTaiKhoan", user.Id.ToString()),
                     new Claim(ClaimTypes.Role, role) // Đã cập nhật thành "Shop" nếu cần
                 };
 

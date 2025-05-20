@@ -9,6 +9,7 @@ using ThueXeDapHoiAn.Data;
 using ThueXeDapHoiAn.Models;
 using Microsoft.EntityFrameworkCore;
 using ThueXeDapHoiAn.Areas.Client.Models.ViewModels;
+using ThueXeDapHoiAn.Areas.Client.Models;
 
 namespace ThueXeDapHoiAn.Areas.Client.Controllers
 {
@@ -111,7 +112,7 @@ namespace ThueXeDapHoiAn.Areas.Client.Controllers
             int userId = int.Parse(userIdStr);
 
             var existingCuaHang = await _context.CuaHang
-                .FirstOrDefaultAsync(c => c.idTaiKhoan == userId);
+                .FirstOrDefaultAsync(c => c.IdTaiKhoan == userId);
 
             if (existingCuaHang != null)
             {
@@ -135,7 +136,7 @@ namespace ThueXeDapHoiAn.Areas.Client.Controllers
 
             // Kiểm tra xem user đã có cửa hàng chưa
             var existingCuaHang = await _context.CuaHang
-                .FirstOrDefaultAsync(c => c.idTaiKhoan == userId);
+                .FirstOrDefaultAsync(c => c.IdTaiKhoan == userId);
 
             if (existingCuaHang != null)
             {
@@ -163,16 +164,16 @@ namespace ThueXeDapHoiAn.Areas.Client.Controllers
                 }
             }
 
-            var cuaHang = new CuaHangModel_cuaHang
+            var cuaHang = new CuaHangModel_Client
             {
-                idTaiKhoan = userId,
-                tenCuaHang = form["tenCuaHang"],
-                diaChi = form["diaChi"],
-                soDienThoai = form["soDienThoai"],
-                gmail = form["gmail"],
-                gioiThieu = form["gioiThieu"],
-                hinhAnh = fileName != null ? "/images/cuahang/" + fileName : null, // Đảm bảo đường dẫn là "/images/cuahang/{fileName}"
-                trangThaiCuaHang = "False" // chưa duyệt
+                IdTaiKhoan = userId,
+                TenCuaHang = form["tenCuaHang"],
+                DiaChi = form["diaChi"],
+                SoDienThoai = form["soDienThoai"],
+                Gmail = form["gmail"],
+                GioiThieu = form["gioiThieu"],
+                HinhAnh = fileName != null ? "/images/cuahang/" + fileName : null, // Đảm bảo đường dẫn là "/images/cuahang/{fileName}"
+                TrangThaiCuaHang = "False" // chưa duyệt
             };
 
             _context.CuaHang.Add(cuaHang);
@@ -201,11 +202,11 @@ namespace ThueXeDapHoiAn.Areas.Client.Controllers
 
             int userId = int.Parse(userIdStr);
 
-            var cuaHang = await _context.CuaHang.FirstOrDefaultAsync(c => c.idTaiKhoan == userId);
+            var cuaHang = await _context.CuaHang.FirstOrDefaultAsync(c => c.IdTaiKhoan == userId);
 
             if (cuaHang != null)
             {
-                if (cuaHang.trangThaiCuaHang != "True")
+                if (cuaHang.TrangThaiCuaHang != "True")
                 {
                     TempData["ThongBao"] = "Cửa hàng của bạn đang chờ admin duyệt.";
                     return RedirectToAction("Index", "Home", new { area = "Client" });

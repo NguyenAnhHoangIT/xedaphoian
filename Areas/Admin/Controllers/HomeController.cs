@@ -72,7 +72,6 @@ namespace ThueXeDapHoiAn.Areas.Admin.Controllers
 
 
         [Route("Admin/DangXuat")]
-        [Route("Admin/Home/dangxuatAdmin")]
         public async Task<IActionResult> DangXuat()
         {
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);

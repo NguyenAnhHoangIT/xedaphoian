@@ -8,6 +8,7 @@ using ThueXeDapHoiAn.Data;
 using ThueXeDapHoiAn.Models;
 using Microsoft.Data.SqlClient;
 using Microsoft.AspNetCore.Mvc.Filters;
+using ThueXeDapHoiAn.Areas.Client.Models;
 
 namespace ThueXeDapHoiAn.Areas.Client.Controllers
 {
@@ -31,7 +32,7 @@ namespace ThueXeDapHoiAn.Areas.Client.Controllers
             int userId = int.Parse(userIdStr);
 
             var cuaHang = await _context.CuaHang
-                .FirstOrDefaultAsync(c => c.idTaiKhoan == userId);
+                .FirstOrDefaultAsync(c => c.IdTaiKhoan == userId);
 
             if (cuaHang == null)
             {
@@ -47,13 +48,13 @@ namespace ThueXeDapHoiAn.Areas.Client.Controllers
             if (!string.IsNullOrEmpty(userIdStr))
             {
                 int userId = int.Parse(userIdStr);
-                var cuaHang = _context.CuaHang.FirstOrDefault(c => c.idTaiKhoan == userId);
+                var cuaHang = _context.CuaHang.FirstOrDefault(c => c.IdTaiKhoan == userId);
                 if (cuaHang != null)
                 {
-                    ViewBag.TenCuaHang = cuaHang.tenCuaHang;
-                    ViewBag.AvatarCuaHang = string.IsNullOrEmpty(cuaHang.hinhAnh)
+                    ViewBag.TenCuaHang = cuaHang.TenCuaHang;
+                    ViewBag.AvatarCuaHang = string.IsNullOrEmpty(cuaHang.HinhAnh)
                         ? "/images/avatar-default.jpg"
-                        : (cuaHang.hinhAnh.StartsWith("/images/") ? cuaHang.hinhAnh : "/images/cuahang/" + cuaHang.hinhAnh);
+                        : (cuaHang.HinhAnh.StartsWith("/images/") ? cuaHang.HinhAnh : "/images/cuahang/" + cuaHang.HinhAnh);
                 }
             }
             base.OnActionExecuting(context);
@@ -62,18 +63,18 @@ namespace ThueXeDapHoiAn.Areas.Client.Controllers
         [HttpPost]
         [Authorize(Roles = "Shop")]
         [Route("Client/Shop/ThongTinCuaHang")]
-        public async Task<IActionResult> CapNhatThongTin(CuaHangModel_cuaHang model, IFormFile hinhAnh)
+        public async Task<IActionResult> CapNhatThongTin(CuaHangModel_Client model, IFormFile hinhAnh)
         {
             var userIdStr = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (string.IsNullOrEmpty(userIdStr)) return Unauthorized();
 
             int userId = int.Parse(userIdStr);
 
-            var cuaHang = await _context.CuaHang.FirstOrDefaultAsync(c => c.idTaiKhoan == userId);
+            var cuaHang = await _context.CuaHang.FirstOrDefaultAsync(c => c.IdTaiKhoan == userId);
             if (cuaHang == null) return NotFound();
 
             // Xử lý ảnh đại diện
-            string fileName = cuaHang.hinhAnh;
+            string fileName = cuaHang.HinhAnh;
             if (hinhAnh != null && hinhAnh.Length > 0)
             {
                 fileName = Guid.NewGuid().ToString() + Path.GetExtension(hinhAnh.FileName);
@@ -85,12 +86,12 @@ namespace ThueXeDapHoiAn.Areas.Client.Controllers
             }
 
             // Cập nhật các thông tin
-            cuaHang.tenCuaHang = model.tenCuaHang;
-            cuaHang.diaChi = model.diaChi;
-            cuaHang.soDienThoai = model.soDienThoai;
-            cuaHang.gmail = model.gmail;
-            cuaHang.gioiThieu = model.gioiThieu;
-            cuaHang.hinhAnh = fileName;
+            cuaHang.TenCuaHang = model.TenCuaHang;
+            cuaHang.DiaChi = model.DiaChi;
+            cuaHang.SoDienThoai = model.SoDienThoai;
+            cuaHang.Gmail = model.Gmail;
+            cuaHang.GioiThieu = model.GioiThieu;
+            cuaHang.HinhAnh = fileName;
 
             _context.CuaHang.Update(cuaHang);
             await _context.SaveChangesAsync();
@@ -110,13 +111,13 @@ namespace ThueXeDapHoiAn.Areas.Client.Controllers
             int userId = int.Parse(userIdStr);
 
             // Lấy cửa hàng tương ứng với người dùng
-            var cuaHang = await _context.CuaHang.FirstOrDefaultAsync(c => c.idTaiKhoan == userId);
+            var cuaHang = await _context.CuaHang.FirstOrDefaultAsync(c => c.IdTaiKhoan == userId);
             if (cuaHang == null) return NotFound();
 
             // Lấy danh sách xe của cửa hàng này
             var danhSachXe = await _context.Xe
                 .Include(x => x.LoaiXe) // Bao gồm thông tin loại xe (LoạiXe)
-                .Where(x => x.idCuaHang == cuaHang.idCuaHang) // Chỉ lấy xe của cửa hàng hiện tại
+                .Where(x => x.IdCuaHang == cuaHang.IdCuaHang) // Chỉ lấy xe của cửa hàng hiện tại
                 .ToListAsync();
 
             // Trả về view và truyền danh sách xe vào
@@ -131,12 +132,12 @@ namespace ThueXeDapHoiAn.Areas.Client.Controllers
             if (string.IsNullOrEmpty(userIdStr)) return Unauthorized();
             int userId = int.Parse(userIdStr);
 
-            var cuaHang = await _context.CuaHang.FirstOrDefaultAsync(c => c.idTaiKhoan == userId);
+            var cuaHang = await _context.CuaHang.FirstOrDefaultAsync(c => c.IdTaiKhoan == userId);
             if (cuaHang == null) return NotFound();
 
             // Lọc loại xe theo idCuaHang của shop hiện tại
             ViewBag.LoaiXeList = await _context.LoaiXe
-                .Where(lx => lx.idCuaHang == cuaHang.idCuaHang)
+                .Where(lx => lx.IdCuaHang == cuaHang.IdCuaHang)
                 .ToListAsync();
 
             return View();
@@ -145,13 +146,13 @@ namespace ThueXeDapHoiAn.Areas.Client.Controllers
         [HttpPost]
         [Authorize(Roles = "Shop")]
         [Route("Client/Shop/ThemXe")]
-        public async Task<IActionResult> ThemXe(XeModel_cuaHang model, IFormFile hinhAnh)
+        public async Task<IActionResult> ThemXe(XeModel_Client model, IFormFile hinhAnh)
         {
             var userIdStr = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (string.IsNullOrEmpty(userIdStr)) return Unauthorized();
             int userId = int.Parse(userIdStr);
 
-            var cuaHang = await _context.CuaHang.FirstOrDefaultAsync(c => c.idTaiKhoan == userId);
+            var cuaHang = await _context.CuaHang.FirstOrDefaultAsync(c => c.IdTaiKhoan == userId);
             if (cuaHang == null) return NotFound();
 
             string fileName = null;
@@ -167,17 +168,17 @@ namespace ThueXeDapHoiAn.Areas.Client.Controllers
                 }
             }
 
-            var xe = new XeModel_cuaHang
+            var xe = new XeModel_Client
             {
-                tenXe = model.tenXe,
-                idLoaiXe = model.idLoaiXe,
-                soLuong = model.soLuong,
-                giaThueTheoGio = model.giaThueTheoGio,
-                giaThueTheoNgay = model.giaThueTheoNgay,
-                gioiThieu = model.gioiThieu,
-                hinhAnh = fileName,
-                idCuaHang = cuaHang.idCuaHang,
-                trangThaiLoaiXe = true
+                TenXe = model.TenXe,
+                IdLoaiXe = model.IdLoaiXe,
+                SoLuong = model.SoLuong,
+                GiaThueTheoGio = model.GiaThueTheoGio,
+                GiaThueTheoNgay = model.GiaThueTheoNgay,
+                GioiThieu = model.GioiThieu,
+                HinhAnh = fileName,
+                IdCuaHang = cuaHang.IdCuaHang,
+                TrangThaiLoaiXe = true
             };
 
             _context.Xe.Add(xe);
@@ -192,14 +193,14 @@ namespace ThueXeDapHoiAn.Areas.Client.Controllers
         public async Task<IActionResult> XoaXe(int id)
         {
             // Kiểm tra xe có nằm trong ChiTietDonThue không
-            var exists = await _context.ChiTietDonThue.AnyAsync(ct => ct.idXe == id);
+            var exists = await _context.ChiTietDonThue.AnyAsync(ct => ct.IdXe == id);
             if (exists)
             {
                 TempData["ErrorMessage"] = "Không thể xóa xe này vì đã hoặc đang có đơn thuê liên quan!";
                 return RedirectToAction("DanhSachXe");
             }
 
-            var xe = await _context.Xe.FirstOrDefaultAsync(x => x.idXe == id);
+            var xe = await _context.Xe.FirstOrDefaultAsync(x => x.IdXe == id);
             if (xe == null)
             {
                 TempData["ErrorMessage"] = "Không tìm thấy xe để xóa!";
@@ -218,15 +219,15 @@ namespace ThueXeDapHoiAn.Areas.Client.Controllers
         [Route("Client/Shop/SuaXe")]
         public async Task<IActionResult> SuaXe(int id)
         {
-            var xe = await _context.Xe.Include(x => x.LoaiXe).FirstOrDefaultAsync(x => x.idXe == id);
+            var xe = await _context.Xe.Include(x => x.LoaiXe).FirstOrDefaultAsync(x => x.IdXe == id);
             if (xe == null) return NotFound();
 
             // Lấy idCuaHang từ xe hoặc từ user đăng nhập
-            int idCuaHang = xe.idCuaHang;
+            int idCuaHang = xe.IdCuaHang;
 
             // Lọc loại xe theo idCuaHang của shop hiện tại
             ViewBag.LoaiXeList = await _context.LoaiXe
-                .Where(lx => lx.idCuaHang == idCuaHang)
+                .Where(lx => lx.IdCuaHang == idCuaHang)
                 .ToListAsync();
 
             return View(xe);
@@ -236,7 +237,7 @@ namespace ThueXeDapHoiAn.Areas.Client.Controllers
         [HttpPost]
         [Authorize(Roles = "Shop")]
         [Route("Client/Shop/SuaXe")]
-        public async Task<IActionResult> SuaXe(XeModel_cuaHang model, IFormFile hinhAnh)
+        public async Task<IActionResult> SuaXe(XeModel_Client model, IFormFile hinhAnh)
         {
             // Lấy tên ảnh cũ từ database
             string fileName = null;
@@ -246,7 +247,7 @@ namespace ThueXeDapHoiAn.Areas.Client.Controllers
                 await conn.OpenAsync();
                 var getCmd = conn.CreateCommand();
                 getCmd.CommandText = "SELECT hinhAnh FROM Xe WHERE idXe = @idXe";
-                getCmd.Parameters.AddWithValue("@idXe", model.idXe);
+                getCmd.Parameters.AddWithValue("@idXe", model.IdXe);
                 var result = await getCmd.ExecuteScalarAsync();
                 fileName = result != DBNull.Value ? (string)result : null;
             }
@@ -277,14 +278,14 @@ namespace ThueXeDapHoiAn.Areas.Client.Controllers
                 gioiThieu = @gioiThieu,
                 hinhAnh = @hinhAnh
             WHERE idXe = @idXe";
-                cmd.Parameters.AddWithValue("@tenXe", model.tenXe);
-                cmd.Parameters.AddWithValue("@idLoaiXe", model.idLoaiXe);
-                cmd.Parameters.AddWithValue("@soLuong", model.soLuong);
-                cmd.Parameters.AddWithValue("@giaThueTheoGio", model.giaThueTheoGio);
-                cmd.Parameters.AddWithValue("@giaThueTheoNgay", model.giaThueTheoNgay);
-                cmd.Parameters.AddWithValue("@gioiThieu", (object?)model.gioiThieu ?? DBNull.Value);
+                cmd.Parameters.AddWithValue("@tenXe", model.TenXe);
+                cmd.Parameters.AddWithValue("@idLoaiXe", model.IdLoaiXe);
+                cmd.Parameters.AddWithValue("@soLuong", model.SoLuong);
+                cmd.Parameters.AddWithValue("@giaThueTheoGio", model.GiaThueTheoGio);
+                cmd.Parameters.AddWithValue("@giaThueTheoNgay", model.GiaThueTheoNgay);
+                cmd.Parameters.AddWithValue("@gioiThieu", (object?)model.GioiThieu ?? DBNull.Value);
                 cmd.Parameters.AddWithValue("@hinhAnh", (object?)fileName ?? DBNull.Value);
-                cmd.Parameters.AddWithValue("@idXe", model.idXe);
+                cmd.Parameters.AddWithValue("@idXe", model.IdXe);
                 await cmd.ExecuteNonQueryAsync();
             }
 
@@ -300,7 +301,7 @@ namespace ThueXeDapHoiAn.Areas.Client.Controllers
             if (string.IsNullOrEmpty(userIdStr)) return Unauthorized();
             int userId = int.Parse(userIdStr);
 
-            var cuaHang = await _context.CuaHang.FirstOrDefaultAsync(c => c.idTaiKhoan == userId);
+            var cuaHang = await _context.CuaHang.FirstOrDefaultAsync(c => c.IdTaiKhoan == userId);
             if (cuaHang == null) return NotFound();
 
             // Truy vấn để lấy đơn thuê và chi tiết đơn thuê bao gồm thông tin xe
@@ -308,9 +309,9 @@ namespace ThueXeDapHoiAn.Areas.Client.Controllers
                 .Include(d => d.ChiTietDonThue)  // Bao gồm ChiTietDonThue
                     .ThenInclude(ct => ct.Xe)   // Bao gồm Xe
                     .ThenInclude(x => x.LoaiXe) // Bao gồm LoaiXe
-                .Include(d => d.TaiKhoan)   // Bao gồm KhachHang
+                .Include(d => d.User)   // Bao gồm KhachHang
                 .Include(d => d.KhuyenMai)
-                .Where(d => d.trangThaiDon == "Chờ duyệt" && d.idCuaHang == cuaHang.idCuaHang)
+                .Where(d => d.TrangThaiDon == "Chờ duyệt" && d.IdCuaHang == cuaHang.IdCuaHang)
                 .ToListAsync();
 
             return View(donThueChoDuyet); // Trả về View với danh sách đơn thuê
@@ -359,15 +360,15 @@ namespace ThueXeDapHoiAn.Areas.Client.Controllers
             if (string.IsNullOrEmpty(userIdStr)) return Unauthorized();
             int userId = int.Parse(userIdStr);
 
-            var cuaHang = await _context.CuaHang.FirstOrDefaultAsync(c => c.idTaiKhoan == userId);
+            var cuaHang = await _context.CuaHang.FirstOrDefaultAsync(c => c.IdTaiKhoan == userId);
             if (cuaHang == null) return NotFound();
 
             var donThueDaDuyet = await _context.DonThue
                 .Include(d => d.ChiTietDonThue)
                     .ThenInclude(ct => ct.Xe)
                         .ThenInclude(x => x.LoaiXe)
-                .Include(d => d.TaiKhoan)
-                .Where(d => d.trangThaiDon == "Đã duyệt" && d.idCuaHang == cuaHang.idCuaHang)
+                .Include(d => d.User)
+                .Where(d => d.TrangThaiDon == "Đã duyệt" && d.IdCuaHang == cuaHang.IdCuaHang)
                 .ToListAsync();
 
             return View(donThueDaDuyet);
@@ -381,15 +382,15 @@ namespace ThueXeDapHoiAn.Areas.Client.Controllers
             if (string.IsNullOrEmpty(userIdStr)) return Unauthorized();
             int userId = int.Parse(userIdStr);
 
-            var cuaHang = await _context.CuaHang.FirstOrDefaultAsync(c => c.idTaiKhoan == userId);
+            var cuaHang = await _context.CuaHang.FirstOrDefaultAsync(c => c.IdTaiKhoan == userId);
             if (cuaHang == null) return NotFound();
 
             var donThueDaHuy = await _context.DonThue
                 .Include(d => d.ChiTietDonThue)
                     .ThenInclude(ct => ct.Xe)
                         .ThenInclude(x => x.LoaiXe)
-                .Include(d => d.TaiKhoan)
-                .Where(d => d.trangThaiDon == "Đã huỷ" && d.idCuaHang == cuaHang.idCuaHang)
+                .Include(d => d.User)
+                .Where(d => d.TrangThaiDon == "Đã huỷ" && d.IdCuaHang == cuaHang.IdCuaHang)
                 .ToListAsync();
 
             return View(donThueDaHuy);
@@ -403,15 +404,15 @@ namespace ThueXeDapHoiAn.Areas.Client.Controllers
             if (string.IsNullOrEmpty(userIdStr)) return Unauthorized();
             int userId = int.Parse(userIdStr);
 
-            var cuaHang = await _context.CuaHang.FirstOrDefaultAsync(c => c.idTaiKhoan == userId);
+            var cuaHang = await _context.CuaHang.FirstOrDefaultAsync(c => c.IdTaiKhoan == userId);
             if (cuaHang == null) return NotFound();
 
             var donThueHoanThanh = await _context.DonThue
                 .Include(d => d.ChiTietDonThue)
                     .ThenInclude(ct => ct.Xe)
                         .ThenInclude(x => x.LoaiXe)
-                .Include(d => d.TaiKhoan)
-                .Where(d => d.trangThaiDon == "Hoàn thành" && d.idCuaHang == cuaHang.idCuaHang)
+                .Include(d => d.User)
+                .Where(d => d.TrangThaiDon == "Hoàn thành" && d.IdCuaHang == cuaHang.IdCuaHang)
                 .ToListAsync();
 
             return View(donThueHoanThanh);
@@ -426,12 +427,12 @@ namespace ThueXeDapHoiAn.Areas.Client.Controllers
             int userId = int.Parse(userIdStr);
 
             // Lấy cửa hàng của tài khoản hiện tại
-            var cuaHang = await _context.CuaHang.FirstOrDefaultAsync(c => c.idTaiKhoan == userId);
+            var cuaHang = await _context.CuaHang.FirstOrDefaultAsync(c => c.IdTaiKhoan == userId);
             if (cuaHang == null) return NotFound("Không tìm thấy cửa hàng");
 
             // Lấy danh sách khuyến mãi của cửa hàng
             var danhSachKhuyenMai = await _context.KhuyenMai
-                .Where(km => km.idCuaHang == cuaHang.idCuaHang)
+                .Where(km => km.IdCuaHang == cuaHang.IdCuaHang)
                 .ToListAsync();
 
             return View(danhSachKhuyenMai);
@@ -447,16 +448,16 @@ namespace ThueXeDapHoiAn.Areas.Client.Controllers
         [HttpPost]
         [Authorize(Roles = "Shop")]
         [Route("Client/Shop/ThemMaKhuyenMai")]
-        public async Task<IActionResult> ThemMaKhuyenMai(KhuyenMaiModel_cuaHang model)
+        public async Task<IActionResult> ThemMaKhuyenMai(KhuyenMaiModel_Client model)
         {
             var userIdStr = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (string.IsNullOrEmpty(userIdStr)) return Unauthorized();
             int userId = int.Parse(userIdStr);
 
-            var cuaHang = await _context.CuaHang.FirstOrDefaultAsync(c => c.idTaiKhoan == userId);
+            var cuaHang = await _context.CuaHang.FirstOrDefaultAsync(c => c.IdTaiKhoan == userId);
             if (cuaHang == null) return NotFound("Không tìm thấy cửa hàng");
 
-            var mucGiamGia = model.mucGiamGia / 100.0;
+            var mucGiamGia = model.MucGiamGia / 100.0;
 
             var connectionString = _context.Database.GetConnectionString();
             using (var conn = new SqlConnection(connectionString))
@@ -468,13 +469,13 @@ namespace ThueXeDapHoiAn.Areas.Client.Controllers
                 (idCuaHang, maKhuyenMai, mucGiamGia, donToiThieu, soLuong, thoiGianBatDau, thoiGianKetThuc)
             VALUES
                 (@idCuaHang, @maKhuyenMai, @mucGiamGia, @donToiThieu, @soLuong, @thoiGianBatDau, @thoiGianKetThuc)";
-                cmd.Parameters.AddWithValue("@idCuaHang", cuaHang.idCuaHang);
-                cmd.Parameters.AddWithValue("@maKhuyenMai", model.maKhuyenMai);
+                cmd.Parameters.AddWithValue("@idCuaHang", cuaHang.IdCuaHang);
+                cmd.Parameters.AddWithValue("@maKhuyenMai", model.MaKhuyenMai);
                 cmd.Parameters.AddWithValue("@mucGiamGia", mucGiamGia);
-                cmd.Parameters.AddWithValue("@donToiThieu", model.donToiThieu);
-                cmd.Parameters.AddWithValue("@soLuong", model.soLuong);
-                cmd.Parameters.AddWithValue("@thoiGianBatDau", model.thoiGianBatDau);
-                cmd.Parameters.AddWithValue("@thoiGianKetThuc", model.thoiGianKetThuc);
+                cmd.Parameters.AddWithValue("@donToiThieu", model.DonToiThieu);
+                cmd.Parameters.AddWithValue("@soLuong", model.SoLuong);
+                cmd.Parameters.AddWithValue("@thoiGianBatDau", model.ThoiGianBatDau);
+                cmd.Parameters.AddWithValue("@thoiGianKetThuc", model.ThoiGianKetThuc);
                 await cmd.ExecuteNonQueryAsync();
             }
 
@@ -487,14 +488,14 @@ namespace ThueXeDapHoiAn.Areas.Client.Controllers
         public async Task<IActionResult> XoaKhuyenMai(int id)
         {
             // Kiểm tra xem mã khuyến mãi có đang được sử dụng không
-            bool isUsed = await _context.DonThue.AnyAsync(d => d.idKhuyenMai == id);
+            bool isUsed = await _context.DonThue.AnyAsync(d => d.IdKhuyenMai == id);
             if (isUsed)
             {
                 TempData["ErrorMessage"] = "Không thể xóa mã khuyến mãi này vì đang có đơn thuê sử dụng!";
                 return RedirectToAction("DanhSachKhuyenMai");
             }
 
-            var km = await _context.KhuyenMai.FirstOrDefaultAsync(x => x.idKhuyenMai == id);
+            var km = await _context.KhuyenMai.FirstOrDefaultAsync(x => x.IdKhuyenMai == id);
             if (km == null)
             {
                 TempData["ErrorMessage"] = "Không tìm thấy mã khuyến mãi để xóa!";
@@ -512,7 +513,7 @@ namespace ThueXeDapHoiAn.Areas.Client.Controllers
         [Route("Client/Shop/SuaKhuyenMai")]
         public async Task<IActionResult> SuaKhuyenMai(int idKhuyenMai)
         {
-            var km = await _context.KhuyenMai.FirstOrDefaultAsync(x => x.idKhuyenMai == idKhuyenMai);
+            var km = await _context.KhuyenMai.FirstOrDefaultAsync(x => x.IdKhuyenMai == idKhuyenMai);
             if (km == null) return NotFound();
             return View(km);
         }
@@ -520,9 +521,9 @@ namespace ThueXeDapHoiAn.Areas.Client.Controllers
         [HttpPost]
         [Authorize(Roles = "Shop")]
         [Route("Client/Shop/SuaKhuyenMai")]
-        public async Task<IActionResult> SuaKhuyenMai(KhuyenMaiModel_cuaHang model)
+        public async Task<IActionResult> SuaKhuyenMai(KhuyenMaiModel_Client model)
         {
-            var mucGiamGia = model.mucGiamGia / 100.0;
+            var mucGiamGia = model.MucGiamGia / 100.0;
             var connectionString = _context.Database.GetConnectionString();
             using (var conn = new SqlConnection(connectionString))
             {
@@ -537,13 +538,13 @@ namespace ThueXeDapHoiAn.Areas.Client.Controllers
                 thoiGianBatDau = @thoiGianBatDau,
                 thoiGianKetThuc = @thoiGianKetThuc
             WHERE idKhuyenMai = @idKhuyenMai";
-                cmd.Parameters.AddWithValue("@maKhuyenMai", model.maKhuyenMai);
+                cmd.Parameters.AddWithValue("@maKhuyenMai", model.MaKhuyenMai);
                 cmd.Parameters.AddWithValue("@mucGiamGia", mucGiamGia);
-                cmd.Parameters.AddWithValue("@donToiThieu", model.donToiThieu);
-                cmd.Parameters.AddWithValue("@soLuong", model.soLuong);
-                cmd.Parameters.AddWithValue("@thoiGianBatDau", model.thoiGianBatDau);
-                cmd.Parameters.AddWithValue("@thoiGianKetThuc", model.thoiGianKetThuc);
-                cmd.Parameters.AddWithValue("@idKhuyenMai", model.idKhuyenMai);
+                cmd.Parameters.AddWithValue("@donToiThieu", model.DonToiThieu);
+                cmd.Parameters.AddWithValue("@soLuong", model.SoLuong);
+                cmd.Parameters.AddWithValue("@thoiGianBatDau", model.ThoiGianBatDau);
+                cmd.Parameters.AddWithValue("@thoiGianKetThuc", model.ThoiGianKetThuc);
+                cmd.Parameters.AddWithValue("@idKhuyenMai", model.IdKhuyenMai);
                 int rows = await cmd.ExecuteNonQueryAsync();
                 if (rows == 0) return NotFound();
             }

@@ -2,26 +2,26 @@
 using System.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using ThueXeDapHoiAn.Areas.Client.Models;
 using ThueXeDapHoiAn.Models;
 
 namespace ThueXeDapHoiAn.Data
 {
     public class DatabaseHelperClient
     {
-        private readonly string _connectionString;
         private readonly AppDbContextClient _context;
+        private readonly string _connectionString;
 
-        public DatabaseHelperClient(IConfiguration configuration)
-        // Sử dụng DI để inject AppDbContextClient vào
-        public DatabaseHelperClient(AppDbContextClient context)
+        public DatabaseHelperClient(AppDbContextClient context, IConfiguration configuration)
         {
             _context = context;
-        }
-
-        public async Task<CuaHangModel_cuaHang> GetCuaHangByUserId(int userId)
-        {
-            return await _context.CuaHang.FirstOrDefaultAsync(c => c.idTaiKhoan == userId);
             _connectionString = configuration.GetConnectionString("Default");
         }
+
+        public async Task<CuaHangModel_Client> GetCuaHangByUserId(int userId)
+        {
+            return await _context.CuaHang.FirstOrDefaultAsync(c => c.IdTaiKhoan == userId);
+        }
     }
+
 }

@@ -1,4 +1,4 @@
-﻿@model IEnumerable<ThueXeDapHoiAn.Models.DonThueModel_cuaHang>
+﻿@model IEnumerable<ThueXeDapHoiAn.Areas.Client.Models.DonThueModel_Client>
 @{
     Layout = "~/Areas/Client/Views/Shared/_LayoutCuaHang.cshtml";
 }
@@ -46,11 +46,11 @@
                 @foreach (var don in Model)
                 {
                     var chiTietList = (IEnumerable<dynamic>)don.ChiTietDonThue;
-                    var thoiGianThue = (don.ngayTraXe - don.ngayNhanXe).TotalHours;
+                    var thoiGianThue = (don.NgayTraXe - don.NgayNhanXe).TotalHours;
                     bool tinhTheoNgay = thoiGianThue > 23;
 
                     // Tính số ngày hoặc số giờ, làm tròn lên
-                    var soNgay = (int)Math.Ceiling((don.ngayTraXe - don.ngayNhanXe).TotalDays);
+                    var soNgay = (int)Math.Ceiling((don.NgayTraXe - don.NgayNhanXe).TotalDays);
                     var soGio = (int)Math.Ceiling(thoiGianThue);
 
                     decimal tongTien = 0;
@@ -58,21 +58,21 @@
                     {
                         if (tinhTheoNgay)
                         {
-                            tongTien += (ct.giaThueTheoNgay ?? 0) * ct.soLuong * soNgay;
+                            tongTien += (ct.GiaThueTheoNgay ?? 0) * ct.SoLuong * soNgay;
                         }
                         else
                         {
-                            tongTien += (ct.giaThueTheoGio ?? 0) * ct.soLuong * soGio;
+                            tongTien += (ct.GiaThueTheoGio ?? 0) * ct.SoLuong * soGio;
                         }
                     }
 
-                    if (don.KhuyenMai != null && don.KhuyenMai.mucGiamGia > 0)
+                    if (don.KhuyenMai != null && don.KhuyenMai.MucGiamGia > 0)
                     {
-                        tongTien = tongTien * (1 - Convert.ToDecimal(don.KhuyenMai.mucGiamGia));
+                        tongTien = tongTien * (1 - Convert.ToDecimal(don.KhuyenMai.MucGiamGia));
                     }
 
                     var xeInfo = string.Join("<br/>", chiTietList.Select((Func<dynamic, string>)(ct =>
-                    $"{ct.Xe.tenXe} ({ct.Xe.LoaiXe.tenLoaiXe}) x{ct.soLuong} - {(tinhTheoNgay ? ct.giaThueTheoNgay : ct.giaThueTheoGio):N0} VND"
+                    $"{ct.Xe.TenXe} ({ct.Xe.LoaiXe.TenLoaiXe}) x{ct.SoLuong} - {(tinhTheoNgay ? ct.GiaThueTheoNgay : ct.GiaThueTheoGio):N0} VND"
                     )));
 
                     var soGioNgay = tinhTheoNgay
@@ -80,22 +80,22 @@
                     : soGio + " giờ";
 
                     <tr>
-                        <td>@don.idDonThue</td>
-                        <td>@don.TaiKhoan.ten</td>
+                        <td>@don.IdDonThue</td>
+                        <td>@don.User.Ten</td>
                         <td>@Html.Raw(xeInfo)</td>
-                        <td>@don.ngayNhanXe.ToString("HH\\h dd/MM/yyyy")</td>
+                        <td>@don.NgayNhanXe.ToString("HH\\h dd/MM/yyyy")</td>
                         <td>@soGioNgay</td>
                         <td>@string.Format("{0:N0} VND", @tongTien)</td>
                         <!-- ...existing code... -->
                         <td>
                             <form asp-action="DuyetDonThue" asp-controller="CuaHang" asp-area="Client" method="post" style="display:inline;" onsubmit="return confirm('Bạn có chắc chắn muốn DUYỆT đơn thuê này không?');">
-                                <input type="hidden" name="id" value="@don.idDonThue" />
+                                <input type="hidden" name="id" value="@don.IdDonThue" />
                                 <button type="submit" style="background:none;border:none;padding:0;">
                                     <i class="fa-solid fa-check-circle" style="color: green; font-size: 20px;"></i>
                                 </button>
                             </form>
                             <form asp-action="HuyDonThue" asp-controller="CuaHang" asp-area="Client" method="post" style="display:inline;" onsubmit="return confirm('Bạn có chắc chắn muốn HUỶ đơn thuê này không?');">
-                                <input type="hidden" name="id" value="@don.idDonThue" />
+                                <input type="hidden" name="id" value="@don.IdDonThue" />
                                 <button type="submit" style="background:none;border:none;padding:0;">
                                     <i class="fa-solid fa-times-circle" style="color: red; font-size: 20px;"></i>
                                 </button>

@@ -1,7 +1,7 @@
-﻿@model ThueXeDapHoiAn.Models.XeModel_cuaHang
+﻿@model ThueXeDapHoiAn.Areas.Client.Models.XeModel_Client
 @{
     Layout = "~/Areas/Client/Views/Shared/_LayoutCuaHang.cshtml";
-    var loaiXeList = ViewBag.LoaiXeList as List<ThueXeDapHoiAn.Models.LoaiXeModel_cuaHang>;
+    var loaiXeList = ViewBag.LoaiXeList as List<ThueXeDapHoiAn.Areas.Client.Models.LoaiXeModel_Client>;
 }
 
 @section Styles {
@@ -50,10 +50,10 @@
 <div class="edit-bike-form">
     <h2>Sửa thông tin xe</h2>
     <form asp-action="SuaXe" asp-controller="CuaHang" asp-area="Client" method="post" enctype="multipart/form-data">
-        <input type="hidden" name="idXe" value="@Model.idXe" />
+        <input type="hidden" name="idXe" value="@Model.IdXe" />
 
         <label>Tên xe <span style="color:red">*</span></label>
-        <input type="text" name="tenXe" value="@Model.tenXe"  />
+        <input type="text" name="tenXe" value="@Model.TenXe"  />
 
         <label>Loại xe <span style="color:red">*</span></label>
         <select class="custom-select" name="idLoaiXe" >
@@ -62,35 +62,35 @@
             {
                 @foreach (var loaiXe in loaiXeList)
                 {
-                    if (loaiXe.idLoaiXe == Model.idLoaiXe)
+                    if (loaiXe.IdLoaiXe == Model.IdLoaiXe)
                     {
-                        <option value="@loaiXe.idLoaiXe" selected>@loaiXe.tenLoaiXe</option>
+                        <option value="@loaiXe.IdLoaiXe" selected>@loaiXe.TenLoaiXe</option>
                     }
                     else
                     {
-                        <option value="@loaiXe.idLoaiXe">@loaiXe.tenLoaiXe</option>
+                        <option value="@loaiXe.IdLoaiXe">@loaiXe.TenLoaiXe</option>
                     }
                 }
             }
         </select>
 
         <label>Số lượng <span style="color:red">*</span></label>
-        <input type="number" name="soLuong" value="@Model.soLuong" min="1"  />
+        <input type="number" name="soLuong" value="@Model.SoLuong" min="1"  />
 
         <label>Giá thuê theo giờ <span style="color:red">*</span></label>
-        <input type="number" name="giaThueTheoGio" value="@Model.giaThueTheoGio" min="0"  />
+        <input type="number" name="giaThueTheoGio" value="@Model.GiaThueTheoGio" min="0"  />
 
         <label>Giá thuê theo ngày <span style="color:red">*</span></label>
-        <input type="number" name="giaThueTheoNgay" value="@Model.giaThueTheoNgay" min="0"  />
+        <input type="number" name="giaThueTheoNgay" value="@Model.GiaThueTheoNgay" min="0"  />
 
         <label>Giới thiệu</label>
-        <input type="text" name="gioiThieu" value="@Model.gioiThieu" />
+        <input type="text" name="gioiThieu" value="@Model.GioiThieu" />
 
         <label>Hình ảnh</label>
         <input type="file" name="hinhAnh" accept="image/*" />
-        @if (!string.IsNullOrEmpty(Model.hinhAnh))
+        @if (!string.IsNullOrEmpty(Model.HinhAnh))
         {
-            <img src="~/images/xe/@Model.hinhAnh" alt="Ảnh xe" />
+            <img src="~/images/xe/@Model.HinhAnh" alt="Ảnh xe" />
         }
 
         <button type="submit" class="submit-btn">Lưu thay đổi</button>

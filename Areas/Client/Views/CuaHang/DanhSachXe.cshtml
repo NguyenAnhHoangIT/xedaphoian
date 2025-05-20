@@ -1,4 +1,4 @@
-﻿@model List<ThueXeDapHoiAn.Models.XeModel_cuaHang>
+﻿@model List<ThueXeDapHoiAn.Areas.Client.Models.XeModel_Client>
 @{
     Layout = "~/Areas/Client/Views/Shared/_LayoutCuaHang.cshtml";
 }
@@ -79,17 +79,17 @@
                     @foreach (var xe in Model)
                     {
                         <tr>
-                            <td>@xe.idXe</td>
-                            <td>@xe.LoaiXe?.tenLoaiXe</td>
-                            <td>@xe.tenXe</td>
-                            <td>@string.Format("{0:N0} VND", xe.giaThueTheoGio)</td>
-                            <td>@string.Format("{0:N0} VND", xe.giaThueTheoNgay)</td>
-                            <td>@xe.soLuong</td>
+                            <td>@xe.IdXe</td>
+                            <td>@xe.LoaiXe?.TenLoaiXe</td>
+                            <td>@xe.TenXe</td>
+                            <td>@string.Format("{0:N0} VND", xe.GiaThueTheoGio)</td>
+                            <td>@string.Format("{0:N0} VND", xe.GiaThueTheoNgay)</td>
+                            <td>@xe.SoLuong</td>
                             <td>
-                                <a href="@Url.Action("SuaXe", "CuaHang", new { area = "Client", id = xe.idXe })">
+                                <a href="@Url.Action("SuaXe", "CuaHang", new { area = "Client", id = xe.IdXe })">
                                     <i class="fa-solid fa-pen"></i>
                                 </a>
-                                <a href="@Url.Action("XoaXe", "CuaHang", new { area = "Client", id = xe.idXe })" onclick="return confirm('Bạn có chắc chắn muốn xóa xe này?')">
+                                <a href="@Url.Action("XoaXe", "CuaHang", new { area = "Client", id = xe.IdXe })" onclick="return confirm('Bạn có chắc chắn muốn xóa xe này?')">
                                     <i class="fa-solid fa-trash"></i>
                                 </a>
                             </td>
