@@ -30,7 +30,7 @@ namespace ThueXeDapHoiAn.Areas.Client.Models
 
         public DateTime ThoiGianTao { get; set; } = DateTime.Now;
 
-        public string TrangThaiDon { get; set; } = "Đang chờ duyệt";
+        public string TrangThaiDon { get; set; }
 
         public UserModel User { get; set; }
 

@@ -262,7 +262,7 @@ namespace ThueXeDapHoiAn.Areas.Client.Controllers
             ViewBag.HoTen = hoTen;
             ViewBag.SDT = soDienThoai;
             ViewBag.UserModel = userModel;
-            ViewBag.Id = userModel.Id;  // Đưa Id vào ViewBag
+            ViewBag.Id = userModel.UserId;  // Đưa Id vào ViewBag
             ViewBag.PaypalClientId = _paypalClient.ClientId;
 
             return View();

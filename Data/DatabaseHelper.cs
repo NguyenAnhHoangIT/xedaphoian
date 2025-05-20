@@ -59,14 +59,14 @@ namespace ThueXeDapHoiAn.Data
                 {
                     return new UserModel
                     {
-                        Id = Convert.ToInt32(reader["idTaiKhoan"]),
+                        UserId = Convert.ToInt32(reader["idTaiKhoan"]),
                         Ho = reader["ho"].ToString(),
                         Ten = reader["ten"].ToString(),
                         SoDienThoai = reader["soDienThoai"].ToString(),
                         MatKhau = reader["matKhau"].ToString(),  // Raw password
                         HinhAnh = reader["hinhAnh"].ToString(),
                         VaiTro = reader["vaiTro"].ToString(),
-                        TrangThai = reader["trangThaiTaiKhoan"].ToString()
+                        TrangThai = Convert.ToBoolean(reader["trangThaiTaiKhoan"])
                     };
                 }
 

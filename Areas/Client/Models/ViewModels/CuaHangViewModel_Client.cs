@@ -10,7 +10,7 @@
         public string Gmail { get; set; }
         public string GioiThieu { get; set; }
         public string HinhAnh { get; set; }
-        public bool TrangThaiCuaHang { get; set; }
+        public string TrangThaiCuaHang { get; set; }
     }
 
 }
