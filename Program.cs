@@ -37,6 +37,8 @@ builder.Services.AddSingleton(x => new PaypalClient(
         builder.Configuration["PaypalOptions:AppSecret"],
         builder.Configuration["PaypalOptions:Mode"]
 ));
+builder.Services.AddScoped<DatabaseHelper>();
+builder.Services.AddScoped<DatabaseHelperAdmin>();
 // Build the app
 var app = builder.Build();
 

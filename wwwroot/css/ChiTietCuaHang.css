@@ -1,9 +1,11 @@
 ﻿.banner {
     display: flex;
     justify-content: center;
-    background-color: #6398B8;
+    background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url(../images/shop-background.gif);
     padding: 20px 40px;
     flex-wrap: wrap;
+    background-size: cover;
+    background-position: center;
 }
 
     .banner > div {

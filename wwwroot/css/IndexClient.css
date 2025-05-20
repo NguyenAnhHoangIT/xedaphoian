@@ -362,20 +362,31 @@
 }
 
 .carousel-track {
+    padding:10px;
     display: flex;
     transition: transform 0.3s ease;
 }
 
 .bike-card {
-    flex: 0 0 calc(100% / 3);
+    display: flex;
+    flex-direction:column;
     padding: 0 10px;
     min-width: 0;
+    height: 100%;
+}
+
+.bike-card:hover {
+    transform: scale(1.01); /* Phóng to nhẹ */
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .bike-image {
-    height: 180px;
+    min-width: 180px;
+    max-height: 200px;
+    aspect-ratio: 1/1;
     overflow: hidden;
     border-radius: 8px 8px 0 0;
+
 }
 
     .bike-image img {
@@ -385,6 +396,7 @@
     }
 
 .bike-details {
+    height: 100%;
     background-color: #fff;
     padding: 15px;
     border-radius: 0 0 8px 8px;

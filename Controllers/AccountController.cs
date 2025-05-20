@@ -47,9 +47,12 @@ namespace ThueXeDapHoiAn.Controllers
                 {
                     new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
                     new Claim(ClaimTypes.Name, user.SoDienThoai),
-                    new Claim("HoTen", user.Ho + " " + user.Ten),
-                    new Claim("idTaiKhoan", user.Id.ToString()),
-                    new Claim(ClaimTypes.Role, user.VaiTro) // "Admin" or "Client"
+                    new Claim(ClaimTypes.Role, user.VaiTro), // "Admin" or "Client"
+                    new Claim("ID", user.Id.ToString()),
+                    new Claim("Avatar", user.HinhAnh ?? "avatar-default.jpg"),
+                    new Claim("FullName", $"{user.Ho} {user.Ten}"),
+                    new Claim("HoTen", $"{user.Ho} {user.Ten}"),
+                    new Claim("idTaiKhoan", user.Id.ToString())
                 };
 
                         var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);

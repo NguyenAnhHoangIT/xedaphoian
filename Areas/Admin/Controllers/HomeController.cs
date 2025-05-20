@@ -37,14 +37,12 @@ namespace ThueXeDapHoiAn.Areas.Admin.Controllers
         }
 
 
-        [Route("Admin")]
         [Route("Admin/DanhGiaBiBaoCao")]
         public IActionResult DanhGiaBiBaoCao()
         {
             return View();
         }
 
-        [Route("Admin")]
         [Route("Admin/ThongTinTaiKhoan")]
         public IActionResult ThongTinTaiKhoan()
         {
@@ -74,14 +72,13 @@ namespace ThueXeDapHoiAn.Areas.Admin.Controllers
 
 
         [Route("Admin/DangXuat")]
-        [Route("dangxuatAdmin")]
+        [Route("Admin/Home/dangxuatAdmin")]
         public async Task<IActionResult> DangXuat()
         {
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
             return RedirectToAction("Index", "Home");
         }
 
-        [Route("Admin")]
         [Route("Admin/DuyetDangKyTaoCuaHang")]
         public IActionResult DuyetDangKyTaoCuaHang()
         {
