@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 using Microsoft.EntityFrameworkCore;
 using ThueXeDapHoiAn.Areas.Client.Models.ViewModels;
+using ThueXeDapHoiAn.Areas.Client.Models;
 
 namespace ThueXeDapHoiAn.Areas.Client.Controllers
 {
@@ -13,9 +14,11 @@ namespace ThueXeDapHoiAn.Areas.Client.Controllers
     public class HomeController : Controller
     {
         private readonly AppDbContextClient _context;
-        public HomeController(AppDbContextClient context)
+        private readonly IWebHostEnvironment _webHostEnvironment;
+        public HomeController(AppDbContextClient context, IWebHostEnvironment webHostEnvironment)
         {
             _context = context;
+            _webHostEnvironment = webHostEnvironment;
         }
 
 
@@ -30,6 +33,7 @@ namespace ThueXeDapHoiAn.Areas.Client.Controllers
                                select new { dg.DiemDanhGia, dt.IdCuaHang }).ToList();
 
             var dsCuaHang = _context.CuaHang
+                .Where(ch => ch.TrangThaiCuaHang == "true") // Lọc theo trạng thái cửa hàng
                 .ToList()
                 .Select(ch => new CuaHang_Index_ViewModel_Client
                 {
@@ -45,7 +49,6 @@ namespace ThueXeDapHoiAn.Areas.Client.Controllers
                 })
                 .ToList();
 
-
             var viewModel = new CuaHang_Xe_ViewModel_Client
             {
                 DanhSachXe = dsXe,
@@ -54,6 +57,7 @@ namespace ThueXeDapHoiAn.Areas.Client.Controllers
 
             return View(viewModel);
         }
+
 
 
         [HttpGet("Client/GetThongBao")]
@@ -98,9 +102,71 @@ namespace ThueXeDapHoiAn.Areas.Client.Controllers
 
         [Route("Client")]
         [Route("Client/DangKyCuaHang")]
+        [HttpGet]
         public IActionResult DangKyCuaHang()
         {
+
             return View();
+        }
+        
+        [Route("Client")]
+        [Route("Client/DangKyCuaHang")]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DangKyCuaHang(CuaHangModel_Client cuaHang)
+        {
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            if (string.IsNullOrEmpty(userId))
+            {
+                // Không lấy được ID => về đăng nhập
+                TempData["error"] = "Bạn cần đăng nhập để đăng ký cửa hàng.";
+                return RedirectToAction("Login", "Account");
+            }
+            cuaHang.IdTaiKhoan = int.Parse(userId);
+            if (ModelState.IsValid)
+            {
+                var tenCuaHang = await _context.CuaHang.FirstOrDefaultAsync(p => p.TenCuaHang == cuaHang.TenCuaHang);
+                if(tenCuaHang != null)
+                {
+                    ModelState.AddModelError("", "Tên cửa hàng đã tồn tại");
+                    return View(cuaHang);
+                }
+                if(cuaHang.IMageUpload !=null)
+                    {
+                        string uploadDir = Path.Combine(_webHostEnvironment.WebRootPath,"images/cuaHang");
+                        string imageName = Guid.NewGuid().ToString() + "_" + cuaHang.IMageUpload.FileName;
+                        string filePath = Path.Combine(uploadDir, imageName);
+
+                        FileStream fs = new FileStream(filePath, FileMode.Create);
+                        await cuaHang.IMageUpload.CopyToAsync(fs);
+                        fs.Close();
+                        cuaHang.HinhAnh = imageName;
+                        cuaHang.TrangThaiCuaHang = "Pending";
+
+                    }
+                _context.Add(cuaHang);
+                await _context.SaveChangesAsync();
+                return RedirectToAction("Index");
+
+            }
+            else
+            {
+                TempData["error"] = "Dữ liệu nhập vào chưa phù hợp";
+                List<string> errors = new List<string>();
+                foreach(var value in ModelState.Values)
+                {
+                    foreach (var error in value.Errors)
+                    {
+                        errors.Add(error.ErrorMessage);
+                    }
+                }
+                string errorMessage = string.Join("\n", errors);
+                return BadRequest(errorMessage);
+            }
+            
+
+            return View(cuaHang);
         }
 
         [Authorize]

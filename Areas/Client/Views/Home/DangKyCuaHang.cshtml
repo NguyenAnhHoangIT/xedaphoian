@@ -1,4 +1,5 @@
-﻿@{
+﻿@model ThueXeDapHoiAn.Areas.Client.Models.CuaHangModel_Client
+@{
     Layout = "~/Areas/Client/Views/Shared/_Layout.cshtml";
 }
 
@@ -6,42 +7,58 @@
     <link rel="stylesheet" href="~/css/LayoutClient.css" />
     <link rel="stylesheet" href="~/css/DangKyCuaHang.css" />
 }
+
 <div class="register-container">
     <div class="register-card">
         <h3 class="form-title">Đăng Ký Cửa Hàng</h3>
 
-        <form action="#" method="post" enctype="multipart/form-data">
+        @* Validation tổng quát *@
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+        <form asp-action="DangKyCuaHang" asp-controller="Home" method="post" enctype="multipart/form-data">
             <div class="form-group">
-                <label for="tenCuaHang">Tên cửa hàng</label>
-                <input type="text" id="tenCuaHang" name="tenCuaHang" class="form-control" placeholder="Nhập tên cửa hàng">
+                <label asp-for="TenCuaHang">Tên cửa hàng</label>
+                <input asp-for="TenCuaHang" class="form-control" placeholder="Nhập tên cửa hàng" />
+                <span asp-validation-for="TenCuaHang" class="text-danger"></span>
             </div>
 
             <div class="form-group">
-                <label for="diaChi">Địa chỉ</label>
-                <input type="text" id="diaChi" name="diaChi" class="form-control" placeholder="Nhập địa chỉ">
+                <label asp-for="DiaChi"></label>
+                <input asp-for="DiaChi" class="form-control" placeholder="Nhập địa chỉ" />
+                <span asp-validation-for="DiaChi" class="text-danger"></span>
             </div>
 
             <div class="form-group">
-                <label for="soDienThoai">Số điện thoại</label>
-                <input type="text" id="soDienThoai" name="soDienThoai" class="form-control" placeholder="Nhập số điện thoại">
+                <label asp-for="SoDienThoai"></label>
+                <input asp-for="SoDienThoai" class="form-control" placeholder="Nhập số điện thoại" />
+                <span asp-validation-for="SoDienThoai" class="text-danger"></span>
             </div>
 
             <div class="form-group">
-                <label for="gmail">Địa chỉ email</label>
-                <input type="email" id="gmail" name="gmail" class="form-control" placeholder="Nhập email">
+                <label asp-for="Gmail"></label>
+                <input asp-for="Gmail" class="form-control" placeholder="Nhập email" />
+                <span asp-validation-for="Gmail" class="text-danger"></span>
             </div>
 
             <div class="form-group">
-                <label for="gioiThieu">Giới thiệu về cửa hàng</label>
-                <textarea id="gioiThieu" name="gioiThieu" class="form-control" rows="4" placeholder="Giới thiệu ngắn về cửa hàng"></textarea>
+                <label asp-for="GioiThieu"></label>
+                <textarea asp-for="GioiThieu" class="form-control" rows="4" placeholder="Giới thiệu ngắn về cửa hàng"></textarea>
+                <span asp-validation-for="GioiThieu" class="text-danger"></span>
             </div>
 
             <div class="form-group">
-                <label for="hinhAnh">Hình ảnh</label>
-                <input type="file" id="hinhAnh" name="hinhAnh" class="form-control" accept="image/*">
+                <label asp-for="IMageUpload"></label>
+                <input asp-for="IMageUpload" type="file" class="form-control" accept="image/*" />
+                <span asp-validation-for="IMageUpload" class="text-danger"></span>
             </div>
 
-            <button type="submit" class="btn-primary">Đăng ký cửa hàng</button>
+            <button type="submit" class="btn btn-primary">Đăng ký cửa hàng</button>
         </form>
     </div>
 </div>
+
+@section Scripts {
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+}
