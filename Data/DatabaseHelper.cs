@@ -66,7 +66,7 @@ namespace ThueXeDapHoiAn.Data
                         MatKhau = reader["matKhau"].ToString(),  // Raw password
                         HinhAnh = reader["hinhAnh"].ToString(),
                         VaiTro = reader["vaiTro"].ToString(),
-                        TrangThai = reader["trangThaiTaiKhoan"].ToString()
+                        TrangThai = Convert.ToBoolean(reader["trangThaiTaiKhoan"])
                     };
                 }
 

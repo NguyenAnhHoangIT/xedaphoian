@@ -311,7 +311,7 @@ namespace ThueXeDapHoiAn.Areas.Client.Controllers
                     .ThenInclude(x => x.LoaiXe) // Bao gồm LoaiXe
                 .Include(d => d.User)   // Bao gồm KhachHang
                 .Include(d => d.KhuyenMai)
-                .Where(d => d.TrangThaiDon == "Chờ duyệt" && d.IdCuaHang == cuaHang.IdCuaHang)
+                .Where(d => d.TrangThaiDon == "Đang chờ duyệt" && d.IdCuaHang == cuaHang.IdCuaHang)
                 .ToListAsync();
 
             return View(donThueChoDuyet); // Trả về View với danh sách đơn thuê
@@ -326,7 +326,7 @@ namespace ThueXeDapHoiAn.Areas.Client.Controllers
             {
                 await conn.OpenAsync();
                 var cmd = conn.CreateCommand();
-                cmd.CommandText = @"UPDATE DonThue SET trangThaiDon = N'Đã duyệt' WHERE idDonThue = @id";
+                cmd.CommandText = @"UPDATE DonThue SET trangThaiDon = N'Đã duyệt đơn' WHERE idDonThue = @id";
                 cmd.Parameters.AddWithValue("@id", id);
                 int rows = await cmd.ExecuteNonQueryAsync();
                 if (rows == 0) return NotFound();
@@ -363,16 +363,19 @@ namespace ThueXeDapHoiAn.Areas.Client.Controllers
             var cuaHang = await _context.CuaHang.FirstOrDefaultAsync(c => c.IdTaiKhoan == userId);
             if (cuaHang == null) return NotFound();
 
+            var trangThaiChoPhep = new[] { "Đã duyệt", "Đang thuê", "Quá hạn" };
+
             var donThueDaDuyet = await _context.DonThue
                 .Include(d => d.ChiTietDonThue)
                     .ThenInclude(ct => ct.Xe)
                         .ThenInclude(x => x.LoaiXe)
                 .Include(d => d.User)
-                .Where(d => d.TrangThaiDon == "Đã duyệt" && d.IdCuaHang == cuaHang.IdCuaHang)
+                .Where(d => trangThaiChoPhep.Contains(d.TrangThaiDon) && d.IdCuaHang == cuaHang.IdCuaHang)
                 .ToListAsync();
 
             return View(donThueDaDuyet);
         }
+
 
         [Route("Client")]
         [Route("Client/Shop/DonThueDaHuy")]
@@ -412,7 +415,7 @@ namespace ThueXeDapHoiAn.Areas.Client.Controllers
                     .ThenInclude(ct => ct.Xe)
                         .ThenInclude(x => x.LoaiXe)
                 .Include(d => d.User)
-                .Where(d => d.TrangThaiDon == "Hoàn thành" && d.IdCuaHang == cuaHang.IdCuaHang)
+                .Where(d => d.TrangThaiDon == "Đã hoàn thành" && d.IdCuaHang == cuaHang.IdCuaHang)
                 .ToListAsync();
 
             return View(donThueHoanThanh);

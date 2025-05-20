@@ -1,0 +1,50 @@
+﻿@using ThueXeDapHoiAn.Areas.Client.Models.ViewModels
+@model CuaHang_Xe_ViewModel_Client
+@{
+    Layout = "~/Areas/Client/Views/Shared/_Layout.cshtml";
+}
+@if (TempData["ThongBao"] != null)
+{
+    <div class="alert alert-warning" role="alert">
+        @TempData["ThongBao"]
+    </div>
+}
+@section Scripts {
+    <script>
+        setTimeout(function () {
+            var alert = document.querySelector('.alert');
+            if (alert) alert.style.display = 'none';
+        }, 3000); // 5 giây
+    </script>
+}
+@section Styles {
+    <link rel="stylesheet" href="~/css/LayoutClient.css" />
+    <link rel="stylesheet" href="~/css/IndexClient.css" />
+    <style>
+        a[href][asp-action][asp-controller]:hover {
+            background-color: #0056b3 !important;
+        }
+    </style>
+}
+<!-- Hero Section -->
+<section class="hero-section">
+    <div class="hero-content">
+        <h1 class="hero-title">
+            Hãy bắt đầu cuộc hành trình<br>
+            khám phá phố cổ Hội An cùng<br>
+            THUEXEDAPHOIAN
+        </h1>
+    </div>
+</section>
+
+<div style="margin: 40px auto; padding: 20px; max-width: 600px; background-color: #fff3cd; border: 1px solid #ffeeba; border-radius: 8px; text-align: center; color: #856404; font-size: 1.1rem;">
+    <p><strong>Cửa hàng của bạn đang chờ admin duyệt.</strong></p>
+    <p>Hãy trở lại sau nhé!</p>
+</div>
+
+<div style="margin-top: 20px;margin-bottom:20px">
+    <a asp-action="Index" asp-controller="Home"
+       style="display: inline-block; margin-left: 30px; margin-top: 20px; padding: 10px 20px; background-color: #007bff; color: white; border-radius: 5px; text-decoration: none; font-weight: 500; transition: background-color 0.3s;">
+        ← Trở về Trang chủ
+    </a>
+</div>

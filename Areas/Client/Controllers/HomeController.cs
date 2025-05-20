@@ -195,7 +195,6 @@ namespace ThueXeDapHoiAn.Areas.Client.Controllers
         [Route("Client/CuaHangRedirect")]
         public async Task<IActionResult> CuaHangRedirect()
         {
-            var role = User.FindFirst(ClaimTypes.Role)?.Value;
             var userIdStr = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (string.IsNullOrEmpty(userIdStr))
                 return Unauthorized();
@@ -206,16 +205,18 @@ namespace ThueXeDapHoiAn.Areas.Client.Controllers
 
             if (cuaHang != null)
             {
-                if (cuaHang.TrangThaiCuaHang != "True")
+                if (cuaHang.TrangThaiCuaHang == "True")
                 {
-                    TempData["ThongBao"] = "Cửa hàng của bạn đang chờ admin duyệt.";
-                    return RedirectToAction("Index", "Home", new { area = "Client" });
+                    return RedirectToAction("DanhSachXe", "CuaHang", new { area = "Client" });
                 }
-
-                return RedirectToAction("DanhSachXe", "CuaHang", new { area = "Client" });
+                else
+                {
+                    return Redirect("/Client/ChoDuyet");
+                }
             }
 
-            return RedirectToAction("DangKyCuaHang", "Home", new { area = "Client" });
+            // Nếu chưa có cửa hàng thì về trang đăng ký cửa hàng
+            return Redirect("/Client/DangKyCuaHang");
         }
 
 
@@ -225,6 +226,12 @@ namespace ThueXeDapHoiAn.Areas.Client.Controllers
         {
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
             return RedirectToAction("Index", "Home");
+        }
+
+        [Route("Client/ChoDuyet")]
+        public IActionResult CuaHang_ChoDuyet()
+        {
+            return View();
         }
 
     }

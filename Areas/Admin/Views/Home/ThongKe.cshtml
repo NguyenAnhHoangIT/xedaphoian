@@ -1,0 +1,37 @@
+﻿@{
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/LayoutClient.css" />
+    <link rel="stylesheet" href="~/css/CuaHang.css" />
+    <link rel="stylesheet" href="~/css/AdminHome.css" />
+}
+<div class="wrapper_cuahang">
+    <aside>
+        <h3>Quản lý</h3>
+        <nav>
+            <a asp-area="Admin" asp-controller="Home" asp-action="TaiKhoan">Tài Khoản</a>
+            <a asp-area="Admin" asp-controller="Home" asp-action="DanhGiaBiBaoCao">Đánh giá bị báo cáo</a>
+            <a asp-area="Admin" asp-controller="Home" asp-action="DuyetDangKyTaoCuaHang">Đăng ký tạo cửa hàng</a>
+            <a asp-area="Admin" asp-controller="Home" asp-action="Xe_CuaHang">Xe của các cửa hàng</a>
+            <a class="active">Thống kê</a>
+        </nav>
+    </aside>
+    <div class="content_cuahang">
+
+    </div>
+</div>
+<div id="popup" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="closePopup()">&times;</span>
+        <div id="popup-details"></div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+
+
+    </script>
+}

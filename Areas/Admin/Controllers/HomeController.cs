@@ -183,5 +183,11 @@ namespace ThueXeDapHoiAn.Areas.Admin.Controllers
             return Json(new { success = result });
         }
 
+        [Route("Admin/ThongKe")]
+        public IActionResult ThongKe()
+        {
+            return View();
+        }
+
     }
 }
