@@ -1,0 +1,17 @@
+﻿@model UserModel
+
+@{
+    string avatarPath = Url.Content("~/images/avatar-default.jpg");
+    string userName = "Khách";
+    if (Model != null)
+    {
+        userName = Model.Ho + " " + Model.Ten;
+        if (!string.IsNullOrEmpty(Model.HinhAnh))
+        {
+            avatarPath = Url.Content("~/images/nguoiDung/" + Model.HinhAnh);
+        }
+    }
+}
+
+<img src="@avatarPath" alt="User Avatar" class="user-avatar" />
+<span class="user-name">@userName</span>

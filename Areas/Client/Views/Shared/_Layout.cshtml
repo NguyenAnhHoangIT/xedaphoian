@@ -105,13 +105,7 @@
 
                         <!-- User Profile Dropdown -->
                         <div class="user-profile">
-                            <img src="~/images/avatar-default.jpg" alt="User Avatar" class="user-avatar">
-                            @{
-                                // Lấy claim "HoTen" từ User Claims
-                                var hoTenClaim = User.Claims.FirstOrDefault(c => c.Type == "HoTen");
-                                var hoTen = hoTenClaim != null ? hoTenClaim.Value : "Khách";
-                            }
-                            <span class="user-name">@hoTen</span>
+                            @await Component.InvokeAsync("UserProfile")
                             <i class="fas fa-chevron-down dropdown-arrow"></i>
 
                             <div class="dropdown-menu">

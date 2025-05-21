@@ -115,7 +115,8 @@ namespace ThueXeDapHoiAn.Areas.Client.Controllers
         [Route("Client")]
         [Route("Client/ThongTinTaiKhoan")]
         [HttpPost]
-        public async Task<IActionResult> ThongTinTaiKhoan(UserModel model)
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ThongTinTaiKhoan(UserModel model, IFormFile hinhAnh)
         {
             var userIdStr = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (string.IsNullOrEmpty(userIdStr)) return Unauthorized();
@@ -125,17 +126,63 @@ namespace ThueXeDapHoiAn.Areas.Client.Controllers
             var user = await _context.TaiKhoan.FirstOrDefaultAsync(u => u.Id == userId);
             if (user == null) return NotFound();
 
-            // Cập nhật thông tin từ form
-            user.Ho = model.Ho;
-            user.Ten = model.Ten;
-            user.SoDienThoai = model.SoDienThoai;
-            user.MatKhau = model.MatKhau; // Bạn nên hash mật khẩu nếu cần
+            if (ModelState.IsValid)
+            {
+                // Xử lý ảnh nếu có upload mới
+                if (hinhAnh != null && hinhAnh.Length > 0)
+                {
+                    string uploadDir = Path.Combine(_webHostEnvironment.WebRootPath, "images/nguoiDung");
+                    if (!Directory.Exists(uploadDir))
+                    {
+                        Directory.CreateDirectory(uploadDir);
+                    }
 
-            await _context.SaveChangesAsync();
+                    string imageName = Guid.NewGuid().ToString() + Path.GetExtension(hinhAnh.FileName);
+                    string filePath = Path.Combine(uploadDir, imageName);
 
-            ViewBag.ThongBao = "Cập nhật thành công!";
-            return View(user); // Trả lại view với thông tin đã cập nhật
+                    using (var fs = new FileStream(filePath, FileMode.Create))
+                    {
+                        await hinhAnh.CopyToAsync(fs);
+                    }
+
+                    user.HinhAnh = imageName; // Gán ảnh mới
+                }
+
+                // Cập nhật các thông tin khác
+                user.Ho = model.Ho;
+                user.Ten = model.Ten;
+                user.SoDienThoai = model.SoDienThoai;
+                user.MatKhau = model.MatKhau; // Cân nhắc mã hóa nếu cần
+
+                await _context.SaveChangesAsync();
+
+                // Gán ViewBag cho ảnh và tên người dùng
+                ViewBag.ThongBao = "Cập nhật thông tin thành công!";
+                ViewBag.TenNguoiDung = user.Ho + " " + user.Ten;
+                ViewBag.AvatarNguoiDung = string.IsNullOrEmpty(user.HinhAnh)
+                    ? Url.Content("~/images/avatar-default.jpg")
+                    : Url.Content("~/images/nguoiDung/" + user.HinhAnh);
+
+                return View(user);
+            }
+            else
+            {
+                TempData["error"] = "Dữ liệu nhập vào không hợp lệ.";
+                List<string> errors = new List<string>();
+                foreach (var state in ModelState.Values)
+                {
+                    foreach (var error in state.Errors)
+                    {
+                        errors.Add(error.ErrorMessage);
+                    }
+                }
+                string errorMessage = string.Join("\n", errors);
+                return BadRequest(errorMessage);
+            }
         }
+
+
+
 
 
         [Route("Client")]
