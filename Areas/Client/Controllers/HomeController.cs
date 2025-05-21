@@ -10,6 +10,7 @@ using ThueXeDapHoiAn.Models;
 using Microsoft.EntityFrameworkCore;
 using ThueXeDapHoiAn.Areas.Client.Models.ViewModels;
 using ThueXeDapHoiAn.Areas.Client.Models;
+using Microsoft.AspNetCore.Hosting;
 
 namespace ThueXeDapHoiAn.Areas.Client.Controllers
 {
@@ -18,9 +19,11 @@ namespace ThueXeDapHoiAn.Areas.Client.Controllers
     public class HomeController : Controller
     {
         private readonly AppDbContextClient _context;
-        public HomeController(AppDbContextClient context)
+        private readonly IWebHostEnvironment _webHostEnvironment;
+        public HomeController(AppDbContextClient context, IWebHostEnvironment webHostEnvironment)
         {
             _context = context;
+            _webHostEnvironment = webHostEnvironment;
         }
 
 
@@ -35,6 +38,7 @@ namespace ThueXeDapHoiAn.Areas.Client.Controllers
                                select new { dg.DiemDanhGia, dt.IdCuaHang }).ToList();
 
             var dsCuaHang = _context.CuaHang
+                .Where(ch => ch.TrangThaiCuaHang == "true") // Lọc theo trạng thái cửa hàng
                 .ToList()
                 .Select(ch => new CuaHang_Index_ViewModel_Client
                 {
@@ -50,7 +54,6 @@ namespace ThueXeDapHoiAn.Areas.Client.Controllers
                 })
                 .ToList();
 
-
             var viewModel = new CuaHang_Xe_ViewModel_Client
             {
                 DanhSachXe = dsXe,
@@ -59,7 +62,6 @@ namespace ThueXeDapHoiAn.Areas.Client.Controllers
 
             return View(viewModel);
         }
-
 
         [HttpGet("Client/GetThongBao")]
         public IActionResult GetThongBao()
@@ -95,9 +97,44 @@ namespace ThueXeDapHoiAn.Areas.Client.Controllers
 
         [Route("Client")]
         [Route("Client/ThongTinTaiKhoan")]
-        public IActionResult ThongTinTaiKhoan()
+        public async Task<IActionResult> ThongTinTaiKhoan()
         {
-            return View();
+            var userIdStr = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (string.IsNullOrEmpty(userIdStr)) return Unauthorized();
+
+            int userId = int.Parse(userIdStr);
+
+            var user = await _context.TaiKhoan
+                .FirstOrDefaultAsync(u => u.Id == userId);
+
+            if (user == null) return NotFound();
+
+            return View(user); // Truyền user sang View
+        }
+
+        [Route("Client")]
+        [Route("Client/ThongTinTaiKhoan")]
+        [HttpPost]
+        public async Task<IActionResult> ThongTinTaiKhoan(UserModel model)
+        {
+            var userIdStr = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (string.IsNullOrEmpty(userIdStr)) return Unauthorized();
+
+            int userId = int.Parse(userIdStr);
+
+            var user = await _context.TaiKhoan.FirstOrDefaultAsync(u => u.Id == userId);
+            if (user == null) return NotFound();
+
+            // Cập nhật thông tin từ form
+            user.Ho = model.Ho;
+            user.Ten = model.Ten;
+            user.SoDienThoai = model.SoDienThoai;
+            user.MatKhau = model.MatKhau; // Bạn nên hash mật khẩu nếu cần
+
+            await _context.SaveChangesAsync();
+
+            ViewBag.ThongBao = "Cập nhật thành công!";
+            return View(user); // Trả lại view với thông tin đã cập nhật
         }
 
 
@@ -123,73 +160,66 @@ namespace ThueXeDapHoiAn.Areas.Client.Controllers
         }
 
 
+        [Route("Client")]
+        [Route("Client/DangKyCuaHang")]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Route("Client/DangKyCuaHang")]
-        public async Task<IActionResult> DangKyCuaHang(IFormCollection form, IFormFile hinhAnh)
+        public async Task<IActionResult> DangKyCuaHang(CuaHangModel_Client cuaHang)
         {
-            var userIdStr = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            if (string.IsNullOrEmpty(userIdStr))
-                return Unauthorized();
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
-            int userId = int.Parse(userIdStr);
-
-            // Kiểm tra xem user đã có cửa hàng chưa
-            var existingCuaHang = await _context.CuaHang
-                .FirstOrDefaultAsync(c => c.IdTaiKhoan == userId);
-
-            if (existingCuaHang != null)
+            if (string.IsNullOrEmpty(userId))
             {
-                return RedirectToAction("ThongTinCuaHang", "CuaHang", new { area = "Client" });
+                // Không lấy được ID => về đăng nhập
+                TempData["error"] = "Bạn cần đăng nhập để đăng ký cửa hàng.";
+                return RedirectToAction("Login", "Account");
+            }
+            cuaHang.IdTaiKhoan = int.Parse(userId);
+            if (ModelState.IsValid)
+            {
+                var tenCuaHang = await _context.CuaHang.FirstOrDefaultAsync(p => p.TenCuaHang == cuaHang.TenCuaHang);
+                if (tenCuaHang != null)
+                {
+                    ModelState.AddModelError("", "Tên cửa hàng đã tồn tại");
+                    return View(cuaHang);
+                }
+                if (cuaHang.IMageUpload != null)
+                {
+                    string uploadDir = Path.Combine(_webHostEnvironment.WebRootPath, "images/cuaHang");
+                    string imageName = Guid.NewGuid().ToString() + "_" + cuaHang.IMageUpload.FileName;
+                    string filePath = Path.Combine(uploadDir, imageName);
+
+                    FileStream fs = new FileStream(filePath, FileMode.Create);
+                    await cuaHang.IMageUpload.CopyToAsync(fs);
+                    fs.Close();
+                    cuaHang.HinhAnh = imageName;
+                    cuaHang.TrangThaiCuaHang = "Pending";
+
+                }
+                _context.Add(cuaHang);
+                await _context.SaveChangesAsync();
+                return RedirectToAction("Index");
+
+            }
+            else
+            {
+                TempData["error"] = "Dữ liệu nhập vào chưa phù hợp";
+                List<string> errors = new List<string>();
+                foreach (var value in ModelState.Values)
+                {
+                    foreach (var error in value.Errors)
+                    {
+                        errors.Add(error.ErrorMessage);
+                    }
+                }
+                string errorMessage = string.Join("\n", errors);
+                return BadRequest(errorMessage);
             }
 
-            string fileName = null;
-            if (hinhAnh != null && hinhAnh.Length > 0)
-            {
-                // Giữ nguyên tên ảnh nhưng thêm một GUID vào để đảm bảo tính duy nhất
-                var fileExtension = Path.GetExtension(hinhAnh.FileName);
-                fileName = Path.GetFileNameWithoutExtension(hinhAnh.FileName) + "-" + Guid.NewGuid() + fileExtension;
 
-                // Đường dẫn lưu vào thư mục /images/cuahang
-                var folderPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images", "cuahang");
-                if (!Directory.Exists(folderPath))
-                {
-                    Directory.CreateDirectory(folderPath);
-                }
-                var path = Path.Combine(folderPath, fileName);
-
-                using (var stream = new FileStream(path, FileMode.Create))
-                {
-                    await hinhAnh.CopyToAsync(stream);
-                }
-            }
-
-            var cuaHang = new CuaHangModel_Client
-            {
-                IdTaiKhoan = userId,
-                TenCuaHang = form["tenCuaHang"],
-                DiaChi = form["diaChi"],
-                SoDienThoai = form["soDienThoai"],
-                Gmail = form["gmail"],
-                GioiThieu = form["gioiThieu"],
-                HinhAnh = fileName != null ? "/images/cuahang/" + fileName : null, // Đảm bảo đường dẫn là "/images/cuahang/{fileName}"
-                TrangThaiCuaHang = "False" // chưa duyệt
-            };
-
-            _context.CuaHang.Add(cuaHang);
-            await _context.SaveChangesAsync();
-
-            // Cập nhật role thành Shop
-            var identity = (ClaimsIdentity)User.Identity;
-            var oldRoleClaim = identity.FindFirst(ClaimTypes.Role);
-            if (oldRoleClaim != null) identity.RemoveClaim(oldRoleClaim);
-            identity.AddClaim(new Claim(ClaimTypes.Role, "Shop"));
-
-            await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(identity));
-
-            TempData["ThongBao"] = "Cửa hàng của bạn đang chờ admin duyệt.";
-            return RedirectToAction("Index", "Home", new { area = "Client" });
+            return View(cuaHang);
         }
+
 
         [Authorize]
         [Route("Client/CuaHangRedirect")]
