@@ -1,0 +1,86 @@
+﻿.centered-container {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #f6f8fa;
+}
+
+.custom-edit-form {
+    background: #fff;
+    border-radius: 14px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.13);
+    padding: 32px 24px 24px 24px;
+    width: 100%;
+    max-width: 420px;
+    font-family: 'Segoe UI', Arial, sans-serif;
+}
+
+    .custom-edit-form h2 {
+        text-align: center;
+        color: #218c5a;
+        margin-bottom: 28px;
+        font-size: 1.7rem;
+        font-weight: 700;
+        letter-spacing: 0.5px;
+    }
+
+    .custom-edit-form label {
+        font-weight: 600;
+        margin-top: 16px;
+        display: block;
+        color: #222;
+        font-size: 1rem;
+    }
+
+    .custom-edit-form input, .custom-edit-form select {
+        width: 100%;
+        padding: 13px 18px;
+        margin-top: 7px;
+        border-radius: 8px;
+        border: 1.5px solid #d1e7dd;
+        margin-bottom: 20px;
+        font-size: 1rem;
+        background: #fafdff;
+        transition: border-color 0.2s;
+    }
+
+        .custom-edit-form input:focus, .custom-edit-form select:focus {
+            border-color: #218c5a;
+            outline: none;
+            background: #f4fff7;
+        }
+
+    .custom-edit-form .submit-btn {
+        width: 100%;
+        padding: 15px;
+        background: linear-gradient(90deg, #218c5a 60%, #32cd32 100%);
+        color: #fff;
+        border: none;
+        border-radius: 8px;
+        font-size: 1.1rem;
+        font-weight: 700;
+        cursor: pointer;
+        box-shadow: 0 2px 8px rgba(44, 204, 113, 0.13);
+        transition: background 0.2s, transform 0.15s;
+        margin-top: 10px;
+    }
+
+        .custom-edit-form .submit-btn:hover {
+            background: linear-gradient(90deg, #176c3a 60%, #28b463 100%);
+            transform: translateY(-2px) scale(1.02);
+        }
+
+    .custom-edit-form img {
+        margin-top: 12px;
+        max-width: 160px;
+        border-radius: 8px;
+        display: block;
+    }
+
+@media (max-width: 600px) {
+    .custom-edit-form {
+        padding: 18px 8px 20px 8px;
+        max-width: 98vw;
+    }
+}

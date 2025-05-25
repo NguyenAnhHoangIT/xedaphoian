@@ -1,0 +1,20 @@
+﻿@{
+    Layout = "~/Areas/Client/Views/Shared/_LayoutCuaHang.cshtml";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/LayoutClient.css" />
+}
+
+<div class="wrapper_cuahang">
+    <div class="content_cuahang">
+        <div class="container_cuahang8 cuahang_class">
+            <h2>Thêm loại xe mới</h2>
+            <form method="POST" asp-action="ThemLoaiXe" asp-controller="CuaHang" asp-area="Client">
+                <label>Tên loại xe <span class="required">*</span></label>
+                <input type="text" name="tenLoaiXe" placeholder="Nhập tên loại xe" required />
+                <button type="submit" class="submit-btn">Thêm loại xe</button>
+            </form>
+        </div>
+    </div>
+</div>
