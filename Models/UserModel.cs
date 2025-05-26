@@ -9,7 +9,7 @@ namespace ThueXeDapHoiAn.Models
     {
         [Key]
         [Column("idTaiKhoan")]
-        public int UserId { get; set; }
+        public int Id { get; set; }
         [Column("ho")]
         public string Ho { get; set; }
         [Column("ten")]

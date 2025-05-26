@@ -5,6 +5,14 @@
 
 @section Styles {
     <link rel="stylesheet" href="~/css/LayoutClient.css" />
+    <style>
+        .container_cuahang {
+            max-width: 1100px;
+            width: 100%;
+            margin: 20px auto;
+            overflow-x: auto;
+        }
+    </style>
 }
 <header>
     <nav class="main-nav">
@@ -13,6 +21,7 @@
         <a asp-area="Client" asp-controller="CuaHang" asp-action="DonThueChoDuyet" class="active">Quản lý đơn thuê</a>
         <a href="#">Báo cáo</a>
         <a asp-area="Client" asp-controller="CuaHang" asp-action="DanhSachKhuyenMai">Khuyến mãi</a>
+        <a asp-area="Client" asp-controller="CuaHang" asp-action="ThongKe">Thống kê</a>
     </nav>
 </header>
 <!-- WRAPPER -->
@@ -39,12 +48,13 @@
                     <th>Ngày nhận</th>
                     <th>Tổng tiền</th>
                     <th>Trạng thái</th>
+                    <th>Hoạt động</th>
                 </tr>
             </thead>
             <tbody>
                 @foreach (var don in Model)
                 {
-                    var chiTietList = don.ChiTietDonThue;
+                    var chiTietList = (IEnumerable<dynamic>)don.ChiTietDonThue;
                     var thoiGianThue = (don.NgayTraXe - don.NgayNhanXe).TotalHours;
                     bool tinhTheoNgay = thoiGianThue > 23;
                     var soNgay = (int)Math.Ceiling((don.NgayTraXe - don.NgayNhanXe).TotalDays);
@@ -56,14 +66,22 @@
 
                     var soGioNgay = tinhTheoNgay ? soNgay + " ngày" : soGio + " giờ";
 
-                    // Tính tổng tiền (tùy logic của bạn)
                     decimal tongTien = 0;
                     foreach (var ct in chiTietList)
                     {
                         if (tinhTheoNgay)
+                        {
                             tongTien += (ct.GiaThueTheoNgay ?? 0) * ct.SoLuong * soNgay;
+                        }
                         else
+                        {
                             tongTien += (ct.GiaThueTheoGio ?? 0) * ct.SoLuong * soGio;
+                        }
+                    }
+
+                    if (don.KhuyenMai != null && don.KhuyenMai.MucGiamGia > 0)
+                    {
+                        tongTien = tongTien * (1 - Convert.ToDecimal(don.KhuyenMai.MucGiamGia));
                     }
 
                     <tr>
@@ -73,7 +91,15 @@
                         <td>@soGioNgay</td>
                         <td>@don.NgayNhanXe.ToString("HH\\h dd/MM/yyyy")</td>
                         <td>@string.Format("{0:N0} VND", @tongTien)</td>
-                        <td>Đã duyệt <i class="fa-solid fa-check-circle" style="color: green;"></i></td>
+                        <td>Đã duyệt</td>
+                        <td>
+                            <form asp-action="HoanThanhDonThue" asp-controller="CuaHang" asp-area="Client" method="post" style="display:inline;">
+                                <input type="hidden" name="id" value="@don.IdDonThue" />
+                                <button type="submit" class="btn btn-success btn-sm" onclick="return confirm('Đơn thuê chắc chắn đã hoàn thành?')">
+                                    <i class="fa-solid fa-check-circle" style="color: green;"></i>
+                                </button>
+                            </form>
+                        </td>
                     </tr>
                 }
             </tbody>

@@ -1,4 +1,4 @@
-﻿@model List<ThueXeDapHoiAn.Areas.Client.Models.XeModel_Client>
+﻿@model List<ThueXeDapHoiAn.Areas.Client.Models.LoaiXeModel_Client>
 @{
     Layout = "~/Areas/Client/Views/Shared/_LayoutCuaHang.cshtml";
 }
@@ -48,15 +48,15 @@
     <aside>
         <h3>Quản lý</h3>
         <nav>
-            <a class="active">Danh sách xe</a>
+            <a asp-area="Client" asp-controller="CuaHang" asp-action="DanhSachXe">Danh sách xe</a>
             <a asp-area="Client" asp-controller="CuaHang" asp-action="ThemXe">Thêm xe</a>
-            <a asp-area="Client" asp-controller="CuaHang" asp-action="DanhSachLoaiXe">Loại xe</a>
+            <a class="active">Loại xe</a>
         </nav>
     </aside>
 
     <div class="content_cuahang">
         <div class="container_cuahang">
-            <h2>Danh sách xe đạp</h2>
+            <h2>Danh sách loại xe</h2>
             @if (TempData["ErrorMessage"] != null)
             {
                 <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
@@ -69,29 +69,21 @@
                 <thead>
                     <tr>
                         <th>ID</th>
-                        <th>Loại xe</th>
-                        <th>Tên xe</th>
-                        <th>Giá thuê theo giờ</th>
-                        <th>Giá thuê theo ngày</th>
-                        <th>Số lượng</th>
+                        <th>Tên loại xe</th>
                         <th>Thao tác</th>
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach (var xe in Model)
+                    @foreach (var loaixe in Model)
                     {
                         <tr>
-                            <td>@xe.IdXe</td>
-                            <td>@xe.LoaiXe?.TenLoaiXe</td>
-                            <td>@xe.TenXe</td>
-                            <td>@string.Format("{0:N0} VND", xe.GiaThueTheoGio)</td>
-                            <td>@string.Format("{0:N0} VND", xe.GiaThueTheoNgay)</td>
-                            <td>@xe.SoLuong</td>
+                            <td>@loaixe.IdLoaiXe</td>
+                            <td>@loaixe.TenLoaiXe</td>
                             <td>
-                                <a href="@Url.Action("SuaXe", "CuaHang", new { area = "Client", id = xe.IdXe })">
+                                <a href="@Url.Action("SuaLoaiXe", "CuaHang", new { area = "Client", id = loaixe.IdLoaiXe })">
                                     <i class="fa-solid fa-pen"></i>
                                 </a>
-                                <a href="@Url.Action("XoaXe", "CuaHang", new { area = "Client", id = xe.IdXe })" onclick="return confirm('Bạn có chắc chắn muốn xóa xe này?')">
+                                <a href="@Url.Action("XoaLoaiXe", "CuaHang", new { area = "Client", id = loaixe.IdLoaiXe })" onclick="return confirm('Bạn có chắc chắn muốn xóa loại xe này?')">
                                     <i class="fa-solid fa-trash"></i>
                                 </a>
                             </td>

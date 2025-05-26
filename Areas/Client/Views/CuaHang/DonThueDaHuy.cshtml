@@ -13,6 +13,7 @@
         <a asp-area="Client" asp-controller="CuaHang" asp-action="DonThueChoDuyet" class="active">Quản lý đơn thuê</a>
         <a href="#">Báo cáo</a>
         <a asp-area="Client" asp-controller="CuaHang" asp-action="DanhSachKhuyenMai">Khuyến mãi</a>
+        <a asp-area="Client" asp-controller="CuaHang" asp-action="ThongKe">Thống kê</a>
     </nav>
 </header>
 
@@ -46,7 +47,7 @@
                 <tbody>
                     @foreach (var don in Model)
                     {
-                        var chiTietList = don.ChiTietDonThue;
+                        var chiTietList = (IEnumerable<dynamic>)don.ChiTietDonThue;
                         var thoiGianThue = (don.NgayTraXe - don.NgayNhanXe).TotalHours;
                         bool tinhTheoNgay = thoiGianThue > 23;
                         var soNgay = (int)Math.Ceiling((don.NgayTraXe - don.NgayNhanXe).TotalDays);
@@ -62,9 +63,18 @@
                         foreach (var ct in chiTietList)
                         {
                             if (tinhTheoNgay)
+                            {
                                 tongTien += (ct.GiaThueTheoNgay ?? 0) * ct.SoLuong * soNgay;
+                            }
                             else
+                            {
                                 tongTien += (ct.GiaThueTheoGio ?? 0) * ct.SoLuong * soGio;
+                            }
+                        }
+
+                        if (don.KhuyenMai != null && don.KhuyenMai.MucGiamGia > 0)
+                        {
+                            tongTien = tongTien * (1 - Convert.ToDecimal(don.KhuyenMai.MucGiamGia));
                         }
 
                         <tr>

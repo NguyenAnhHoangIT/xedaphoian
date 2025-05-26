@@ -368,6 +368,7 @@ namespace ThueXeDapHoiAn.Areas.Client.Controllers
                     .ThenInclude(ct => ct.Xe)
                         .ThenInclude(x => x.LoaiXe)
                 .Include(d => d.User)
+                .Include(d => d.KhuyenMai)
                 .Where(d => d.TrangThaiDon == "Đã duyệt đơn" && d.IdCuaHang == cuaHang.IdCuaHang)
                 .ToListAsync();
 
@@ -390,10 +391,28 @@ namespace ThueXeDapHoiAn.Areas.Client.Controllers
                     .ThenInclude(ct => ct.Xe)
                         .ThenInclude(x => x.LoaiXe)
                 .Include(d => d.User)
+                .Include(d => d.KhuyenMai)
                 .Where(d => d.TrangThaiDon == "Đã huỷ" && d.IdCuaHang == cuaHang.IdCuaHang)
                 .ToListAsync();
 
             return View(donThueDaHuy);
+        }
+        [HttpPost]
+        [Authorize(Roles = "Shop")]
+        [Route("Client/Shop/HoanThanhDonThue")]
+        public async Task<IActionResult> HoanThanhDonThue(int id)
+        {
+            var connectionString = _context.Database.GetConnectionString();
+            using (var conn = new SqlConnection(connectionString))
+            {
+                await conn.OpenAsync();
+                var cmd = conn.CreateCommand();
+                cmd.CommandText = @"UPDATE DonThue SET trangThaiDon = N'Hoàn thành' WHERE idDonThue = @id";
+                cmd.Parameters.AddWithValue("@id", id);
+                int rows = await cmd.ExecuteNonQueryAsync();
+                if (rows == 0) return NotFound();
+            }
+            return RedirectToAction("DonThueHoanThanh");
         }
 
         [Route("Client")]
@@ -412,6 +431,7 @@ namespace ThueXeDapHoiAn.Areas.Client.Controllers
                     .ThenInclude(ct => ct.Xe)
                         .ThenInclude(x => x.LoaiXe)
                 .Include(d => d.User)
+                .Include(d => d.KhuyenMai)
                 .Where(d => d.TrangThaiDon == "Hoàn thành" && d.IdCuaHang == cuaHang.IdCuaHang)
                 .ToListAsync();
 
@@ -553,6 +573,72 @@ namespace ThueXeDapHoiAn.Areas.Client.Controllers
             return RedirectToAction("DanhSachKhuyenMai");
         }
 
+        [Route("Client")]
+        [Route("Client/Shop/DanhSachLoaiXe")]
+        public async Task<IActionResult> DanhSachLoaiXe()
+        {
+            var userIdStr = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (string.IsNullOrEmpty(userIdStr)) return Unauthorized();
+            int userId = int.Parse(userIdStr);
+
+            var cuaHang = await _context.CuaHang.FirstOrDefaultAsync(c => c.IdTaiKhoan == userId);
+            if (cuaHang == null) return NotFound();
+
+            var danhSachLoaiXe = await _context.LoaiXe
+                .Where(lx => lx.IdCuaHang == cuaHang.IdCuaHang)
+                .ToListAsync();
+
+            return View(danhSachLoaiXe);
+        }
+        [HttpGet]
+        [Route("Client/Shop/SuaLoaiXe")]
+        public async Task<IActionResult> SuaLoaiXe(int id)
+        {
+            var loaiXe = await _context.LoaiXe.FirstOrDefaultAsync(lx => lx.IdLoaiXe == id);
+            if (loaiXe == null) return NotFound();
+            return View(loaiXe);
+        }
+
+        [HttpPost]
+        [Authorize(Roles = "Shop")]
+        [Route("Client/Shop/SuaLoaiXe")]
+        public async Task<IActionResult> SuaLoaiXe(LoaiXeModel_Client model)
+        {
+            var loaiXe = await _context.LoaiXe.FirstOrDefaultAsync(lx => lx.IdLoaiXe == model.IdLoaiXe);
+            if (loaiXe == null) return NotFound();
+
+            loaiXe.TenLoaiXe = model.TenLoaiXe;
+            _context.LoaiXe.Update(loaiXe);
+            await _context.SaveChangesAsync();
+
+            TempData["SuccessMessage"] = "Cập nhật loại xe thành công!";
+            return RedirectToAction("DanhSachLoaiXe");
+        }
+        [HttpGet]
+        [Route("Client/Shop/XoaLoaiXe")]
+        public async Task<IActionResult> XoaLoaiXe(int id)
+        {
+            // Kiểm tra loại xe có đang được dùng cho xe nào không
+            bool isUsed = await _context.Xe.AnyAsync(x => x.IdLoaiXe == id);
+            if (isUsed)
+            {
+                TempData["ErrorMessage"] = "Không thể xóa loại xe này vì đang có xe sử dụng!";
+                return RedirectToAction("DanhSachLoaiXe");
+            }
+
+            var loaiXe = await _context.LoaiXe.FirstOrDefaultAsync(lx => lx.IdLoaiXe == id);
+            if (loaiXe == null)
+            {
+                TempData["ErrorMessage"] = "Không tìm thấy loại xe để xóa!";
+                return RedirectToAction("DanhSachLoaiXe");
+            }
+
+            _context.LoaiXe.Remove(loaiXe);
+            await _context.SaveChangesAsync();
+
+            TempData["SuccessMessage"] = "Xóa loại xe thành công!";
+            return RedirectToAction("DanhSachLoaiXe");
+        }
         [HttpGet]
         [Route("Client/Shop/ThemLoaiXe")]
         public ActionResult ThemLoaiXe()
@@ -583,5 +669,75 @@ namespace ThueXeDapHoiAn.Areas.Client.Controllers
             return RedirectToAction("ThemXe");
         }
 
+        [HttpGet]
+        [Route("Client/Shop/ThongKe")]
+        public async Task<IActionResult> ThongKe(DateTime? fromDate, DateTime? toDate)
+        {
+            var userIdStr = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (string.IsNullOrEmpty(userIdStr)) return Unauthorized();
+            int userId = int.Parse(userIdStr);
+
+            var cuaHang = await _context.CuaHang.FirstOrDefaultAsync(c => c.IdTaiKhoan == userId);
+            if (cuaHang == null) return NotFound();
+
+            // Lọc tất cả đơn thuê theo ngày nếu có chọn (tổng đơn, đơn hủy)
+            var donThueQuery = _context.DonThue
+                .Where(d => d.IdCuaHang == cuaHang.IdCuaHang);
+
+            if (fromDate.HasValue)
+                donThueQuery = donThueQuery.Where(d => d.NgayNhanXe.Date >= fromDate.Value.Date);
+            if (toDate.HasValue)
+                donThueQuery = donThueQuery.Where(d => d.NgayNhanXe.Date <= toDate.Value.Date);
+
+            var donThue = await donThueQuery.ToListAsync();
+
+            // Lấy đơn hoàn thành có đầy đủ navigation property để tính doanh thu
+            var donHoanThanhQuery = _context.DonThue
+                .Include(d => d.ChiTietDonThue)
+                .Include(d => d.KhuyenMai)
+                .Where(d => d.TrangThaiDon == "Hoàn thành" && d.IdCuaHang == cuaHang.IdCuaHang);
+
+            if (fromDate.HasValue)
+                donHoanThanhQuery = donHoanThanhQuery.Where(d => d.NgayNhanXe.Date >= fromDate.Value.Date);
+            if (toDate.HasValue)
+                donHoanThanhQuery = donHoanThanhQuery.Where(d => d.NgayNhanXe.Date <= toDate.Value.Date);
+
+            var donHoanThanh = await donHoanThanhQuery.ToListAsync();
+
+            var donHuy = donThue
+                .Where(d => d.TrangThaiDon == "Đã huỷ")
+                .ToList();
+
+            var doanhThuTheoNgay = donHoanThanh
+                .GroupBy(d => d.NgayNhanXe.Date)
+                .Select(g => new DoanhThuTheoNgay
+                {
+                    Ngay = g.Key,
+                    NgayISO = g.Key.ToString("yyyy-MM-dd"),
+                    DoanhThu = g.Sum(x =>
+                        x.ChiTietDonThue != null
+                            ? (
+                                (x.ChiTietDonThue.Sum(ct =>
+                                    (x.NgayTraXe - x.NgayNhanXe).TotalHours > 23
+                                        ? (ct.GiaThueTheoNgay ?? 0) * ct.SoLuong * (int)Math.Ceiling((x.NgayTraXe - x.NgayNhanXe).TotalDays)
+                                        : (ct.GiaThueTheoGio ?? 0) * ct.SoLuong * (int)Math.Ceiling((x.NgayTraXe - x.NgayNhanXe).TotalHours)
+                                )) * (1 - (decimal)(x.KhuyenMai != null ? x.KhuyenMai.MucGiamGia : 0))
+                            )
+                            : 0
+                    ),
+                    SoDon = g.Count()
+                }).OrderBy(x => x.Ngay).ToList();
+
+            var model = new ThongKeViewModel
+            {
+                TongDon = donThue.Count,
+                DonHoanThanh = donHoanThanh.Count,
+                DonHuy = donHuy.Count,
+                DoanhThu = doanhThuTheoNgay.Sum(x => x.DoanhThu),
+                DoanhThuTheoNgay = doanhThuTheoNgay
+            };
+
+            return View(model);
+        }
     }
 }

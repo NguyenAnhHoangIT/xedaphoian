@@ -13,6 +13,7 @@
         <a asp-area="Client" asp-controller="CuaHang" asp-action="DonThueChoDuyet" class="active">Quản lý đơn thuê</a>
         <a href="#">Báo cáo</a>
         <a asp-area="Client" asp-controller="CuaHang" asp-action="DanhSachKhuyenMai">Khuyến mãi</a>
+        <a asp-area="Client" asp-controller="CuaHang" asp-action="ThongKe">Thống kê</a>
     </nav>
 </header>
 <!-- WRAPPER -->
@@ -88,13 +89,13 @@
                         <td>@string.Format("{0:N0} VND", @tongTien)</td>
                         <!-- ...existing code... -->
                         <td>
-                            <form asp-action="DuyetDonThue" asp-controller="CuaHang" asp-area="Client" method="post" style="display:inline;" onsubmit="return confirm('Bạn có chắc chắn muốn DUYỆT đơn thuê này không?');">
+                            <form asp-action="DuyetDonThue" asp-controller="CuaHang" asp-area="Client" method="post" style="display:inline;" onsubmit="return confirm('Bạn có chắc chắn muốn duyệt đơn thuê này không?');">
                                 <input type="hidden" name="id" value="@don.IdDonThue" />
                                 <button type="submit" style="background:none;border:none;padding:0;">
                                     <i class="fa-solid fa-check-circle" style="color: green; font-size: 20px;"></i>
                                 </button>
                             </form>
-                            <form asp-action="HuyDonThue" asp-controller="CuaHang" asp-area="Client" method="post" style="display:inline;" onsubmit="return confirm('Bạn có chắc chắn muốn HUỶ đơn thuê này không?');">
+                            <form asp-action="HuyDonThue" asp-controller="CuaHang" asp-area="Client" method="post" style="display:inline;" onsubmit="return confirm('Bạn có chắc chắn muốn huỷ đơn thuê này không?');">
                                 <input type="hidden" name="id" value="@don.IdDonThue" />
                                 <button type="submit" style="background:none;border:none;padding:0;">
                                     <i class="fa-solid fa-times-circle" style="color: red; font-size: 20px;"></i>
