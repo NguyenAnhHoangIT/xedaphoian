@@ -556,7 +556,35 @@ namespace ThueXeDapHoiAn.Areas.Client.Controllers
             return RedirectToAction("DanhSachKhuyenMai");
         }
 
+        [HttpGet]
+        [Route("Client/Shop/ThemLoaiXe")]
+        public ActionResult ThemLoaiXe()
+        {
+            return View();
+        }
 
+        [HttpPost]
+        [Authorize(Roles = "Shop")]
+        [Route("Client/Shop/ThemLoaiXe")]
+        public async Task<IActionResult> ThemLoaiXe(string tenLoaiXe)
+        {
+            var userIdStr = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (string.IsNullOrEmpty(userIdStr)) return Unauthorized();
+            int userId = int.Parse(userIdStr);
+
+            var cuaHang = await _context.CuaHang.FirstOrDefaultAsync(c => c.IdTaiKhoan == userId);
+            if (cuaHang == null) return NotFound("Không tìm thấy cửa hàng");
+
+            var loaiXe = new LoaiXeModel_Client
+            {
+                TenLoaiXe = tenLoaiXe,
+                IdCuaHang = cuaHang.IdCuaHang
+            };
+            _context.LoaiXe.Add(loaiXe);
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction("ThemXe");
+        }
 
     }
 }
