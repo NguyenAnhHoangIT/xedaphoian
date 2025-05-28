@@ -2,13 +2,14 @@
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Filters;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
+using ThueXeDapHoiAn.Areas.Client.Models;
+using ThueXeDapHoiAn.Areas.Client.Models.ViewModels;
 using ThueXeDapHoiAn.Data;
 using ThueXeDapHoiAn.Models;
-using Microsoft.Data.SqlClient;
-using Microsoft.AspNetCore.Mvc.Filters;
-using ThueXeDapHoiAn.Areas.Client.Models;
 
 namespace ThueXeDapHoiAn.Areas.Client.Controllers
 {
@@ -17,10 +18,12 @@ namespace ThueXeDapHoiAn.Areas.Client.Controllers
     public class CuaHangController : Controller
     {
         private readonly AppDbContextClient _context;
+        private readonly DatabaseHelperClient _dbHelper;
 
-        public CuaHangController(AppDbContextClient context)
+        public CuaHangController(AppDbContextClient context, DatabaseHelperClient dbHelper)
         {
             _context = context;
+            _dbHelper = dbHelper;
         }
         [Authorize(Roles = "Shop")]
         [Route("Client/Shop/ThongTinCuaHang")]
@@ -585,6 +588,36 @@ namespace ThueXeDapHoiAn.Areas.Client.Controllers
 
             return RedirectToAction("ThemXe");
         }
+
+        [Route("Client/Shop/BaoCao")]
+        public async Task<IActionResult> BaoCao()
+        {
+            var userIdStr = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (string.IsNullOrEmpty(userIdStr)) return Unauthorized();
+
+            int userId = int.Parse(userIdStr);
+
+            var cuaHang = await _context.CuaHang.FirstOrDefaultAsync(c => c.IdTaiKhoan == userId);
+            if (cuaHang == null) return NotFound();
+
+            int cuaHangId = cuaHang.IdCuaHang;
+
+            var model = new BaoCaoViewModel
+            {
+                SoXe = _dbHelper.LaySoXe(cuaHangId),
+                SoXeDaThue = _dbHelper.LaySoXeDaThue(cuaHangId),
+                SoDonDaThue = _dbHelper.LaySoDonDaThue(cuaHangId),
+                DoanhThuThangNay = _dbHelper.LayDoanhThuThangNay(cuaHangId),
+
+                DoanhThuTheoNgay = _dbHelper.LayDoanhThuTheoNgay(cuaHangId),
+                DoanhThuTheoLoaiXe = _dbHelper.LayDoanhThuTheoLoaiXe(cuaHangId),
+                DoanhThuCacXe = _dbHelper.LayDoanhThuCacXe(cuaHangId),
+                TopNguoiDung = _dbHelper.LayTopNguoiDung(cuaHangId)
+            };
+
+            return View(model);
+        }
+
 
     }
 }

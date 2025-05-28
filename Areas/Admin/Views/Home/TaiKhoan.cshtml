@@ -23,6 +23,9 @@
     <div class="content_cuahang">
         <div class="container_cuahang">
             <h2>Danh sách tài khoản</h2>
+            <button id="addUserBtn" class="themtaikhoan">
+                <i class="fa-solid fa-plus"></i> Thêm tài khoản
+            </button>
             <table>
                 <thead>
                     <tr>
@@ -130,6 +133,20 @@
                 });
             });
 
+            document.getElementById('addUserBtn').addEventListener('click', () => {
+                // Reset tất cả input
+                document.getElementById('editIdTaiKhoan').value = "0";
+                document.getElementById('editHo').value = "";
+                document.getElementById('editTen').value = "";
+                document.getElementById('editSoDienThoai').value = "";
+                document.getElementById('editMatKhau').value = "";
+                document.getElementById('editVaiTro').value = "Client";
+                document.getElementById('editTrangThaiTaiKhoan').value = "True";
+
+                modal.style.display = 'flex';
+            });
+
+
             // Close modal
             closeBtn.addEventListener('click', () => {
                 modal.style.display = 'none';
@@ -146,21 +163,30 @@
             document.getElementById('editUserForm').addEventListener('submit', function (e) {
                 e.preventDefault();
 
-                fetch('@Url.Action("CapNhatTaiKhoan", "Home", new { area = "Admin" })', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                    body: new URLSearchParams(new FormData(this))
+                const id = document.getElementById('editIdTaiKhoan').value;
+                const url = id === "0" || id === ""
+                    ? '@Url.Action("ThemTaiKhoan", "Home", new { area = "Admin" })'
+                    : '@Url.Action("CapNhatTaiKhoan", "Home", new { area = "Admin" })';
+
+                fetch(url, {
+
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: new URLSearchParams(new FormData(this))
                 })
-                    .then(res => res.json())
-                    .then(data => {
-                        if (data.success) {
-                            location.reload();
-                        } else {
-                            alert("Cập nhật thất bại!");
-                        }
-                    })
-                    .catch(() => alert("Đã xảy ra lỗi!"));
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success) {
+                        location.reload();
+                    } else {
+                        alert("Cập nhật thất bại!");
+                    }
+                })
+                .catch(() => alert("Đã xảy ra lỗi!"));
             });
+
+            
+
         });
     </script>
 }

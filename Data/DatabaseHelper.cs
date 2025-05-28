@@ -59,7 +59,7 @@ namespace ThueXeDapHoiAn.Data
                 {
                     return new UserModel
                     {
-                        UserId = Convert.ToInt32(reader["idTaiKhoan"]),
+                        Id = Convert.ToInt32(reader["idTaiKhoan"]),
                         Ho = reader["ho"].ToString(),
                         Ten = reader["ten"].ToString(),
                         SoDienThoai = reader["soDienThoai"].ToString(),
