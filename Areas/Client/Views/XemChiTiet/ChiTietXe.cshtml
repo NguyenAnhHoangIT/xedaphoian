@@ -1,4 +1,6 @@
-﻿@{
+﻿@using ThueXeDapHoiAn.Areas.Admin.Models
+@using ThueXeDapHoiAn.Areas.Client.Models
+@{
     Layout = "~/Areas/Client/Views/Shared/_Layout.cshtml";
 }
 
@@ -179,45 +181,47 @@
     <div class="wrapper2">
         <p style="margin-left: 20px;" class="title">CÁC SẢN PHẨM TƯƠNG TỰ TẠI CỬA HÀNG</p>
         <section class="bike-list" style="margin-left: 20px;">
-            <a href="#">
-                <div class="xe-card">
-                    <img src="~/images/xe2.jpg" alt="Xe đạp đua">
-                    <div class="xe-card-body">
-                        <p class="tenXe">Xe đạp đua <span class="loai">(Hybrid-Bike)</span></p>
-                        <p class="moTa">Tốc độ cao, nhẹ nhàng, linh hoạt, hiệu suất cao</p>
-                        <p class="gia">Giá thuê: <span>150.000 đ/chiếc</span></p>
-                    </div>
-                </div>
-            </a>
+            @{
+                var xeList = ViewBag.XeCungCuaHang as List<XeModel_Client>;
+                var loaiXeDict = ViewBag.LoaiXeDict as Dictionary<int, string>;
+            }
 
-            <a href="#">
-                <div class="xe-card">
-                    <img src="~/images/xe2.jpg" alt="Xe đạp đua">
-                    <div class="xe-card-body">
-                        <p class="tenXe">Xe đạp đua <span class="loai">(Hybrid-Bike)</span></p>
-                        <p class="moTa">Tốc độ cao, nhẹ nhàng, linh hoạt, hiệu suất cao</p>
-                        <p class="gia">Giá thuê: <span>150.000 đ/chiếc</span></p>
-                    </div>
-                </div>
-            </a>
+            @if (xeList != null && xeList.Count > 0)
+            {
+                foreach (var xe in xeList)
+                {
+                    <a href="/Client/ChiTietXe/@xe.IdXe">
+                        <div class="xe-card">
+                            <img src="~/images/@xe.HinhAnh" alt="@xe.TenXe" />
+                            <div class="xe-card-body">
 
-            <a href="#">
-                <div class="xe-card">
-                    <img src="~/images/xe3.png" alt="Xe trẻ em">
-                    <div class="xe-card-body">
-                        <p class="tenXe">Xe đạp trẻ em</p>
-                        <p class="moTa">An toàn, thiết kế dễ thương, phù hợp trẻ nhỏ</p>
-                        <p class="gia">Giá thuê: <span>70.000 đ/chiếc</span></p>
-                    </div>
-                </div>
-            </a>
+                                <p class="tenXe">
+                                    @xe.TenXe
+                                    <span class="loai">
+                                        (@(loaiXeDict != null && loaiXeDict.ContainsKey(xe.IdLoaiXe) ? loaiXeDict[xe.IdLoaiXe] : "Không rõ"))
+                                    </span>
+                                </p>
 
+                                <p class="moTa">@xe.GioiThieu</p>
+                                <p class="gia">Giá thuê chỉ từ: <span>@xe.GiaThueTheoGio.ToString("N0") đ/chiếc</span> </p>
+                            </div>
+                        </div>
+                    </a>
+                }
+            }
+            else
+            {
+                <p>Không có sản phẩm tương tự tại cửa hàng.</p>
+            }
         </section>
 
         <div class="btn-wrapper">
             <button class="btn-xem-them">Xem thêm</button>
         </div>
     </div>
+
+
+
 </div>
 
 @section Scripts {
@@ -383,6 +387,4 @@
             });
         });
     </script>
-
-
 }

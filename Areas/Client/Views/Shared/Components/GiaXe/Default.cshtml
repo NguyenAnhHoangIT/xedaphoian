@@ -1,0 +1,73 @@
+﻿@using ThueXeDapHoiAn.Areas.Client.Models
+@model IEnumerable<XeModel_Client>
+<style>
+    /* Xóa nút tăng/giảm trên Chrome, Safari, Edge */
+    input[type=number]::-webkit-inner-spin-button,
+    input[type=number]::-webkit-outer-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+    }
+
+    /* Xóa nút trên Firefox */
+    input[type=number] {
+        -moz-appearance: textfield;
+    }
+    .filter-sidebar {
+        padding: 1rem;
+        background-color: #f9f9f9;
+        border-radius: 8px;
+        width: 250px;
+    }
+
+    .filter-sidebar h2,
+    .filter-sidebar h3 {
+        margin-top: 1rem;
+        font-size: 1.2rem;
+        font-weight: bold;
+    }
+
+    .filter-sidebar label {
+        display: block;
+        margin: 0.5rem 0;
+    }
+
+    .price-filter {
+        margin-top: 1rem;
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    .price-input {
+        padding: 0.5rem;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+    }
+
+    #filter-button {
+        padding: 0.5rem;
+        background-color: #007bff;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
+
+    #filter-button:hover {
+        background-color: #0056b3;
+    }
+</style>
+<form method="get" asp-controller="Client" asp-action="Search">
+    <input type="hidden" name="searchTerm" value="@ViewBag.Keyword" />
+
+    <aside class="filter-sidebar">
+        <h2>Lọc theo giá</h2>
+        <div class="price-filter">
+            <input type="text" class="price-input" name="minPrice" id="min-price" placeholder="Giá từ" />
+            <input type="text" class="price-input" name="maxPrice" id="max-price" placeholder="Giá đến" />
+            <button type="submit" id="filter-button">Lọc</button>
+        </div>
+    </aside>
+</form>
+

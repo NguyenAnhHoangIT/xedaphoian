@@ -86,14 +86,41 @@ namespace ThueXeDapHoiAn.Areas.Client.Controllers
 
         [Route("Client")]
         [Route("Client/Search")]
-        public async Task<IActionResult> Search(string searchTerm)
+        public async Task<IActionResult> Search(string searchTerm, decimal? minPrice, decimal? maxPrice)
         {
-            var xe = await _context.Xe.Where(p => p.TenXe.Contains(searchTerm) || p.GioiThieu.Contains(searchTerm))
-                .ToListAsync();
-            ViewBag.Keyword = searchTerm;
-            return View(xe);
+            var query = _context.Xe.AsQueryable();
 
+            if (!string.IsNullOrEmpty(searchTerm))
+            {
+                query = query.Where(p => p.TenXe.Contains(searchTerm) || p.GioiThieu.Contains(searchTerm));
+            }
+
+            if (minPrice.HasValue && maxPrice.HasValue && minPrice > maxPrice)
+            {
+                ViewData["Error"] = "Giá tối thiểu không được lớn hơn giá tối đa.";
+                ViewBag.Keyword = searchTerm;
+                return View(new List<XeModel_Client>());
+            }
+
+            if (minPrice.HasValue)
+            {
+                query = query.Where(p => p.GiaThueTheoGio >= minPrice.Value);
+            }
+
+            if (maxPrice.HasValue)
+            {
+                query = query.Where(p => p.GiaThueTheoGio <= maxPrice.Value);
+            }
+
+            var xe = await query.ToListAsync();
+
+            ViewBag.Keyword = searchTerm;
+            ViewBag.MinPrice = minPrice;
+            ViewBag.MaxPrice = maxPrice;
+            return View(xe);
         }
+
+
 
         [Route("Client")]
         [Route("Client/ThongTinTaiKhoan")]
