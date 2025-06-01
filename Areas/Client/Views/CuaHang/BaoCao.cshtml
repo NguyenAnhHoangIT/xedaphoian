@@ -1,0 +1,210 @@
+﻿@model ThueXeDapHoiAn.Areas.Client.Models.ViewModels.BaoCaoViewModel
+@using System.Text.Json
+
+@{
+    Layout = "~/Areas/Client/Views/Shared/_LayoutCuaHang.cshtml";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/LayoutClient.css" />
+    <link rel="stylesheet" href="~/css/BaoCao.css" />
+}
+
+<header>
+    <nav class="main-nav">
+        <a asp-area="Client" asp-controller="CuaHang" asp-action="ThongTinCuaHang">Thông tin cửa hàng</a>
+        <a asp-area="Client" asp-controller="CuaHang" asp-action="DanhSachXe">Quản lý xe</a>
+        <a asp-area="Client" asp-controller="CuaHang" asp-action="DonThueChoDuyet">Quản lý đơn thuê</a>
+        <a asp-area="Client" asp-controller="CuaHang" asp-action="BaoCao" class="active">Báo cáo</a>
+        <a asp-area="Client" asp-controller="CuaHang" asp-action="DanhSachKhuyenMai" >Khuyến mãi</a>
+    </nav>
+</header>
+<div class="wrapper_cuahang">
+    <div class="thongkecontainer animate-fade-in">
+        <!-- Stats Grid -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <img class="icon" src="~/images/thongke/placeholder.gif" alt="Bike Icon" />
+                <div class="label">Số xe của shop</div>
+                <div class="value" id="accountCount"></div>
+            </div>
+            <div class="stat-card">
+                <img class="icon" src="~/images/thongke/bike.gif" alt="Bike Icon" />
+                <div class="label">Số xe đã được thuê</div>
+                <div class="value" id="vehicleCount"></div>
+            </div>
+            <div class="stat-card">
+                <img class="icon" src="~/images/thongke/order.gif" alt="Bike Icon" />
+                <div class="label">Số đơn đã được thuê</div>
+                <div class="value" id="storeCount"></div>
+            </div>
+            <div class="stat-card">
+                <img class="icon" src="~/images/thongke/analytics.gif" alt="Bike Icon" />
+                <div class="label">Tổng doanh thu tháng này</div>
+                <div class="value" id="monthlyRevenue"></div>
+            </div>
+        </div>
+        <!-- Dashboard Grid -->
+        <div class="dashboard-grid">
+            <!-- Store Revenue Chart -->
+            <div class="chart-container">
+                <div class="chart-title">Doanh Thu Của Cửa Hàng Theo Ngày</div>
+                <canvas id="storeRevenueChart"></canvas>
+            </div>
+            <!-- Vehicle Revenue Pie Chart -->
+            <div class="chart-container">
+                <div class="chart-title">Doanh Thu Các Loại Xe</div>
+                <canvas id="vehicleRevenueChart"></canvas>
+            </div>
+
+            <!-- Vehicle Ranking Table -->
+            <div class="table-container">
+                <div class="chart-title">Doanh thu của các xe</div>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Hạng</th>
+                            <th>Tên xe</th>
+                            <th>Doanh thu</th>
+                        </tr>
+                    </thead>
+                    <tbody id="vehicleRankingTable">
+                        <!-- Data will be populated by JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="table-container">
+                <div class="chart-title">Top 10 Người Dùng Theo Tổng Tiền Thuê</div>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Hạng</th>
+                            <th>Tên người dùng</th>
+                            <th>Tổng tiền thuê</th>
+                        </tr>
+                    </thead>
+                    <tbody id="topStoresTable">
+                        <!-- Data will be populated by JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+
+    </div>
+</div>
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        // Tạo object data đầy đủ từ model để JS dùng chung
+        const data = {
+            soXe: @Model.SoXe,
+            soXeDaThue: @Model.SoXeDaThue,
+            soDonDaThue: @Model.SoDonDaThue,
+            doanhThuThangNay: @Model.DoanhThuThangNay.ToString(System.Globalization.CultureInfo.InvariantCulture),
+
+            doanhThuTheoNgay: @Html.Raw(Json.Serialize(Model.DoanhThuTheoNgay)),
+            doanhThuTheoLoaiXe: @Html.Raw(Json.Serialize(Model.DoanhThuTheoLoaiXe)),
+            doanhThuCacXe: @Html.Raw(Json.Serialize(Model.DoanhThuCacXe)),
+            topNguoiDung: @Html.Raw(Json.Serialize(Model.TopNguoiDung))
+        };
+        document.addEventListener("DOMContentLoaded", () => {
+            document.getElementById("accountCount").innerText = data.soXe;
+            document.getElementById("vehicleCount").innerText = data.soXeDaThue;
+            document.getElementById("storeCount").innerText = data.soDonDaThue;
+            document.getElementById("monthlyRevenue").innerText = Number(data.doanhThuThangNay).toLocaleString("vi-VN") + " ₫";
+
+            // Vẽ biểu đồ doanh thu theo ngày
+            const revenueCtx = document.getElementById("storeRevenueChart").getContext("2d");
+            new Chart(revenueCtx, {
+                type: "line",
+                data: {
+                    labels: data.doanhThuTheoNgay.map(x => x.ngay),
+                    datasets: [{
+                        label: "Doanh thu",
+                        data: data.doanhThuTheoNgay.map(x => x.doanhThu),
+                        borderColor: "#4CAF50",
+                        fill: false
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: {
+                            min: 0,
+                            ticks: {
+                                callback: value => value.toLocaleString("vi-VN") + " ₫"
+                            }
+                        }
+                    }
+                }
+            });
+
+            // Vẽ biểu đồ doanh thu theo loại xe
+                    const vehicleTypeCtx = document.getElementById("vehicleRevenueChart").getContext("2d");
+
+        // Tính tổng doanh thu
+        const totalRevenue = data.doanhThuTheoLoaiXe.reduce((sum, item) => sum + item.doanhThu, 0);
+
+        new Chart(vehicleTypeCtx, {
+            type: "pie",
+            data: {
+                labels: data.doanhThuTheoLoaiXe.map(x => x.loaiXe),
+                datasets: [{
+                    data: data.doanhThuTheoLoaiXe.map(x => x.doanhThu),
+                    backgroundColor: ["#FF6384", "#36A2EB", "#FFCE56", "#9CCC65", "#FFA726"]
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                const label = context.label || "";
+                                const value = context.raw;
+                                const percent = ((value / totalRevenue) * 100).toFixed(2);
+                                return `${label}: ${value.toLocaleString('vi-VN')} VNĐ (${percent}%)`;
+                            }
+                        }
+                    },
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            usePointStyle: true
+                        }
+                    }
+                }
+            }
+        });
+
+
+            // Bảng doanh thu các xe
+            const rankingTable = document.getElementById("vehicleRankingTable");
+            data.doanhThuCacXe.forEach((item, index) => {
+                const row = `
+                    <tr>
+                        <td>${index + 1}</td>
+                        <td>${item.tenXe}</td>
+                        <td>${Number(item.doanhThu).toLocaleString("vi-VN")} ₫</td>
+                    </tr>`;
+                rankingTable.insertAdjacentHTML("beforeend", row);
+            });
+
+            // Bảng top người dùng
+            const topUsersTable = document.getElementById("topStoresTable");
+            data.topNguoiDung.forEach((item, index) => {
+                const row = `
+                    <tr>
+                        <td>${index + 1}</td>
+                        <td>${item.tenNguoiDung}</td>
+                        <td>${Number(item.tongTienThue).toLocaleString("vi-VN")} ₫</td>
+                    </tr>`;
+                topUsersTable.insertAdjacentHTML("beforeend", row);
+            });
+        });
+
+    </script>
+
+}
