@@ -329,7 +329,7 @@ namespace ThueXeDapHoiAn.Areas.Client.Controllers
             {
                 await conn.OpenAsync();
                 var cmd = conn.CreateCommand();
-                cmd.CommandText = @"UPDATE DonThue SET trangThaiDon = N'Đã duyệt đơn' WHERE idDonThue = @id";
+                cmd.CommandText = @"UPDATE DonThue SET trangThaiDon = N'Đang thuê' WHERE idDonThue = @id";
                 cmd.Parameters.AddWithValue("@id", id);
                 int rows = await cmd.ExecuteNonQueryAsync();
                 if (rows == 0) return NotFound();
@@ -437,7 +437,7 @@ namespace ThueXeDapHoiAn.Areas.Client.Controllers
                     .ThenInclude(ct => ct.Xe)
                         .ThenInclude(x => x.LoaiXe)
                 .Include(d => d.User)
-                .Where(d => d.TrangThaiDon == "Đã hoàn thành" && d.IdCuaHang == cuaHang.IdCuaHang)
+                .Where(d => d.TrangThaiDon == "Hoàn thành" && d.IdCuaHang == cuaHang.IdCuaHang)
                 .ToListAsync();
 
             return View(donThueHoanThanh);

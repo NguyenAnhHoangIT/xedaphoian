@@ -65,6 +65,24 @@
             {
                 <div class="alert alert-success">@TempData["SuccessMessage"]</div>
             }
+            <input type="text" id="searchInput" placeholder="Tìm theo tên xe..." />
+            <div style="margin:10px 0;">
+                <label for="sortColumn">Sắp xếp theo: </label>
+                <select id="sortColumn">
+                    <option value="id" selected>ID</option>
+                    <option value="giaGio">Giá thuê theo giờ</option>
+                    <option value="giaNgay">Giá thuê theo ngày</option>
+                    <option value="soLuong">Số lượng</option>
+                </select>
+
+                <label for="sortOrder" style="margin-left:20px;">Thứ tự: </label>
+                <select id="sortOrder">
+                    <option value="asc">Từ thấp đến cao</option>
+                    <option value="desc">Từ cao đến thấp</option>
+                </select>
+            </div>
+
+
             <table>
                 <thead>
                     <tr>
@@ -80,7 +98,7 @@
                 <tbody>
                     @foreach (var xe in Model)
                     {
-                        <tr>
+                        <tr data-tenxe="@xe.TenXe.ToLower()" data-loaixe="@xe.LoaiXe?.TenLoaiXe.ToLower()">
                             <td>@xe.IdXe</td>
                             <td>@xe.LoaiXe?.TenLoaiXe</td>
                             <td>@xe.TenXe</td>
@@ -102,3 +120,72 @@
         </div>
     </div>
 </div>
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const searchInput = document.getElementById('searchInput');
+            const sortColumn = document.getElementById('sortColumn');
+            const sortOrder = document.getElementById('sortOrder');
+            const tbody = document.querySelector('tbody');
+
+            const allRows = Array.from(tbody.querySelectorAll('tr')); // ✅ Lưu toàn bộ dòng gốc
+
+            function parseMoney(str) {
+                return parseInt(str.replace(/[^\d]/g, '')) || 0;
+            }
+
+            function filterAndSortTable() {
+                const searchTerm = searchInput.value.toLowerCase();
+
+                // ✅ luôn bắt đầu từ allRows (dòng gốc)
+                let filteredRows = allRows.filter(row => {
+                    const tenXe = row.getAttribute('data-tenxe') || '';
+                    return tenXe.includes(searchTerm);
+                });
+
+                filteredRows.sort((a, b) => {
+                    let aVal, bVal;
+
+                    switch (sortColumn.value) {
+                        case 'id':
+                            aVal = parseInt(a.cells[0].textContent) || 0;
+                            bVal = parseInt(b.cells[0].textContent) || 0;
+                            break;
+                        case 'giaGio':
+                            aVal = parseMoney(a.cells[3].textContent);
+                            bVal = parseMoney(b.cells[3].textContent);
+                            break;
+                        case 'giaNgay':
+                            aVal = parseMoney(a.cells[4].textContent);
+                            bVal = parseMoney(b.cells[4].textContent);
+                            break;
+                        case 'soLuong':
+                            aVal = parseInt(a.cells[5].textContent) || 0;
+                            bVal = parseInt(b.cells[5].textContent) || 0;
+                            break;
+                        default:
+                            aVal = 0;
+                            bVal = 0;
+                    }
+
+                    return sortOrder.value === 'asc' ? aVal - bVal : bVal - aVal;
+                });
+
+                // Xoá hết dòng cũ
+                tbody.innerHTML = '';
+
+                // Thêm dòng đã lọc + sắp xếp vào lại
+                filteredRows.forEach(row => tbody.appendChild(row));
+            }
+
+            // Gắn sự kiện
+            [searchInput, sortColumn, sortOrder].forEach(el => {
+                el.addEventListener('input', filterAndSortTable);
+            });
+
+            // Gọi hàm lần đầu khi load
+            filterAndSortTable();
+        });
+    </script>
+
+}

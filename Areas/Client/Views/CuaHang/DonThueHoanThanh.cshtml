@@ -31,6 +31,18 @@
     <div class="content_cuahang">
         <div class="container_cuahang">
             <h2>Danh sách đơn hoàn thành</h2>
+            <input type="text" id="searchInput" placeholder="Tìm theo tên hoặc id" style="margin: 10px 0;" />
+
+            <label for="sortColumn">Sắp xếp theo:</label>
+            <select id="sortColumn">
+                <option value="id">ID đơn</option>
+                <option value="tongTien">Tổng tiền</option>
+            </select>
+            <select id="sortOrder">
+                <option value="asc">Tăng dần</option>
+                <option value="desc">Giảm dần</option>
+            </select>
+
             <table>
                 <thead>
                     <tr>
@@ -76,7 +88,11 @@
                             tongTien = tongTien * (1 - Convert.ToDecimal(don.KhuyenMai.MucGiamGia));
                         }
 
-                        <tr style="cursor:pointer;" onclick="window.location.href='@Url.Action("ChiTietDonThue", "CuaHang", new { area = "Client", id = don.IdDonThue })'">
+                        <tr style="cursor:pointer;"
+                            onclick="window.location.href='@Url.Action("ChiTietDonThue", "CuaHang", new { area = "Client", id = don.IdDonThue })'"
+                            data-khachhang="@don.User.Ten.ToLower()"
+                            data-tongtien="@tongTien"
+                            data-id="@don.IdDonThue">
                             <td>@don.IdDonThue</td>
                             <td>@don.User.Ten</td>
                             <td>@Html.Raw(xeInfo)</td>
@@ -91,3 +107,55 @@
         </div>
     </div>
 </div>
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const searchInput = document.getElementById('searchInput');
+            const sortColumn = document.getElementById('sortColumn');
+            const sortOrder = document.getElementById('sortOrder');
+            const tbody = document.querySelector('tbody');
+
+            // Lưu toàn bộ dòng gốc
+            const allRows = Array.from(tbody.querySelectorAll('tr'));
+
+            function filterAndSortTable() {
+                const searchTerm = searchInput.value.toLowerCase().trim();
+
+                // Lọc từ allRows
+                let filteredRows = allRows.filter(row => {
+                    const khachHang = row.getAttribute('data-khachhang') || '';
+                    const id = row.getAttribute('data-id') || '';
+                    return khachHang.includes(searchTerm) || id.includes(searchTerm);
+                });
+
+                // Sắp xếp
+                filteredRows.sort((a, b) => {
+                    let aVal = 0, bVal = 0;
+
+                    if (sortColumn.value === 'id') {
+                        aVal = parseInt(a.getAttribute('data-id'));
+                        bVal = parseInt(b.getAttribute('data-id'));
+                    } else if (sortColumn.value === 'tongTien') {
+                        aVal = parseFloat(a.getAttribute('data-tongtien'));
+                        bVal = parseFloat(b.getAttribute('data-tongtien'));
+                    }
+
+                    return sortOrder.value === 'asc' ? aVal - bVal : bVal - aVal;
+                });
+
+                // Làm sạch và render lại bảng
+                tbody.innerHTML = '';
+                filteredRows.forEach(row => tbody.appendChild(row));
+            }
+
+
+            // Gắn sự kiện
+            [searchInput, sortColumn, sortOrder].forEach(el => {
+                el.addEventListener('input', filterAndSortTable);
+                el.addEventListener('change', filterAndSortTable);
+            });
+
+            filterAndSortTable(); // Gọi khi load
+        });
+    </script>
+}
