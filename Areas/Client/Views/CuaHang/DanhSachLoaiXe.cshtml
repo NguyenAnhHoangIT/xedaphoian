@@ -1,38 +1,62 @@
-﻿@model IEnumerable<ThueXeDapHoiAn.Areas.Client.Models.KhuyenMaiModel_Client>
-
+﻿@model List<ThueXeDapHoiAn.Areas.Client.Models.LoaiXeModel_Client>
 @{
     Layout = "~/Areas/Client/Views/Shared/_LayoutCuaHang.cshtml";
 }
 
+
 @section Styles {
     <link rel="stylesheet" href="~/css/LayoutClient.css" />
 }
-
 <header>
     <nav class="main-nav">
         <a asp-area="Client" asp-controller="CuaHang" asp-action="ThongTinCuaHang">Thông tin cửa hàng</a>
-        <a asp-area="Client" asp-controller="CuaHang" asp-action="DanhSachXe">Quản lý xe</a>
+        <a asp-area="Client" asp-controller="CuaHang" asp-action="DanhSachXe" class="active">Quản lý xe</a>
         <a asp-area="Client" asp-controller="CuaHang" asp-action="DonThueChoDuyet">Quản lý đơn thuê</a>
-        <a asp-area="Client" asp-controller="CuaHang" asp-action="BaoCao">Báo cáo</a>
-        <a asp-area="Client" asp-controller="CuaHang" asp-action="DanhSachKhuyenMai" class="active">Khuyến mãi</a>
+        <a href="#">Báo cáo</a>
+        <a asp-area="Client" asp-controller="CuaHang" asp-action="DanhSachKhuyenMai">Khuyến mãi</a>
         <a asp-area="Client" asp-controller="CuaHang" asp-action="ThongKe">Thống kê</a>
     </nav>
 </header>
+<style>
+    .alert {
+        display: inline-block;
+        margin-bottom: 12px;
+        padding: 8px 18px;
+        border-radius: 6px;
+        font-size: 15px;
+        font-weight: 500;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+        max-width: 100%;
+    }
+
+    .alert-danger {
+        background: #ffeaea;
+        color: #d93025;
+        border: 1px solid #f5c2c7;
+    }
+
+    .alert-success {
+        background: #eaffea;
+        color: #218838;
+        border: 1px solid #b7ebc6;
+    }
+</style>
+
 
 <!-- WRAPPER -->
 <div class="wrapper_cuahang">
     <aside>
         <h3>Quản lý</h3>
         <nav>
-            <a class="active">Danh sách mã</a>
-            <a asp-area="Client" asp-controller="CuaHang" asp-action="ThemMaKhuyenMai">Thêm mã</a>
+            <a asp-area="Client" asp-controller="CuaHang" asp-action="DanhSachXe">Danh sách xe</a>
+            <a asp-area="Client" asp-controller="CuaHang" asp-action="ThemXe">Thêm xe</a>
+            <a class="active">Loại xe</a>
         </nav>
     </aside>
 
     <div class="content_cuahang">
         <div class="container_cuahang">
-            <h2>Danh sách mã khuyến mãi</h2>
-
+            <h2>Danh sách loại xe</h2>
             @if (TempData["ErrorMessage"] != null)
             {
                 <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
@@ -41,34 +65,25 @@
             {
                 <div class="alert alert-success">@TempData["SuccessMessage"]</div>
             }
-            <table class="table">
+            <table>
                 <thead>
                     <tr>
                         <th>ID</th>
-                        <th>Mã khuyến mãi</th>
-                        <th>Mức giảm giá (%)</th>
-                        <th>Đơn tối thiểu (VNĐ)</th>
-                        <th>Số lượng</th>
-                        <th>Trạng thái</th>
+                        <th>Tên loại xe</th>
                         <th>Thao tác</th>
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach (var km in Model)
+                    @foreach (var loaixe in Model)
                     {
-                        var mucGiamGia = km.MucGiamGia *100;
                         <tr>
-                            <td>@km.IdKhuyenMai</td>
-                            <td>@km.MaKhuyenMai</td>
-                            <td>@mucGiamGia %</td>
-                            <td>@km.DonToiThieu.ToString("N0")</td>
-                            <td>@km.SoLuong</td>
-                            <td>@(km.TrangThaiKhuyenMai ? "Kích hoạt" : "Vô hiệu")</td>
+                            <td>@loaixe.IdLoaiXe</td>
+                            <td>@loaixe.TenLoaiXe</td>
                             <td>
-                                <a href="@Url.Action("SuaKhuyenMai", "CuaHang", new { area = "Client", idKhuyenMai = km.IdKhuyenMai })">
+                                <a href="@Url.Action("SuaLoaiXe", "CuaHang", new { area = "Client", id = loaixe.IdLoaiXe })">
                                     <i class="fa-solid fa-pen"></i>
                                 </a>
-                                <a href="@Url.Action("XoaKhuyenMai", "CuaHang", new { area = "Client", id = km.IdKhuyenMai })" onclick="return confirm('Bạn có chắc chắn muốn xóa khuyến mãi này?')">
+                                <a href="@Url.Action("XoaLoaiXe", "CuaHang", new { area = "Client", id = loaixe.IdLoaiXe })" onclick="return confirm('Bạn có chắc chắn muốn xóa loại xe này?')">
                                     <i class="fa-solid fa-trash"></i>
                                 </a>
                             </td>

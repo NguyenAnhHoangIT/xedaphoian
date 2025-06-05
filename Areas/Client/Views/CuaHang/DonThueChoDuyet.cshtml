@@ -19,6 +19,7 @@
         <a asp-area="Client" asp-controller="CuaHang" asp-action="DonThueChoDuyet" class="active">Quản lý đơn thuê</a>
         <a asp-area="Client" asp-controller="CuaHang" asp-action="BaoCao">Báo cáo</a>
         <a asp-area="Client" asp-controller="CuaHang" asp-action="DanhSachKhuyenMai">Khuyến mãi</a>
+        <a asp-area="Client" asp-controller="CuaHang" asp-action="ThongKe">Thống kê</a>
     </nav>
 </header>
 <!-- WRAPPER -->
@@ -41,7 +42,7 @@
                 <tr>
                     <th>ID đơn thuê</th>
                     <th>Tên khách hàng</th>
-                    <th>Tên xe</th>
+                    <th>Tên xe</th> 
                     <th>Ngày nhận</th>
                     <th>Số giờ/ngày thuê</th> <!-- Thêm cột mới -->
                     <th>Tổng tiền</th>
@@ -85,7 +86,7 @@
                     ? soNgay + " ngày"
                     : soGio + " giờ";
 
-                    <tr>
+                    <tr style="cursor:pointer;" onclick="window.location.href='@Url.Action("ChiTietDonThue", "CuaHang", new { area = "Client", id = don.IdDonThue })'">
                         <td>@don.IdDonThue</td>
                         <td>@don.User.Ten</td>
                         <td>@Html.Raw(xeInfo)</td>
@@ -94,13 +95,13 @@
                         <td>@string.Format("{0:N0} VND", @tongTien)</td>
                         <!-- ...existing code... -->
                         <td>
-                            <form asp-action="DuyetDonThue" asp-controller="CuaHang" asp-area="Client" method="post" style="display:inline;" onsubmit="return confirm('Bạn có chắc chắn muốn DUYỆT đơn thuê này không?');">
+                            <form asp-action="DuyetDonThue" asp-controller="CuaHang" asp-area="Client" method="post" style="display:inline;" onsubmit="return confirm('Bạn có chắc chắn muốn duyệt đơn thuê này không?');">
                                 <input type="hidden" name="id" value="@don.IdDonThue" />
                                 <button type="submit" class="btn-icon" style="background:none;border:none;padding:0;cursor:pointer;">
                                     <i class="fa-solid fa-check-circle" style="color: green; font-size: 20px;"></i>
                                 </button>
                             </form>
-                            <form asp-action="HuyDonThue" asp-controller="CuaHang" asp-area="Client" method="post" style="display:inline;" onsubmit="return confirm('Bạn có chắc chắn muốn HUỶ đơn thuê này không?');">
+                            <form asp-action="HuyDonThue" asp-controller="CuaHang" asp-area="Client" method="post" style="display:inline;" onsubmit="return confirm('Bạn có chắc chắn muốn huỷ đơn thuê này không?');">
                                 <input type="hidden" name="id" value="@don.IdDonThue" />
                                 <button type="submit" class="btn-icon" style="background:none;border:none;padding:0;cursor:pointer;">
                                     <i class="fa-solid fa-times-circle" style="color: red; font-size: 20px;"></i>

@@ -366,7 +366,7 @@ namespace ThueXeDapHoiAn.Areas.Client.Controllers
             var cuaHang = await _context.CuaHang.FirstOrDefaultAsync(c => c.IdTaiKhoan == userId);
             if (cuaHang == null) return NotFound();
 
-            var trangThaiChoPhep = new[] { "Đã duyệt", "Đang thuê", "Quá hạn" };
+            var trangThaiChoPhep = new[] { "Đã duyệt đơn", "Đang thuê", "Quá hạn" };
 
             var donThueDaDuyet = await _context.DonThue
                 .Include(d => d.ChiTietDonThue)
@@ -374,6 +374,7 @@ namespace ThueXeDapHoiAn.Areas.Client.Controllers
                         .ThenInclude(x => x.LoaiXe)
                 .Include(d => d.User)
                 .Where(d => trangThaiChoPhep.Contains(d.TrangThaiDon) && d.IdCuaHang == cuaHang.IdCuaHang)
+
                 .ToListAsync();
 
             return View(donThueDaDuyet);
@@ -396,10 +397,28 @@ namespace ThueXeDapHoiAn.Areas.Client.Controllers
                     .ThenInclude(ct => ct.Xe)
                         .ThenInclude(x => x.LoaiXe)
                 .Include(d => d.User)
+                .Include(d => d.KhuyenMai)
                 .Where(d => d.TrangThaiDon == "Đã huỷ" && d.IdCuaHang == cuaHang.IdCuaHang)
                 .ToListAsync();
 
             return View(donThueDaHuy);
+        }
+        [HttpPost]
+        [Authorize(Roles = "Shop")]
+        [Route("Client/Shop/HoanThanhDonThue")]
+        public async Task<IActionResult> HoanThanhDonThue(int id)
+        {
+            var connectionString = _context.Database.GetConnectionString();
+            using (var conn = new SqlConnection(connectionString))
+            {
+                await conn.OpenAsync();
+                var cmd = conn.CreateCommand();
+                cmd.CommandText = @"UPDATE DonThue SET trangThaiDon = N'Hoàn thành' WHERE idDonThue = @id";
+                cmd.Parameters.AddWithValue("@id", id);
+                int rows = await cmd.ExecuteNonQueryAsync();
+                if (rows == 0) return NotFound();
+            }
+            return RedirectToAction("DonThueHoanThanh");
         }
 
         [Route("Client")]
@@ -559,6 +578,72 @@ namespace ThueXeDapHoiAn.Areas.Client.Controllers
             return RedirectToAction("DanhSachKhuyenMai");
         }
 
+        [Route("Client")]
+        [Route("Client/Shop/DanhSachLoaiXe")]
+        public async Task<IActionResult> DanhSachLoaiXe()
+        {
+            var userIdStr = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (string.IsNullOrEmpty(userIdStr)) return Unauthorized();
+            int userId = int.Parse(userIdStr);
+
+            var cuaHang = await _context.CuaHang.FirstOrDefaultAsync(c => c.IdTaiKhoan == userId);
+            if (cuaHang == null) return NotFound();
+
+            var danhSachLoaiXe = await _context.LoaiXe
+                .Where(lx => lx.IdCuaHang == cuaHang.IdCuaHang)
+                .ToListAsync();
+
+            return View(danhSachLoaiXe);
+        }
+        [HttpGet]
+        [Route("Client/Shop/SuaLoaiXe")]
+        public async Task<IActionResult> SuaLoaiXe(int id)
+        {
+            var loaiXe = await _context.LoaiXe.FirstOrDefaultAsync(lx => lx.IdLoaiXe == id);
+            if (loaiXe == null) return NotFound();
+            return View(loaiXe);
+        }
+
+        [HttpPost]
+        [Authorize(Roles = "Shop")]
+        [Route("Client/Shop/SuaLoaiXe")]
+        public async Task<IActionResult> SuaLoaiXe(LoaiXeModel_Client model)
+        {
+            var loaiXe = await _context.LoaiXe.FirstOrDefaultAsync(lx => lx.IdLoaiXe == model.IdLoaiXe);
+            if (loaiXe == null) return NotFound();
+
+            loaiXe.TenLoaiXe = model.TenLoaiXe;
+            _context.LoaiXe.Update(loaiXe);
+            await _context.SaveChangesAsync();
+
+            TempData["SuccessMessage"] = "Cập nhật loại xe thành công!";
+            return RedirectToAction("DanhSachLoaiXe");
+        }
+        [HttpGet]
+        [Route("Client/Shop/XoaLoaiXe")]
+        public async Task<IActionResult> XoaLoaiXe(int id)
+        {
+            // Kiểm tra loại xe có đang được dùng cho xe nào không
+            bool isUsed = await _context.Xe.AnyAsync(x => x.IdLoaiXe == id);
+            if (isUsed)
+            {
+                TempData["ErrorMessage"] = "Không thể xóa loại xe này vì đang có xe sử dụng!";
+                return RedirectToAction("DanhSachLoaiXe");
+            }
+
+            var loaiXe = await _context.LoaiXe.FirstOrDefaultAsync(lx => lx.IdLoaiXe == id);
+            if (loaiXe == null)
+            {
+                TempData["ErrorMessage"] = "Không tìm thấy loại xe để xóa!";
+                return RedirectToAction("DanhSachLoaiXe");
+            }
+
+            _context.LoaiXe.Remove(loaiXe);
+            await _context.SaveChangesAsync();
+
+            TempData["SuccessMessage"] = "Xóa loại xe thành công!";
+            return RedirectToAction("DanhSachLoaiXe");
+        }
         [HttpGet]
         [Route("Client/Shop/ThemLoaiXe")]
         public ActionResult ThemLoaiXe()
@@ -599,7 +684,6 @@ namespace ThueXeDapHoiAn.Areas.Client.Controllers
 
             var cuaHang = await _context.CuaHang.FirstOrDefaultAsync(c => c.IdTaiKhoan == userId);
             if (cuaHang == null) return NotFound();
-
             int cuaHangId = cuaHang.IdCuaHang;
 
             var model = new BaoCaoViewModel
@@ -617,7 +701,20 @@ namespace ThueXeDapHoiAn.Areas.Client.Controllers
 
             return View(model);
         }
+        [Route("Client/Shop/ChiTietDonThue")]
+        public async Task<IActionResult> ChiTietDonThue(int id)
+        {
+            var don = await _context.DonThue
+                .Include(d => d.User)
+                .Include(d => d.KhuyenMai)
+                .Include(d => d.ChiTietDonThue)
+                    .ThenInclude(ct => ct.Xe)
+                        .ThenInclude(x => x.LoaiXe)
+                .FirstOrDefaultAsync(d => d.IdDonThue == id);
 
+            if (don == null) return NotFound();
 
+            return View(don);
+        }
     }
-}
+}   
