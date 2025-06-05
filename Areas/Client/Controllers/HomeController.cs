@@ -50,7 +50,8 @@ namespace ThueXeDapHoiAn.Areas.Client.Controllers
                         .Where(x => x.IdCuaHang == ch.IdCuaHang)
                         .Select(x => x.DiemDanhGia)
                         .DefaultIfEmpty(0)
-                        .Average()
+                        .Average(),
+                    DiaChi = ch.DiaChi
                 })
                 .ToList();
 

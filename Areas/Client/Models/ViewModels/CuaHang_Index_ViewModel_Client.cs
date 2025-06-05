@@ -8,5 +8,7 @@
         public string HinhAnh { get; set; }
         public double DiemTrungBinh { get; set; }
         public string DiaChi { get; set; }
+        public double Latitude { get; set; }
+        public double Longitude { get; set; }
     }
 }

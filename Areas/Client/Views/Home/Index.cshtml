@@ -16,6 +16,62 @@
             if (alert) alert.style.display = 'none';
         }, 3000); // 5 giây
     </script>
+    <script src='https://api.mapbox.com/mapbox-gl-js/v2.14.1/mapbox-gl.js'></script>
+    <script>
+        mapboxgl.accessToken = 'pk.eyJ1IjoiaGFuaG9nYW4iLCJhIjoiY21iajcydzUyMGN4NjJqcTFnOWN2amQ4MSJ9.he4lo9oQTGFwphDygXxfsQ';
+
+        // Hàm chuyển địa chỉ thành tọa độ
+        function getCoordinatesFromAddress(address) {
+            return fetch(`https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(address)}.json?access_token=${mapboxgl.accessToken}`)
+                .then(res => res.json())
+                .then(data => {
+                    if (data.features.length > 0) {
+                        const [lng, lat] = data.features[0].center;
+                        return { lat, lng };
+                    } else {
+                        throw new Error("Không tìm thấy tọa độ");
+                    }
+                });
+        }
+
+        // Hàm tính khoảng cách và thời gian đi bộ
+        function calculateDistanceAndTime(userLat, userLng, shopLat, shopLng, element) {
+            fetch(`https://api.mapbox.com/directions/v5/mapbox/walking/${userLng},${userLat};${shopLng},${shopLat}?geometries=geojson&access_token=${mapboxgl.accessToken}`)
+                .then(res => res.json())
+                .then(data => {
+                    const route = data.routes[0];
+                    const distanceKm = (route.distance / 1000).toFixed(2);
+                    const durationMin = Math.round(route.duration / 60);
+                    element.innerText += `${distanceKm} km | ${durationMin} phút đi bộ`;
+                })
+                .catch(err => {
+                    console.error("Lỗi khi tính khoảng cách:", err);
+                });
+        }
+
+        // Lấy vị trí người dùng
+        navigator.geolocation.getCurrentPosition(function(position) {
+            const userLat = position.coords.latitude;
+            const userLng = position.coords.longitude;
+
+            // Duyệt qua các cửa hàng
+            document.querySelectorAll('.shop-distance').forEach(el => {
+                const address = el.dataset.address;
+
+                getCoordinatesFromAddress(address)
+                    .then(shopCoords => {
+                        calculateDistanceAndTime(userLat, userLng, shopCoords.lat, shopCoords.lng, el);
+                    })
+                    .catch(err => {
+                        console.warn(`Không thể lấy tọa độ cho địa chỉ "${address}":`, err.message);
+                    });
+            });
+
+        }, function(error) {
+            console.error("Không lấy được vị trí người dùng:", error.message);
+        });
+    </script>
+
 }
 @section Styles {
 <link rel="stylesheet" href="~/css/LayoutClient.css" />
@@ -77,9 +133,10 @@
                                     }
                                 </div>
                                 <span class="rating-score">@rating.ToString("0.0")</span>
-
+                                
                         </div>
-                        <p class="shop-distance">1.1km | 5 phút đi bộ</p>
+                        <p class="shop-distance" data-address="@item.DiaChi"></p>
+
                     </div>
                     <div class="shop-link">
                         <a asp-area="Client" asp-controller="XemChiTiet" asp-action="ChiTietCuaHang" asp-route-id="@item.IdCuaHang" class="details-link">Chi tiết <i class="fas fa-chevron-right"></i></a>
