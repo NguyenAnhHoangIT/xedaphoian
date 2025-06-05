@@ -36,7 +36,7 @@
                 <tr>
                     <th>ID đơn thuê</th>
                     <th>Tên khách hàng</th>
-                    <th>Tên xe</th>
+                    <th>Tên xe</th> 
                     <th>Ngày nhận</th>
                     <th>Số giờ/ngày thuê</th> <!-- Thêm cột mới -->
                     <th>Tổng tiền</th>
@@ -80,7 +80,7 @@
                     ? soNgay + " ngày"
                     : soGio + " giờ";
 
-                    <tr>
+                    <tr style="cursor:pointer;" onclick="window.location.href='@Url.Action("ChiTietDonThue", "CuaHang", new { area = "Client", id = don.IdDonThue })'">
                         <td>@don.IdDonThue</td>
                         <td>@don.User.Ten</td>
                         <td>@Html.Raw(xeInfo)</td>

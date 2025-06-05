@@ -84,7 +84,7 @@
                         tongTien = tongTien * (1 - Convert.ToDecimal(don.KhuyenMai.MucGiamGia));
                     }
 
-                    <tr>
+                    <tr style="cursor:pointer;" onclick="window.location.href='@Url.Action("ChiTietDonThue", "CuaHang", new { area = "Client", id = don.IdDonThue })'">
                         <td>@don.IdDonThue</td>
                         <td>@don.User.Ten</td>
                         <td>@Html.Raw(xeInfo)</td>

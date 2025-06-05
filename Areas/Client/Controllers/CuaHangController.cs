@@ -739,5 +739,20 @@ namespace ThueXeDapHoiAn.Areas.Client.Controllers
 
             return View(model);
         }
+        [Route("Client/Shop/ChiTietDonThue")]
+        public async Task<IActionResult> ChiTietDonThue(int id)
+        {
+            var don = await _context.DonThue
+                .Include(d => d.User)
+                .Include(d => d.KhuyenMai)
+                .Include(d => d.ChiTietDonThue)
+                    .ThenInclude(ct => ct.Xe)
+                        .ThenInclude(x => x.LoaiXe)
+                .FirstOrDefaultAsync(d => d.IdDonThue == id);
+
+            if (don == null) return NotFound();
+
+            return View(don);
+        }
     }
 }
