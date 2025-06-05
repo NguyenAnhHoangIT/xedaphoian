@@ -94,13 +94,28 @@ namespace ThueXeDapHoiAn.Areas.Client.Controllers
             }
 
             var xe = _context.Xe.FirstOrDefault(c => c.IdXe == id);
+
+            var xeCungCuaHang = _context.Xe
+                .Where(x => x.IdCuaHang == xe.IdCuaHang && x.IdXe != id)
+                .ToList();
+
+            // Tạo dictionary map IdLoaiXe -> TenLoaiXe
+            var loaiXeDict = _context.LoaiXe
+                .ToDictionary(l => l.IdLoaiXe, l => l.TenLoaiXe);
+
+            ViewBag.XeCungCuaHang = xeCungCuaHang;
+            ViewBag.LoaiXeDict = loaiXeDict;
+
             var gioiThieu = _context.CuaHang
-                 .Where(ch => ch.IdCuaHang == xe.IdCuaHang)
-                 .Select(ch => ch.GioiThieu)
-                 .FirstOrDefault();
+                .Where(ch => ch.IdCuaHang == xe.IdCuaHang)
+                .Select(ch => ch.GioiThieu)
+                .FirstOrDefault();
             ViewBag.GioiThieuCuaHang = gioiThieu;
+
             return View(xe);
         }
+
+
 
 
         [HttpPost]

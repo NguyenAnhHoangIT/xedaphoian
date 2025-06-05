@@ -2,13 +2,14 @@
 
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
-    <Nullable>enable</Nullable>
+    <Nullable>disable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
 
   <ItemGroup>
     <Folder Include="Areas\Client\ViewModels\" />
     <Folder Include="wwwroot\images\cuahang\" />
+    <Folder Include="wwwroot\images\nguoiDung\" />
     <Folder Include="wwwroot\images\xe\" />
   </ItemGroup>
 

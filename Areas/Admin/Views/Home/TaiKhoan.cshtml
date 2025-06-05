@@ -16,12 +16,27 @@
             <a asp-area="Admin" asp-controller="Home" asp-action="DanhGiaBiBaoCao">Đánh giá bị báo cáo</a>
             <a asp-area="Admin" asp-controller="Home" asp-action="DuyetDangKyTaoCuaHang">Đăng ký tạo cửa hàng</a>
             <a asp-area="Admin" asp-controller="Home" asp-action="Xe_CuaHang">Xe của các cửa hàng</a>
+            <a asp-area="Admin" asp-controller="Home" asp-action="ThongKe">Thống kê</a>
         </nav>
     </aside>
 
     <div class="content_cuahang">
         <div class="container_cuahang">
             <h2>Danh sách tài khoản</h2>
+            <button id="addUserBtn" class="themtaikhoan">
+                <i class="fa-solid fa-plus"></i> Thêm tài khoản
+            </button>
+            <div class="search-filter-wrapper">
+                <input type="text" id="searchInput" placeholder="Tìm theo tên, họ, số điện thoại..." />
+
+                <select id="roleFilter">
+                    <option value="">Tất cả vai trò</option>
+                    <option value="Admin">Admin</option>
+                    <option value="Client">Client</option>
+                    <option value="Shop">Shop</option>
+                </select>
+            </div>
+
             <table>
                 <thead>
                     <tr>
@@ -36,7 +51,7 @@
                         <th>Thao tác</th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody id="userTableBody">
                     @foreach (var user in Model)
                     {
                         <tr>
@@ -129,6 +144,20 @@
                 });
             });
 
+            document.getElementById('addUserBtn').addEventListener('click', () => {
+                // Reset tất cả input
+                document.getElementById('editIdTaiKhoan').value = "0";
+                document.getElementById('editHo').value = "";
+                document.getElementById('editTen').value = "";
+                document.getElementById('editSoDienThoai').value = "";
+                document.getElementById('editMatKhau').value = "";
+                document.getElementById('editVaiTro').value = "Client";
+                document.getElementById('editTrangThaiTaiKhoan').value = "True";
+
+                modal.style.display = 'flex';
+            });
+
+
             // Close modal
             closeBtn.addEventListener('click', () => {
                 modal.style.display = 'none';
@@ -145,21 +174,56 @@
             document.getElementById('editUserForm').addEventListener('submit', function (e) {
                 e.preventDefault();
 
-                fetch('@Url.Action("CapNhatTaiKhoan", "Home", new { area = "Admin" })', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                    body: new URLSearchParams(new FormData(this))
+                const id = document.getElementById('editIdTaiKhoan').value;
+                const url = id === "0" || id === ""
+                    ? '@Url.Action("ThemTaiKhoan", "Home", new { area = "Admin" })'
+                    : '@Url.Action("CapNhatTaiKhoan", "Home", new { area = "Admin" })';
+
+                fetch(url, {
+
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: new URLSearchParams(new FormData(this))
                 })
-                    .then(res => res.json())
-                    .then(data => {
-                        if (data.success) {
-                            location.reload();
-                        } else {
-                            alert("Cập nhật thất bại!");
-                        }
-                    })
-                    .catch(() => alert("Đã xảy ra lỗi!"));
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success) {
+                        location.reload();
+                    } else {
+                        alert("Cập nhật thất bại!");
+                    }
+                })
+                .catch(() => alert("Đã xảy ra lỗi!"));
             });
+
+            const searchInput = document.getElementById("searchInput");
+            const roleFilter = document.getElementById("roleFilter");
+
+            function filterTable() {
+                const searchValue = searchInput.value.toLowerCase();
+                const roleValue = roleFilter.value;
+                const rows = document.querySelectorAll("#userTableBody tr");
+
+                rows.forEach(row => {
+                    const ho = row.children[1].textContent.toLowerCase();
+                    const ten = row.children[2].textContent.toLowerCase();
+                    const sdt = row.children[3].textContent.toLowerCase();
+                    const role = row.children[6].textContent;
+
+                    const matchSearch = ho.includes(searchValue) || ten.includes(searchValue) || sdt.includes(searchValue);
+                    const matchRole = roleValue === "" || role === roleValue;
+
+                    if (matchSearch && matchRole) {
+                        row.style.display = "";
+                    } else {
+                        row.style.display = "none";
+                    }
+                });
+            }
+
+            searchInput.addEventListener("input", filterTable);
+            roleFilter.addEventListener("change", filterTable);
+
         });
     </script>
 }

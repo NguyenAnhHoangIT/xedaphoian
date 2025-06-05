@@ -5,13 +5,19 @@
 
 @section Styles {
     <link rel="stylesheet" href="~/css/LayoutClient.css" />
+    <style>
+        .btn-icon:hover i {
+            transform: scale(1.1);
+            transition: all 0.2s ease-in-out;
+        }
+    </style>
 }
 <header>
     <nav class="main-nav">
         <a asp-area="Client" asp-controller="CuaHang" asp-action="ThongTinCuaHang">Thông tin cửa hàng</a>
         <a asp-area="Client" asp-controller="CuaHang" asp-action="DanhSachXe">Quản lý xe</a>
         <a asp-area="Client" asp-controller="CuaHang" asp-action="DonThueChoDuyet" class="active">Quản lý đơn thuê</a>
-        <a href="#">Báo cáo</a>
+        <a asp-area="Client" asp-controller="CuaHang" asp-action="BaoCao">Báo cáo</a>
         <a asp-area="Client" asp-controller="CuaHang" asp-action="DanhSachKhuyenMai">Khuyến mãi</a>
         <a asp-area="Client" asp-controller="CuaHang" asp-action="ThongKe">Thống kê</a>
     </nav>
@@ -91,13 +97,13 @@
                         <td>
                             <form asp-action="DuyetDonThue" asp-controller="CuaHang" asp-area="Client" method="post" style="display:inline;" onsubmit="return confirm('Bạn có chắc chắn muốn duyệt đơn thuê này không?');">
                                 <input type="hidden" name="id" value="@don.IdDonThue" />
-                                <button type="submit" style="background:none;border:none;padding:0;">
+                                <button type="submit" class="btn-icon" style="background:none;border:none;padding:0;cursor:pointer;">
                                     <i class="fa-solid fa-check-circle" style="color: green; font-size: 20px;"></i>
                                 </button>
                             </form>
                             <form asp-action="HuyDonThue" asp-controller="CuaHang" asp-area="Client" method="post" style="display:inline;" onsubmit="return confirm('Bạn có chắc chắn muốn huỷ đơn thuê này không?');">
                                 <input type="hidden" name="id" value="@don.IdDonThue" />
-                                <button type="submit" style="background:none;border:none;padding:0;">
+                                <button type="submit" class="btn-icon" style="background:none;border:none;padding:0;cursor:pointer;">
                                     <i class="fa-solid fa-times-circle" style="color: red; font-size: 20px;"></i>
                                 </button>
                             </form>

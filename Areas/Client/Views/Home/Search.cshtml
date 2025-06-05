@@ -6,24 +6,44 @@
 }
 
 @section Styles {
-    <link rel="stylesheet" href="~/css/LayoutClient.css" />
-    <link rel="stylesheet" href="~/css/ChiTietCuaHang.css" />
+<link rel="stylesheet" href="~/css/LayoutClient.css" />
+<link rel="stylesheet" href="~/css/ChiTietCuaHang.css" />
 
 }
 <div style="text-align: center;
     margin: 30px 0 20px;
     padding: 10px;
     border-radius: 10px;">
-    <h4 style="font-size:20px"> Kết quả tìm kiếm cho từ "@ViewBag.Keyword"</h4>
+    @if (ViewBag.Keyword != null)
+    {
+        <h5 style="font-size:20px"> Kết quả tìm kiếm cho từ "@ViewBag.Keyword"</h5>
+    }
+    @if (ViewBag.MinPrice != null || ViewBag.MaxPrice != null)
+    {
+        <h5 style="font-size:20px">
+            Kết quả tìm kiếm cho giá
+            @(ViewBag.MinPrice != null ? $"từ {((decimal)ViewBag.MinPrice).ToString("N0")} đ" : "")
+            @(ViewBag.MinPrice != null && ViewBag.MaxPrice != null ? " đến " : "")
+            @(ViewBag.MaxPrice != null ? $"{((decimal)ViewBag.MaxPrice).ToString("N0")} đ" : "")
+        </h5>
+    }
+    @if (ViewData["Error"] != null)
+    {
+        <div style="color: red; margin-bottom: 15px;">
+            @ViewData["Error"]
+        </div>
+    }
 </div>
 <main class="main-content">
-    <aside class="filter-sidebar">
-        <h2>Lọc theo loại xe</h2>
-        <label><input type="checkbox"> Xe địa hình</label>
-        <label><input type="checkbox"> Xe đua</label>
-        <label><input type="checkbox"> Xe trẻ em</label>
-    </aside>
-
+    @{
+        decimal? minPrice = null;
+        decimal? maxPrice = null;
+        decimal.TryParse(Context.Request.Query["minPrice"], out var _min);
+        decimal.TryParse(Context.Request.Query["maxPrice"], out var _max);
+        minPrice = _min;
+        maxPrice = _max;
+    }
+    <vc:gia-xe min-price="@(minPrice)" max-price="@(maxPrice)"></vc:gia-xe>
     <section class="bike-list">
         @foreach (var item in Model)
         {

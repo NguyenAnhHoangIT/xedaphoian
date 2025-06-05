@@ -175,21 +175,23 @@ namespace ThueXeDapHoiAn.Areas.Client.Controllers
                 return Json(new { success = false, message = "Bạn chưa đăng nhập." });
 
             var donThue = await _context.DonThue
-                .Include(o => o.ChiTietDonThue)
                 .FirstOrDefaultAsync(o => o.IdDonThue == id && o.UserId == userId);
 
             if (donThue == null)
                 return Json(new { success = false, message = "Không tìm thấy đơn." });
 
             if (donThue.TrangThaiDon != "Đang chờ duyệt")
-                return Json(new { success = false, message = "Chỉ có thể xóa đơn thuê chưa duyệt." });
+                return Json(new { success = false, message = "Chỉ có thể hủy đơn thuê chưa duyệt." });
 
-            _context.ChiTietDonThue.RemoveRange(donThue.ChiTietDonThue);
-            _context.DonThue.Remove(donThue);
+            // Cập nhật trạng thái đơn
+            donThue.TrangThaiDon = "Đã hủy";
+
+            _context.Update(donThue);
             await _context.SaveChangesAsync();
 
-            return Json(new { success = true, message = "Đã hủy đơn thành công!" });
+            return Json(new { success = true, message = "Đơn đã được hủy thành công!" });
         }
+
 
 
 

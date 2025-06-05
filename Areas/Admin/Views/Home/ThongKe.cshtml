@@ -1,0 +1,361 @@
+﻿@model ThueXeDapHoiAn.Areas.Admin.ViewModels.ThongKeViewModel
+@{
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+
+@section Styles {
+        <link rel="stylesheet" href="~/css/LayoutClient.css" />
+        <link rel="stylesheet" href="~/css/CuaHang.css" />
+        <link rel="stylesheet" href="~/css/AdminHome.css" />
+}
+
+
+<div class="wrapper_cuahang">
+    <aside>
+        <h3>Quản lý</h3>
+        <nav>
+            <a asp-area="Admin" asp-controller="Home" asp-action="TaiKhoan">Tài Khoản</a>
+            <a asp-area="Admin" asp-controller="Home" asp-action="DanhGiaBiBaoCao">Đánh giá bị báo cáo</a>
+            <a asp-area="Admin" asp-controller="Home" asp-action="DuyetDangKyTaoCuaHang">Đăng ký tạo cửa hàng</a>
+            <a asp-area="Admin" asp-controller="Home" asp-action="Xe_CuaHang">Xe của các cửa hàng</a>
+            <a class="active">Thống kê</a>
+        </nav>
+    </aside>
+    <div class="content_cuahang">
+        <div class="thongkecontainer animate-fade-in">
+            <!-- Stats Grid -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <img class="icon" src="~/images/thongke/account.gif" alt="Bike Icon" />
+                    <div class="label">Tài khoản</div>
+                    <div class="value" id="accountCount">@Model.SoLuongTaiKhoan</div>
+                </div>
+                <div class="stat-card">
+                    <img class="icon" src="~/images/thongke/bike.gif" alt="Bike Icon" />
+                    <div class="label">Xe</div>
+                    <div class="value" id="vehicleCount">@Model.SoLuongXe</div>
+                </div>
+                <div class="stat-card">
+                    <img class="icon" src="~/images/thongke/shop.gif" alt="Bike Icon" />
+                    <div class="label">Cửa hàng</div>
+                    <div class="value" id="storeCount">@Model.SoLuongCuaHang</div>
+                </div>
+                <div class="stat-card">
+                    <img class="icon" src="~/images/thongke/analytics.gif" alt="Bike Icon" />
+                    <div class="label">Tổng doanh thu tháng này</div>
+                    <div class="value" id="monthlyRevenue">@String.Format("{0:N0} VNĐ", Model.TongDoanhThuThangNay)</div>
+                </div>
+            </div>
+            <!-- Dashboard Grid -->
+            <div class="dashboard-grid">
+
+                <!-- Store Revenue Chart -->
+                <div class="chart-container">
+                    <div class="chart-title">Doanh Thu Các Cửa Hàng Theo Ngày</div>
+                    <canvas id="storeRevenueChart"></canvas>
+                </div>
+
+                <!-- Top Stores Table -->
+                <div class="table-container">
+                    <div class="chart-title">Top 5 Cửa Hàng Theo Doanh Thu</div>
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Hạng</th>
+                                <th>Tên Cửa Hàng</th>
+                                <th>Doanh Thu</th>
+                            </tr>
+                        </thead>
+                        <tbody id="topStoresTable">
+                            <!-- Data will be populated by JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+                    
+                <!-- Vehicle Ranking Table -->
+                <div class="table-container">
+                    <div class="chart-title">Top 10 Xe Theo Số Lượng Được Thuê</div>
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Hạng</th>
+                                <th>Tên Xe</th>
+                                <th>Số Lượng</th>
+                            </tr>
+                        </thead>
+                        <tbody id="vehicleRankingTable">
+                            <!-- Data will be populated by JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Vehicle Revenue Pie Chart -->
+                <div class="chart-container">
+                    <div class="chart-title">Top 5 Doanh Thu Các Loại Xe</div>
+                    <canvas id="vehicleRevenueChart"></canvas>
+                </div>
+
+                <!-- Top Users Chart -->
+                <div class="chart-container">
+                    <div class="chart-title">Top 10 Người Dùng Theo Tổng Tiền Thuê</div>
+                    <canvas id="topUsersChart"></canvas>
+                </div>
+                
+
+            </div>
+
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        // Tạo object data đầy đủ từ model để JS dùng chung
+        const data = {
+            topUsers: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.TopNguoiDungTheoTienThue.Select(u => new { name = u.TenNguoiDung, total = u.TongTienThue }))),
+            storeRevenue: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.DoanhThuCuaHangTheoNgay)),
+            topStores: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.TopCuaHangTheoDoanhThu)),
+            vehicleRevenue: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.DoanhThuTheoLoaiXe)),
+            vehicleRanking: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.XepHangXeTheoSoLuong))
+
+        };
+                console.log("topStores:", data.topStores);
+        console.log("vehicleRanking:", data.vehicleRanking);
+        console.log("vehicleRevenue:", data.vehicleRevenue);
+
+        // Format currency
+        function formatCurrency(amount) {
+            return new Intl.NumberFormat('vi-VN', {
+                style: 'currency',
+                currency: 'VND'
+            }).format(amount);
+        }
+
+        // Create Top Users Chart
+        function createTopUsersChart() {
+            const ctx = document.getElementById('topUsersChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: data.topUsers.map(user => user.name),
+                    datasets: [{
+                        label: 'Tổng tiền thuê (triệu VNĐ)',
+                        data: data.topUsers.map(user => user.total / 1000000),
+                        backgroundColor: 'rgba(102, 126, 234, 0.8)',
+                        borderColor: 'rgba(102, 126, 234, 1)',
+                        borderWidth: 2,
+                        borderRadius: 8
+                    }]
+                },
+                options: {
+                    indexAxis: 'y',
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    },
+                    scales: {
+                        x: {
+                            beginAtZero: true,
+                            grid: {
+                                color: 'rgba(0,0,0,0.1)'
+                            }
+                        },
+                        y: {
+                            grid: {
+                                display: false
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+                function prepareStoreRevenueData(rawData) {
+            // rawData là mảng dạng [{Ngay, DoanhThu, TenCuaHang}, ...]
+
+            // Lấy danh sách ngày duy nhất, sắp xếp theo thứ tự
+            const labels = Array.from(new Set(rawData.map(item => item.Ngay))).sort((a, b) => {
+                // Chuyển "dd/MM/yyyy" sang Date để sắp xếp
+                const [d1,m1,y1] = a.split('/');
+                const [d2,m2,y2] = b.split('/');
+                return new Date(+y1, m1 - 1, +d1) - new Date(+y2, m2 - 1, +d2);
+            });
+
+            // Lấy danh sách cửa hàng duy nhất
+            const storeNames = Array.from(new Set(rawData.map(item => item.TenCuaHang)));
+
+            // Tạo datasets cho từng cửa hàng
+            const datasets = storeNames.map((store, idx) => {
+                // Tạo mảng dữ liệu DoanhThu theo từng ngày (label)
+                const data = labels.map(date => {
+                    const record = rawData.find(r => r.Ngay === date && r.TenCuaHang === store);
+                    return record ? record.DoanhThu / 1000000 : 0; // chia triệu cho dễ nhìn
+                });
+
+                // Màu sắc cho từng dataset (có thể custom)
+                const colors = ['#667EEA', '#764BA2', '#FF6B6B', '#FFA931', '#4ECDC4', '#C7F464'];
+                const color = colors[idx % colors.length];
+
+                return {
+                    label: store,
+                    data: data,
+                    borderColor: color,
+                    backgroundColor: color + '20', // màu nhạt cho background
+                    borderWidth: 3,
+                    fill: false,
+                    tension: 0.4
+                };
+            });
+
+            return { labels, datasets };
+        }
+
+        // Create Store Revenue Chart
+                function createStoreRevenueChart() {
+            const ctx = document.getElementById('storeRevenueChart').getContext('2d');
+
+            const chartData = prepareStoreRevenueData(data.storeRevenue); // ✅ đây là kết quả cần
+
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: chartData.labels, // ✅ sửa chỗ này
+                    datasets: chartData.datasets // ✅ sửa chỗ này
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { position: 'top' }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: { display: true, text: 'Doanh thu (triệu VNĐ)' }
+                        },
+                        x: {
+                            title: { display: true, text: 'Ngày' },
+                            ticks: {
+                                maxTicksLimit: 10 // Limit number of x-axis labels for readability
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+
+        // Create Vehicle Revenue Pie Chart
+                function createVehicleRevenueChart() {
+            const ctx = document.getElementById('vehicleRevenueChart').getContext('2d');
+            const totalRevenue = data.vehicleRevenue.reduce((sum, item) => sum + item.DoanhThu, 0);
+
+            new Chart(ctx, {
+                type: 'pie',
+                data: {
+                    labels: data.vehicleRevenue.map(item => item.TenXe),
+                    datasets: [{
+                        data: data.vehicleRevenue.map(item => item.DoanhThu / 1000000), // triệu VNĐ
+                        backgroundColor: data.vehicleRevenue.map(item => item.Color),
+                        borderWidth: 3,
+                        borderColor: '#fff'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                padding: 20,
+                                usePointStyle: true
+                            }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    const label = context.label || '';
+                                    const rawValue = data.vehicleRevenue[context.dataIndex].DoanhThu;
+                                    const percent = (rawValue / totalRevenue * 100).toFixed(2);
+                                    return `${label}: ${rawValue.toLocaleString('vi-VN')} VNĐ (${percent}%)`;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+
+
+        // Populate Top Stores Table
+        function populateTopStoresTable() {
+            const tbody = document.getElementById('topStoresTable');
+            tbody.innerHTML = '';
+            if (data.topStores.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="3">No data available</td></tr>';
+                return;
+            }
+            data.topStores.forEach(store => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td><span class="rank-badge">#${store.Hang}</span></td>
+                    <td>${store.TenCuaHang}</td>
+                    <td><span class="currency">${formatCurrency(store.DoanhThu)}</span></td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        // Populate Vehicle Ranking Table
+                function populateVehicleRankingTable() {
+            const tbody = document.getElementById('vehicleRankingTable');
+            tbody.innerHTML = '';
+
+            data.vehicleRanking.forEach(vehicle => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td><span class="rank-badge">#${vehicle.Hang}</span></td>
+                    <td>${vehicle.TenXe}</td>
+                    <td><strong>${vehicle.SoLuong} xe</strong></td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+
+        // Initialize Dashboard
+        function initDashboard() {
+            // Create charts
+            createTopUsersChart();
+            createStoreRevenueChart();
+            createVehicleRevenueChart();
+
+            // Populate tables
+            populateTopStoresTable();
+            populateVehicleRankingTable();
+        }
+
+        // Wait for DOM to load
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add a small delay to ensure smooth animation
+            setTimeout(initDashboard, 500);
+        });
+
+        // Add some interactive effects
+        document.querySelectorAll('.stat-card').forEach(card => {
+            card.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-10px) scale(1.02)';
+            });
+
+            card.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateY(0) scale(1)';
+            });
+        });
+    </script>
+}

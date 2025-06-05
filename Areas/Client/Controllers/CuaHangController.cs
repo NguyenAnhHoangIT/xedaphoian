@@ -2,13 +2,14 @@
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Filters;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
+using ThueXeDapHoiAn.Areas.Client.Models;
+using ThueXeDapHoiAn.Areas.Client.Models.ViewModels;
 using ThueXeDapHoiAn.Data;
 using ThueXeDapHoiAn.Models;
-using Microsoft.Data.SqlClient;
-using Microsoft.AspNetCore.Mvc.Filters;
-using ThueXeDapHoiAn.Areas.Client.Models;
 
 namespace ThueXeDapHoiAn.Areas.Client.Controllers
 {
@@ -17,10 +18,12 @@ namespace ThueXeDapHoiAn.Areas.Client.Controllers
     public class CuaHangController : Controller
     {
         private readonly AppDbContextClient _context;
+        private readonly DatabaseHelperClient _dbHelper;
 
-        public CuaHangController(AppDbContextClient context)
+        public CuaHangController(AppDbContextClient context, DatabaseHelperClient dbHelper)
         {
             _context = context;
+            _dbHelper = dbHelper;
         }
         [Authorize(Roles = "Shop")]
         [Route("Client/Shop/ThongTinCuaHang")]
@@ -363,17 +366,20 @@ namespace ThueXeDapHoiAn.Areas.Client.Controllers
             var cuaHang = await _context.CuaHang.FirstOrDefaultAsync(c => c.IdTaiKhoan == userId);
             if (cuaHang == null) return NotFound();
 
+            var trangThaiChoPhep = new[] { "Đã duyệt đơn", "Đang thuê", "Quá hạn" };
+
             var donThueDaDuyet = await _context.DonThue
                 .Include(d => d.ChiTietDonThue)
                     .ThenInclude(ct => ct.Xe)
                         .ThenInclude(x => x.LoaiXe)
                 .Include(d => d.User)
-                .Include(d => d.KhuyenMai)
-                .Where(d => d.TrangThaiDon == "Đã duyệt đơn" && d.IdCuaHang == cuaHang.IdCuaHang)
+                .Where(d => trangThaiChoPhep.Contains(d.TrangThaiDon) && d.IdCuaHang == cuaHang.IdCuaHang)
+
                 .ToListAsync();
 
             return View(donThueDaDuyet);
         }
+
 
         [Route("Client")]
         [Route("Client/Shop/DonThueDaHuy")]
@@ -431,8 +437,7 @@ namespace ThueXeDapHoiAn.Areas.Client.Controllers
                     .ThenInclude(ct => ct.Xe)
                         .ThenInclude(x => x.LoaiXe)
                 .Include(d => d.User)
-                .Include(d => d.KhuyenMai)
-                .Where(d => d.TrangThaiDon == "Hoàn thành" && d.IdCuaHang == cuaHang.IdCuaHang)
+                .Where(d => d.TrangThaiDon == "Đã hoàn thành" && d.IdCuaHang == cuaHang.IdCuaHang)
                 .ToListAsync();
 
             return View(donThueHoanThanh);
@@ -669,72 +674,29 @@ namespace ThueXeDapHoiAn.Areas.Client.Controllers
             return RedirectToAction("ThemXe");
         }
 
-        [HttpGet]
-        [Route("Client/Shop/ThongKe")]
-        public async Task<IActionResult> ThongKe(DateTime? fromDate, DateTime? toDate)
+        [Route("Client/Shop/BaoCao")]
+        public async Task<IActionResult> BaoCao()
         {
             var userIdStr = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (string.IsNullOrEmpty(userIdStr)) return Unauthorized();
+
             int userId = int.Parse(userIdStr);
 
             var cuaHang = await _context.CuaHang.FirstOrDefaultAsync(c => c.IdTaiKhoan == userId);
             if (cuaHang == null) return NotFound();
+            int cuaHangId = cuaHang.IdCuaHang;
 
-            // Lọc tất cả đơn thuê theo ngày nếu có chọn (tổng đơn, đơn hủy)
-            var donThueQuery = _context.DonThue
-                .Where(d => d.IdCuaHang == cuaHang.IdCuaHang);
-
-            if (fromDate.HasValue)
-                donThueQuery = donThueQuery.Where(d => d.NgayNhanXe.Date >= fromDate.Value.Date);
-            if (toDate.HasValue)
-                donThueQuery = donThueQuery.Where(d => d.NgayNhanXe.Date <= toDate.Value.Date);
-
-            var donThue = await donThueQuery.ToListAsync();
-
-            // Lấy đơn hoàn thành có đầy đủ navigation property để tính doanh thu
-            var donHoanThanhQuery = _context.DonThue
-                .Include(d => d.ChiTietDonThue)
-                .Include(d => d.KhuyenMai)
-                .Where(d => d.TrangThaiDon == "Hoàn thành" && d.IdCuaHang == cuaHang.IdCuaHang);
-
-            if (fromDate.HasValue)
-                donHoanThanhQuery = donHoanThanhQuery.Where(d => d.NgayNhanXe.Date >= fromDate.Value.Date);
-            if (toDate.HasValue)
-                donHoanThanhQuery = donHoanThanhQuery.Where(d => d.NgayNhanXe.Date <= toDate.Value.Date);
-
-            var donHoanThanh = await donHoanThanhQuery.ToListAsync();
-
-            var donHuy = donThue
-                .Where(d => d.TrangThaiDon == "Đã huỷ")
-                .ToList();
-
-            var doanhThuTheoNgay = donHoanThanh
-                .GroupBy(d => d.NgayNhanXe.Date)
-                .Select(g => new DoanhThuTheoNgay
-                {
-                    Ngay = g.Key,
-                    NgayISO = g.Key.ToString("yyyy-MM-dd"),
-                    DoanhThu = g.Sum(x =>
-                        x.ChiTietDonThue != null
-                            ? (
-                                (x.ChiTietDonThue.Sum(ct =>
-                                    (x.NgayTraXe - x.NgayNhanXe).TotalHours > 23
-                                        ? (ct.GiaThueTheoNgay ?? 0) * ct.SoLuong * (int)Math.Ceiling((x.NgayTraXe - x.NgayNhanXe).TotalDays)
-                                        : (ct.GiaThueTheoGio ?? 0) * ct.SoLuong * (int)Math.Ceiling((x.NgayTraXe - x.NgayNhanXe).TotalHours)
-                                )) * (1 - (decimal)(x.KhuyenMai != null ? x.KhuyenMai.MucGiamGia : 0))
-                            )
-                            : 0
-                    ),
-                    SoDon = g.Count()
-                }).OrderBy(x => x.Ngay).ToList();
-
-            var model = new ThongKeViewModel
+            var model = new BaoCaoViewModel
             {
-                TongDon = donThue.Count,
-                DonHoanThanh = donHoanThanh.Count,
-                DonHuy = donHuy.Count,
-                DoanhThu = doanhThuTheoNgay.Sum(x => x.DoanhThu),
-                DoanhThuTheoNgay = doanhThuTheoNgay
+                SoXe = _dbHelper.LaySoXe(cuaHangId),
+                SoXeDaThue = _dbHelper.LaySoXeDaThue(cuaHangId),
+                SoDonDaThue = _dbHelper.LaySoDonDaThue(cuaHangId),
+                DoanhThuThangNay = _dbHelper.LayDoanhThuThangNay(cuaHangId),
+
+                DoanhThuTheoNgay = _dbHelper.LayDoanhThuTheoNgay(cuaHangId),
+                DoanhThuTheoLoaiXe = _dbHelper.LayDoanhThuTheoLoaiXe(cuaHangId),
+                DoanhThuCacXe = _dbHelper.LayDoanhThuCacXe(cuaHangId),
+                TopNguoiDung = _dbHelper.LayTopNguoiDung(cuaHangId)
             };
 
             return View(model);
@@ -755,4 +717,4 @@ namespace ThueXeDapHoiAn.Areas.Client.Controllers
             return View(don);
         }
     }
-}
+}   
