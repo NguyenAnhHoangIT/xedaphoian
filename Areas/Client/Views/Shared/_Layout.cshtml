@@ -27,7 +27,10 @@
             color: #333;
             /* bỏ margin-bottom để không xuống dòng */
             margin: 0;
-            white-space: nowrap;
+            white-space: normal;
+            overflow: visible; /* show the full content */
+            text-overflow: unset; /* no ellipsis needed */
+            word-break: break-word;
         }
 
         .notification-content {
@@ -36,7 +39,10 @@
             font-weight: bold;
             line-height: 1.4;
             margin-left: 10px; /* khoảng cách giữa title và content */
-            white-space: nowrap;
+            white-space: normal;
+            overflow: visible; /* show the full content */
+            text-overflow: unset; /* no ellipsis needed */
+            word-break: break-word;
         }
 
         /* Container bao quanh title và content để hiển thị flex */
