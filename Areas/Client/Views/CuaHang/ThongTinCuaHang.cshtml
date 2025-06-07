@@ -37,7 +37,7 @@
             <form asp-area="Client" asp-controller="CuaHang" asp-action="CapNhatThongTin" method="post" enctype="multipart/form-data" class="form-grid">
                 <div class="profile-header" style="grid-column: span 2;">
                     <div class="avatar-upload" onclick="document.getElementById('avatarInput').click();">
-                        <img src="@Model.HinhAnh" alt="Avatar" class="avatar" id="avatarPreview">
+                        <img src="~/images/CuaHang/@Model.HinhAnh" alt="Avatar" class="avatar" id="avatarPreview">
                         <span class="edit-icon"><i class="fa fa-camera"></i></span>
                         <input type="file" id="avatarInput" name="hinhAnh" accept="image/*" onchange="previewAvatar(event)">
                     </div>
