@@ -83,7 +83,7 @@
         {
             <a asp-area="Client" asp-controller="XemChiTiet" asp-action="ChiTietXe" asp-route-id="@xe.IdXe">
                 <div class="xe-card">
-                    <img src="~/images/@xe.HinhAnh" alt="Xe đạp đua">
+                    <img src="@Url.Content($"~/images/xe/{xe.HinhAnh}")" alt="Xe đạp đua">
                     <div class="xe-card-body">
                         <p class="tenXe">@xe.TenXe</p>
                         <p class="moTa">@xe.GioiThieu</p>
@@ -104,11 +104,11 @@
         const idCuaHang = new URLSearchParams(window.location.search).get("id");
 
         // Hàm dựng HTML của từng xe
-        function createXeCard(xe) {
+                function createXeCard(xe) {
             return `
-                <a href="/Client/ChiTietXe?id=${xe.idXe}">
+                <a href="/Client/XemChiTiet/ChiTietXe/${xe.idXe}">
                     <div class="xe-card">
-                        <img src="/images/${xe.hinhAnh}" alt="${xe.tenXe}">
+                        <img src="/images/xe/${xe.hinhAnh}" alt="${xe.tenXe}">
                         <div class="xe-card-body">
                             <p class="tenXe">${xe.tenXe}</p>
                             <p class="moTa">${xe.gioiThieu}</p>
@@ -119,6 +119,7 @@
                 </a>
             `;
         }
+
 
         async function fetchXeTheoLoai() {
             const checkedValues = Array.from(document.querySelectorAll(".filter-checkbox:checked"))
