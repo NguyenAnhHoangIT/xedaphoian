@@ -1,0 +1,121 @@
+﻿@using ThueXeDapHoiAn.Areas.Client.Models
+@{
+    Layout = "~/Areas/Client/Views/Shared/_LayoutCuaHang.cshtml";
+    var chiTietList = Model.ChiTietDonThue as IEnumerable<ChiTietDonThueModel_Client>;
+    var thoiGianThue = (Model.NgayTraXe - Model.NgayNhanXe).TotalHours;
+    bool tinhTheoNgay = thoiGianThue > 23;
+    var soNgay = (int)Math.Ceiling((Model.NgayTraXe - Model.NgayNhanXe).TotalDays);
+    var soGio = (int)Math.Ceiling(thoiGianThue);
+    var soGioNgay = tinhTheoNgay ? soNgay + " ngày" : soGio + " giờ";
+    decimal tongTien = 0;
+    foreach (var ct in chiTietList)
+    {
+        if (tinhTheoNgay)
+            tongTien += (ct.GiaThueTheoNgay ?? 0) * ct.SoLuong * soNgay;
+        else
+            tongTien += (ct.GiaThueTheoGio ?? 0) * ct.SoLuong * soGio;
+    }
+    if (Model.KhuyenMai != null && Model.KhuyenMai.MucGiamGia > 0)
+    {
+        tongTien = tongTien * (1 - Convert.ToDecimal(Model.KhuyenMai.MucGiamGia));
+    }
+}
+@section Styles {
+    <link rel="stylesheet" href="~/css/LayoutClient.css" />
+    <style>
+        .order-detail-box {
+            max-width: 600px;
+            margin: 40px auto;
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 8px 32px rgba(44,204,113,0.10);
+            padding: 32px 28px 28px 28px;
+        }
+
+            .order-detail-box h2 {
+                color: #27ae60;
+                text-align: center;
+                margin-bottom: 24px;
+            }
+
+        .order-detail-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+            .order-detail-table th, .order-detail-table td {
+                padding: 10px 8px;
+                border-bottom: 1px solid #eee;
+            }
+
+            .order-detail-table th {
+                background: #f6f6f6;
+                text-align: left;
+            }
+
+            .order-detail-table td {
+                vertical-align: top;
+            }
+
+        .order-detail-label {
+            font-weight: 600;
+            width: 160px;
+            color: #222;
+        }
+
+        .order-detail-value {
+            color: #222;
+        }
+    </style>
+}
+<div class="order-detail-box">
+    <h2>Chi tiết đơn thuê</h2>
+    <table class="order-detail-table">
+        <tr>
+            <th class="order-detail-label">ID đơn thuê</th>
+            <td class="order-detail-value">@Model.IdDonThue</td>
+        </tr>
+        <tr>
+            <th class="order-detail-label">Tên khách hàng</th>
+            <td class="order-detail-value">@Model.User.Ten</td>
+        </tr>
+        <tr>
+            <th class="order-detail-label">Tên xe (số lượng)</th>
+            <td class="order-detail-value">
+                @{
+                    var xeInfo = string.Join("<br/>", chiTietList.Select(ct =>
+                    $"{ct.Xe.TenXe} ({ct.Xe.LoaiXe.TenLoaiXe}) x{ct.SoLuong} - {(soGioNgay.Contains("ngày") ? (ct.GiaThueTheoNgay ?? 0) : (ct.GiaThueTheoGio ?? 0)):N0} VND"
+                    ));
+                }
+                @Html.Raw(xeInfo)
+            </td>
+        </tr>
+        <tr>
+            <th class="order-detail-label">Số giờ/ngày thuê</th>
+            <td class="order-detail-value">@soGioNgay</td>
+        </tr>
+        <tr>
+            <th class="order-detail-label">Ngày nhận</th>
+            <td class="order-detail-value">@Model.NgayNhanXe.ToString("HH\\h dd/MM/yyyy")</td>
+        </tr>
+        <tr>
+            <th class="order-detail-label">Ngày trả</th>
+            <td class="order-detail-value">@Model.NgayTraXe.ToString("HH\\h dd/MM/yyyy")</td>
+        </tr>
+        <tr>
+            <th class="order-detail-label">Tổng tiền</th>
+            <td class="order-detail-value">@string.Format("{0:N0} VND", tongTien)</td>
+        </tr>
+        <tr>
+            <th class="order-detail-label">Ghi chú</th>
+            <td class="order-detail-value">@Model.GhiChu</td>
+        </tr>
+        <tr>
+            <th class="order-detail-label">Trạng thái</th>
+            <td class="order-detail-value">@Model.TrangThaiDon</td>
+        </tr>
+    </table>
+    <div style="text-align:center; margin-top:24px;">
+        <a href="javascript:history.back()" class="btn btn-secondary">Quay lại</a>
+    </div>
+</div>

@@ -81,7 +81,7 @@
                         @foreach (var item in Model.CartItems)
                         {
                             <tr class="item-row" data-id="@item.IdXe" data-name="@item.TenXe">
-                                <td><img src="~/images/@item.HinhAnh" class="img-fluid rounded" style="max-width:150px;"></td>
+                                <td><img src="~/images/xe/@item.HinhAnh" class="img-fluid rounded" style="max-width:150px;"></td>
                                 <td class="ten-xe">@item.TenXe</td>
 
                                 <td class="gia-theo-gio" data-price="@item.GiaThueTheoGio">
@@ -142,17 +142,20 @@
         flatpickr("#thoigianGio", {
           enableTime: true,
           dateFormat: "Y-m-d H:i",
-          locale: "vn"
+          locale: "vn",
+          minDate: "today"
         });
 
         flatpickr("#ngayNhan", {
           dateFormat: "Y-m-d",
-          locale: "vn"
+          locale: "vn",
+          minDate: "today" 
         });
 
         flatpickr("#ngayTra", {
           dateFormat: "Y-m-d",
-          locale: "vn"
+          locale: "vn",
+          minDate: "today"
         });
 
         const btnGio = document.getElementById("btnGio");
@@ -555,10 +558,4 @@
         inputNgayNhan.addEventListener("change", kiemTraNgay);
         inputNgayTra.addEventListener("change", kiemTraNgay);
     </script>
-
-
-
-
-
-
 }

@@ -1,24 +1,24 @@
-﻿@using ThueXeDapHoiAn.Areas.Client.Models.ViewModels
+﻿﻿@using ThueXeDapHoiAn.Areas.Client.Models.ViewModels
 @model ChiTietCuaHangViewModel_Client
 @{
     Layout = "~/Areas/Client/Views/Shared/_Layout.cshtml";
 }
 
 @section Styles {
-<link rel="stylesheet" href="~/css/LayoutClient.css" />
-<link rel="stylesheet" href="~/css/ChiTietCuaHang.css" />
-<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet" />
-<link href="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.css" rel="stylesheet" />
-<link rel="stylesheet" href="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-directions/v4.1.1/mapbox-gl-directions.css" type="text/css" />
-<style>
-    #map {
-        width: 50%;
-        aspect-ratio: 16 / 9;
-        margin: 20px;
-        border-radius: 8px;
-        display: inline;
-    }
-</style>
+    <link rel="stylesheet" href="~/css/LayoutClient.css" />
+    <link rel="stylesheet" href="~/css/ChiTietCuaHang.css" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet" />
+    <link href="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-directions/v4.1.1/mapbox-gl-directions.css" type="text/css" />
+    <style>
+        #map {
+            width: 50%;
+            aspect-ratio: 16 / 9;
+            margin: 20px;
+            border-radius: 8px;
+            display: inline;
+        }
+    </style>
 
 }
 <style>
@@ -83,7 +83,7 @@
         {
             <a asp-area="Client" asp-controller="XemChiTiet" asp-action="ChiTietXe" asp-route-id="@xe.IdXe">
                 <div class="xe-card">
-                    <img src="~/images/@xe.HinhAnh" alt="Xe đạp đua">
+                    <img src="~/images/xe/@xe.HinhAnh" alt="Xe đạp đua">
                     <div class="xe-card-body">
                         <p class="tenXe">@xe.TenXe</p>
                         <p class="moTa">@xe.GioiThieu</p>
@@ -108,7 +108,7 @@
             return `
                 <a href="/Client/ChiTietXe?id=${xe.idXe}">
                     <div class="xe-card">
-                        <img src="/images/${xe.hinhAnh}" alt="${xe.tenXe}">
+                        <img src="/images/xe/${xe.hinhAnh}" alt="${xe.tenXe}">
                         <div class="xe-card-body">
                             <p class="tenXe">${xe.tenXe}</p>
                             <p class="moTa">${xe.gioiThieu}</p>
@@ -250,5 +250,3 @@
 
 
 }
-
-

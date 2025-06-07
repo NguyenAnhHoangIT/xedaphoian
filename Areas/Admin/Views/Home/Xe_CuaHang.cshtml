@@ -31,7 +31,7 @@
                         @foreach (var xe in cuaHang.XeList)
                         {
                             <div class="grid-item" onclick='showDetails(@Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(xe).Replace("'", "\\'")))'>
-                                <img src="@Url.Content("~/images/" + xe.HinhAnh)" alt="@xe.TenXe" />
+                                <img src="@Url.Content("~/images/xe/" + xe.HinhAnh)" alt="@xe.TenXe" />
                                 <h4>@xe.TenXe</h4>
                                 <p>Giờ: @xe.GiaThueTheoGio đ - Ngày: @xe.GiaThueTheoNgay đ</p>
                             </div>

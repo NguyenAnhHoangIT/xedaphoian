@@ -61,7 +61,7 @@
                             <td>@user.SoDienThoai</td>
                             <td>@user.MatKhau</td>
                             <td>
-                                <img src="@Url.Content("~/images/" + user.HinhAnh)" class="taikhoan-avatar" />
+                                <img src="@Url.Content(string.IsNullOrEmpty(user.HinhAnh) ? "~/images/avatar-default.jpg" : "~/images/nguoiDung/" + user.HinhAnh)" class="taikhoan-avatar" />
                             </td>
                             <td>@user.VaiTro</td>
                             <td>@user.TrangThaiTaiKhoan</td>
