@@ -1,0 +1,36 @@
+﻿@model List<(string Label, string Value)>
+
+<aside class="filter-sidebar">
+    <h2>Lọc theo điều kiện</h2>
+    <form method="get" asp-controller="Client" asp-action="Search">
+        <input type="hidden" name="searchTerm" value="@ViewBag.Keyword" />
+
+        <div class="price-filter">
+            @foreach (var range in Model)
+            {
+                <label>
+                    <input type="radio" name="priceRange" value="@range.Value" @(ViewBag.SelectedRange == range.Value ? "checked" : "") />
+                    @range.Label
+                </label>
+            }
+
+            @if (ViewBag.SelectedRange == "custom")
+            {
+                <input type="number" class="price-input" name="minPrice" placeholder="Giá từ" />
+                <input type="number" class="price-input" name="maxPrice" placeholder="Giá đến" />
+            }
+
+            <h3>Sắp xếp theo</h3>
+            <label>
+                <input type="radio" name="sortOrder" value="asc" @(ViewBag.SortOrder == "asc" ? "checked" : "") />
+                Giá thấp đến cao
+            </label>
+            <label>
+                <input type="radio" name="sortOrder" value="desc" @(ViewBag.SortOrder == "desc" ? "checked" : "") />
+                Giá cao đến thấp
+            </label>
+
+            <button type="submit" id="filter-button">Lọc</button>
+        </div>
+    </form>
+</aside>

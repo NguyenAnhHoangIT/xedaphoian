@@ -11,6 +11,7 @@ using Microsoft.EntityFrameworkCore;
 using ThueXeDapHoiAn.Areas.Client.Models.ViewModels;
 using ThueXeDapHoiAn.Areas.Client.Models;
 using Microsoft.AspNetCore.Hosting;
+using ThueXeDapHoiAn.Areas.Admin.ViewModels;
 
 namespace ThueXeDapHoiAn.Areas.Client.Controllers
 {
@@ -87,7 +88,12 @@ namespace ThueXeDapHoiAn.Areas.Client.Controllers
 
         [Route("Client")]
         [Route("Client/Search")]
-        public async Task<IActionResult> Search(string searchTerm, decimal? minPrice, decimal? maxPrice)
+        public async Task<IActionResult> Search(
+    string searchTerm,
+    decimal? minPrice,
+    decimal? maxPrice,
+    string priceRange,
+    string sortOrder)
         {
             var query = _context.Xe.AsQueryable();
 
@@ -96,28 +102,67 @@ namespace ThueXeDapHoiAn.Areas.Client.Controllers
                 query = query.Where(p => p.TenXe.Contains(searchTerm) || p.GioiThieu.Contains(searchTerm));
             }
 
-            if (minPrice.HasValue && maxPrice.HasValue && minPrice > maxPrice)
+            // Xử lý lọc theo khoảng giá có sẵn
+            if (!string.IsNullOrEmpty(priceRange) && priceRange != "custom")
             {
-                ViewData["Error"] = "Giá tối thiểu không được lớn hơn giá tối đa.";
-                ViewBag.Keyword = searchTerm;
-                return View(new List<XeModel_Client>());
+                if (priceRange.EndsWith("+"))
+                {
+                    // Ví dụ: 200000+
+                    if (decimal.TryParse(priceRange.Replace("+", ""), out decimal min))
+                    {
+                        query = query.Where(p => p.GiaThueTheoGio >= min);
+                    }
+                }
+                else if (priceRange.Contains('-'))
+                {
+                    var parts = priceRange.Split('-');
+                    if (decimal.TryParse(parts[0], out decimal min) && decimal.TryParse(parts[1], out decimal max))
+                    {
+                        query = query.Where(p => p.GiaThueTheoGio >= min && p.GiaThueTheoGio <= max);
+                    }
+                }
             }
 
-            if (minPrice.HasValue)
+            // Xử lý lọc giá tuỳ chọn nếu người dùng chọn custom
+            if (priceRange == "custom")
             {
-                query = query.Where(p => p.GiaThueTheoGio >= minPrice.Value);
+                if (minPrice.HasValue && maxPrice.HasValue && minPrice > maxPrice)
+                {
+                    ViewData["Error"] = "Giá tối thiểu không được lớn hơn giá tối đa.";
+                    ViewBag.Keyword = searchTerm;
+                    return View(new List<XeModel_Client>());
+                }
+
+                if (minPrice.HasValue)
+                {
+                    query = query.Where(p => p.GiaThueTheoGio >= minPrice.Value);
+                }
+
+                if (maxPrice.HasValue)
+                {
+                    query = query.Where(p => p.GiaThueTheoGio <= maxPrice.Value);
+                }
             }
 
-            if (maxPrice.HasValue)
+            // Xử lý sắp xếp theo giá
+            if (sortOrder == "asc")
             {
-                query = query.Where(p => p.GiaThueTheoGio <= maxPrice.Value);
+                query = query.OrderBy(p => p.GiaThueTheoGio);
+            }
+            else if (sortOrder == "desc")
+            {
+                query = query.OrderByDescending(p => p.GiaThueTheoGio);
             }
 
             var xe = await query.ToListAsync();
 
+            // Gửi lại giá trị để ViewComponent nhớ lựa chọn
             ViewBag.Keyword = searchTerm;
             ViewBag.MinPrice = minPrice;
             ViewBag.MaxPrice = maxPrice;
+            ViewBag.SelectedRange = priceRange;
+            ViewBag.SortOrder = sortOrder;
+
             return View(xe);
         }
 
@@ -338,6 +383,39 @@ namespace ThueXeDapHoiAn.Areas.Client.Controllers
         {
             return View();
         }
+
+        [Route("Client/AllCuaHang")]
+        public async Task<IActionResult> AllCuaHang()
+        {
+            // Lấy danh sách cửa hàng
+            var allCuaHang = await _context.CuaHang.Where(c=>c.TrangThaiCuaHang.Equals("True")).ToListAsync();
+
+            // Lấy tất cả đánh giá liên quan đến các cửa hàng đó (dùng để tính điểm trung bình)
+            var allDanhGia = await _context.DanhGia
+                .Include(dg => dg.DonThue)
+                .Where(dg => allCuaHang.Select(ch => ch.IdCuaHang).Contains(dg.DonThue.IdCuaHang))
+                .ToListAsync();
+
+            // Tạo list viewmodel cửa hàng kèm điểm trung bình đánh giá
+            var model = allCuaHang.Select(ch =>
+            {
+                var danhGiaCuaHang = allDanhGia.Where(dg => dg.DonThue.IdCuaHang == ch.IdCuaHang);
+                double diemTrungBinh = danhGiaCuaHang.Any() ? Math.Round(danhGiaCuaHang.Average(dg => dg.DiemDanhGia), 1) : 0;
+
+                return new CuaHangViewModel2
+                {
+                    IdCuaHang = ch.IdCuaHang,
+                    TenCuaHang = ch.TenCuaHang,
+                    MoTa = ch.GioiThieu,
+                    HinhAnh = ch.HinhAnh,
+                    DiemTrungBinh = diemTrungBinh,
+                    DiaChi = ch.DiaChi
+                };
+            }).ToList();
+
+            return View(model);
+        }
+
 
     }
 }

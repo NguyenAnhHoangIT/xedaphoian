@@ -8,6 +8,22 @@
 @section Styles {
 <link rel="stylesheet" href="~/css/LayoutClient.css" />
 <link rel="stylesheet" href="~/css/ChiTietCuaHang.css" />
+<style>
+        .container-flex {
+            display: flex;
+            gap: 20px;
+        }
+
+        .filter-column {
+            width: 250px; /* hoặc 20%, tùy bạn */
+            flex-shrink: 0;
+        }
+
+        .result-column {
+            flex: 1;
+        }
+
+</style>
 
 }
 <div style="text-align: center;
@@ -43,24 +59,36 @@
         minPrice = _min;
         maxPrice = _max;
     }
-    <vc:gia-xe min-price="@(minPrice)" max-price="@(maxPrice)"></vc:gia-xe>
-    <section class="bike-list">
-        @foreach (var item in Model)
-        {
-            <a asp-route-id="@item.IdXe" asp-action="ChiTietXe" asp-controller="XemChiTiet">
-                <div class="xe-card">
-                    <img src="~/images/xe/@item.HinhAnh" alt="Xe trẻ em">
-                    <div class="xe-card-body">
-                        <p class="tenXe">@item.TenXe</p>
-                        <p class="moTa">@item.GioiThieu</p>
-                        <p class="gia">Theo giờ:<span>@item.GiaThueTheoGio đ/1h</span></p>
-                        <p class="gia">Theo ngày:<span>@item.GiaThueTheoNgay đ/1 ngày</span></p>
-                    </div>
-                </div>
-            </a>
-        }
 
-    </section>
+    <div class="container-flex">
+        <div class="filter-column">
+            <vc:gia-xe min-price="@(minPrice)" max-price="@(maxPrice)" />
+            <div style="margin-top:15px"> 
+                <vc:gia-xe2 selected-range="@ViewBag.SelectedRange" sort-order="@ViewBag.SortOrder" />
+            </div>
+            
+        </div>
+
+        <div class="result-column">
+            <section class="bike-list">
+                @foreach (var item in Model)
+                {
+                    <a asp-route-id="@item.IdXe" asp-action="ChiTietXe" asp-controller="XemChiTiet">
+                        <div class="xe-card">
+                            <img src="~/images/xe/@item.HinhAnh" alt="Xe trẻ em">
+                            <div class="xe-card-body">
+                                <p class="tenXe">@item.TenXe</p>
+                                <p class="moTa">@item.GioiThieu</p>
+                                <p class="gia">Giá thuê chỉ từ:</p>
+                                <p class="gia"><span>@item.GiaThueTheoGio đ</span></p>
+                            </div>
+                        </div>
+                    </a>
+                }
+            </section>
+        </div>
+    </div>
 </main>
+
 
 
