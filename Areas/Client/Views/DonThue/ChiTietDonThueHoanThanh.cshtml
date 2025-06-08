@@ -1,0 +1,111 @@
+﻿@using ThueXeDapHoiAn.Areas.Client.Models.ViewModels
+@model DonThueViewModel2_Client
+
+@{
+    Layout = "~/Areas/Client/Views/Shared/_Layout.cshtml";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/LayoutClient.css" />
+    <link rel="stylesheet" href="~/css/ChiTietDonThue.css" />
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+}
+
+<div class="back-button" onclick="history.back()">
+    &#8592; Quay lại
+</div>
+
+<div class="ndung-container">
+    <div class="ndung">
+        <h5 class="qly">CHI TIẾT ĐƠN THUÊ</h5>
+        <div class="detail">
+
+            <div class="ngang">
+                <p class="text">Mã đơn thuê</p>
+                <span class="dlieu">@Model.IdDonThue</span>
+            </div>
+
+            <div class="ngang">
+                <p class="text">Địa điểm thuê</p>
+                <span class="dlieu">Cửa hàng @Model.IdCuaHang</span>
+                <p class="text">Địa chỉ</p>
+                <span class="dlieu">@Model.DiaChiCuaHang</span>
+                <p class="text">SDT liên hệ</p>
+                <span class="dlieu">@Model.SDTCuaHang</span>
+            </div>
+
+            <div class="ngang">
+                <p class="text">Loại xe đặt</p>
+            </div>
+
+            @foreach (var xe in Model.ChiTietDonThue)
+            {
+                <div class="ngang">
+                    <p class="text">@(xe.TenXe ?? xe.Xe?.TenXe)</p>
+                    <span class="dlieu">@xe.SoLuong chiếc</span>
+                    <p class="text">Đơn giá</p>
+
+                    @{
+                        var thoiGianThue = Model.NgayTraXe - Model.NgayNhanXe;
+                        decimal giaApDung = (thoiGianThue.TotalHours <= 23)
+                        ? xe.GiaThueTheoGio ?? 0
+                        : xe.GiaThueTheoNgay ?? 0;
+                    }
+                    <span class="dlieu">@String.Format("{0:N0} đ", giaApDung)</span>
+                </div>
+            }
+
+            <div class="ngang">
+                <p class="text">Nhận xe lúc</p>
+                <span class="dlieu">@Model.NgayNhanXe.ToString("HH:mm, dd/MM/yyyy")</span>
+                <p class="text">Số giờ thuê</p>
+                <span class="dlieu">@Math.Round((Model.NgayTraXe - Model.NgayNhanXe).TotalHours, 2) giờ</span>
+                <p class="text">Trả xe lúc</p>
+                <span class="dlieu">@Model.NgayTraXe.ToString("HH:mm, dd/MM/yyyy")</span>
+            </div>
+
+            <div class="ngang">
+                <p class="text">Tạm tính</p>
+                <span class="dlieu">@String.Format("{0:N0} đ", Model.TamTinh)</span>
+            </div>
+
+            @if (Model.MaKhuyenMai != null && Model.MucGiamGia > 0)
+            {
+                <div class="ngang">
+                    <p class="text">Mã khuyến mãi</p>
+                    <span class="dlieu">@Model.MaKhuyenMai</span>
+                    <p class="text">Nội dung</p>
+                    <span class="dlieu">Áp dụng giảm giá @Model.MucGiamGia% cho hóa đơn</span>
+                </div>
+
+                <div class="ngang">
+                    <p class="text">Giảm giá</p>
+                    <span class="dlieu">@String.Format("-{0:N0} đ", Model.GiamGia)</span>
+                </div>
+            }
+
+            <div class="ngang">
+                <p class="text">Tổng cộng</p>
+                <span class="dlieu">@String.Format("{0:N0} đ", Model.TongCong)</span>
+            </div>
+
+            <div class="ngang">
+                <p class="text">Ghi chú (tùy chọn)</p>
+                <span class="dlieu">@Model.GhiChu</span>
+            </div>
+
+            <div class="button-group">
+                <a asp-area="Client"
+                   asp-controller="DonThue"
+                   asp-action="DanhGia"
+                   asp-route-idCuaHang="@Model.IdCuaHang"
+                   asp-route-idDonThue="@Model.IdDonThue">
+                    <button class="btn3" type="submit">Đánh giá</button>
+                </a>
+
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts {
+}

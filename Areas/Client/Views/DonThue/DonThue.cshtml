@@ -56,9 +56,18 @@
                                     <span class="status @statusClass">@item.TrangThai</span>
                                 </td>
                                 <td>
-                                    <a asp-area="Client" asp-controller="DonThue" asp-action="ChiTietDonThueChuaDuyet" asp-route-id="@item.IdDonThue">
-                                        <button class="btn btn-warning">Xem</button>
-                                    </a>
+                                    @if(item.TrangThai.Equals("Hoàn thành"))
+                                    {
+                                        <a asp-area="Client" asp-controller="DonThue" asp-action="ChiTietDonThueHoanThanh" asp-route-id="@item.IdDonThue">
+                                            <button class="btn btn-warning">Xem</button>
+                                        </a>
+                                    }
+                                    else
+                                    {
+                                        <a asp-area="Client" asp-controller="DonThue" asp-action="ChiTietDonThueChuaDuyet" asp-route-id="@item.IdDonThue">
+                                            <button class="btn btn-warning">Xem</button>
+                                        </a>
+                                    }
                                 </td>
                             </tr>
                         }

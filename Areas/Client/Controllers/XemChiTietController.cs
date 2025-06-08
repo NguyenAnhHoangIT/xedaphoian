@@ -94,27 +94,55 @@ namespace ThueXeDapHoiAn.Areas.Client.Controllers
             }
 
             var xe = _context.Xe.FirstOrDefault(c => c.IdXe == id);
+            if (xe == null)
+            {
+                return NotFound();
+            }
 
             var xeCungCuaHang = _context.Xe
                 .Where(x => x.IdCuaHang == xe.IdCuaHang && x.IdXe != id)
                 .ToList();
 
-            // Tạo dictionary map IdLoaiXe -> TenLoaiXe
             var loaiXeDict = _context.LoaiXe
                 .ToDictionary(l => l.IdLoaiXe, l => l.TenLoaiXe);
 
             ViewBag.XeCungCuaHang = xeCungCuaHang;
             ViewBag.LoaiXeDict = loaiXeDict;
 
-            var gioiThieu = _context.CuaHang
+            // ✅ Lấy thông tin cửa hàng: Giới thiệu, Tên, Hình ảnh
+            var cuaHangInfo = _context.CuaHang
                 .Where(ch => ch.IdCuaHang == xe.IdCuaHang)
-                .Select(ch => ch.GioiThieu)
+                .Select(ch => new
+                {
+                    ch.GioiThieu,
+                    ch.TenCuaHang,
+                    ch.HinhAnh
+                })
                 .FirstOrDefault();
-            ViewBag.GioiThieuCuaHang = gioiThieu;
+
+            ViewBag.GioiThieuCuaHang = cuaHangInfo?.GioiThieu;
+            ViewBag.TenCuaHang = cuaHangInfo?.TenCuaHang;
+            ViewBag.HinhAnhCuaHang = cuaHangInfo?.HinhAnh;
+
+            var danhGiaList = await _context.DanhGia
+                .Include(dg => dg.DonThue).ThenInclude(dt => dt.CuaHang)
+                .Include(dg => dg.DonThue).ThenInclude(dt => dt.User)
+                .Where(dg => dg.DonThue.CuaHang.IdCuaHang == xe.IdCuaHang)
+                .OrderByDescending(dg => dg.ThoiGianDanhGia)
+                .ToListAsync();
+
+            double diemTrungBinh = 0;
+            if (danhGiaList.Any())
+            {
+                diemTrungBinh = Math.Round(danhGiaList.Average(dg => dg.DiemDanhGia), 1);
+            }
+            ViewBag.DiemTrungBinh = diemTrungBinh;
+
+
+            ViewBag.DanhGiaList = danhGiaList;
 
             return View(xe);
         }
-
 
 
 
