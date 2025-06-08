@@ -87,7 +87,12 @@ namespace ThueXeDapHoiAn.Areas.Client.Controllers
 
         [Route("Client")]
         [Route("Client/Search")]
-        public async Task<IActionResult> Search(string searchTerm, decimal? minPrice, decimal? maxPrice)
+        public async Task<IActionResult> Search(
+    string searchTerm,
+    decimal? minPrice,
+    decimal? maxPrice,
+    string priceRange,
+    string sortOrder)
         {
             var query = _context.Xe.AsQueryable();
 
@@ -96,28 +101,67 @@ namespace ThueXeDapHoiAn.Areas.Client.Controllers
                 query = query.Where(p => p.TenXe.Contains(searchTerm) || p.GioiThieu.Contains(searchTerm));
             }
 
-            if (minPrice.HasValue && maxPrice.HasValue && minPrice > maxPrice)
+            // Xử lý lọc theo khoảng giá có sẵn
+            if (!string.IsNullOrEmpty(priceRange) && priceRange != "custom")
             {
-                ViewData["Error"] = "Giá tối thiểu không được lớn hơn giá tối đa.";
-                ViewBag.Keyword = searchTerm;
-                return View(new List<XeModel_Client>());
+                if (priceRange.EndsWith("+"))
+                {
+                    // Ví dụ: 200000+
+                    if (decimal.TryParse(priceRange.Replace("+", ""), out decimal min))
+                    {
+                        query = query.Where(p => p.GiaThueTheoGio >= min);
+                    }
+                }
+                else if (priceRange.Contains('-'))
+                {
+                    var parts = priceRange.Split('-');
+                    if (decimal.TryParse(parts[0], out decimal min) && decimal.TryParse(parts[1], out decimal max))
+                    {
+                        query = query.Where(p => p.GiaThueTheoGio >= min && p.GiaThueTheoGio <= max);
+                    }
+                }
             }
 
-            if (minPrice.HasValue)
+            // Xử lý lọc giá tuỳ chọn nếu người dùng chọn custom
+            if (priceRange == "custom")
             {
-                query = query.Where(p => p.GiaThueTheoGio >= minPrice.Value);
+                if (minPrice.HasValue && maxPrice.HasValue && minPrice > maxPrice)
+                {
+                    ViewData["Error"] = "Giá tối thiểu không được lớn hơn giá tối đa.";
+                    ViewBag.Keyword = searchTerm;
+                    return View(new List<XeModel_Client>());
+                }
+
+                if (minPrice.HasValue)
+                {
+                    query = query.Where(p => p.GiaThueTheoGio >= minPrice.Value);
+                }
+
+                if (maxPrice.HasValue)
+                {
+                    query = query.Where(p => p.GiaThueTheoGio <= maxPrice.Value);
+                }
             }
 
-            if (maxPrice.HasValue)
+            // Xử lý sắp xếp theo giá
+            if (sortOrder == "asc")
             {
-                query = query.Where(p => p.GiaThueTheoGio <= maxPrice.Value);
+                query = query.OrderBy(p => p.GiaThueTheoGio);
+            }
+            else if (sortOrder == "desc")
+            {
+                query = query.OrderByDescending(p => p.GiaThueTheoGio);
             }
 
             var xe = await query.ToListAsync();
 
+            // Gửi lại giá trị để ViewComponent nhớ lựa chọn
             ViewBag.Keyword = searchTerm;
             ViewBag.MinPrice = minPrice;
             ViewBag.MaxPrice = maxPrice;
+            ViewBag.SelectedRange = priceRange;
+            ViewBag.SortOrder = sortOrder;
+
             return View(xe);
         }
 
