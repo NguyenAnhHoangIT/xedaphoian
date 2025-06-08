@@ -37,6 +37,18 @@
                 color: #0288d1;
             }
 
+        .luaChon.active {
+            background-color: #f8d775;
+            font-weight: bold;
+            border-radius: 5px;
+            padding: 5px 10px;
+        }
+
+        .luaChon {
+            cursor: pointer;
+        }
+
+
     </style>
 }
 
@@ -89,10 +101,12 @@
                 </div>
                 <div class="col-md-8 col-12">
                     <div class="filter-options">
-                        <div class="luaChon">Tất cả</div>
-                        <div class="luaChon">5 sao</div>
-                        <div class="luaChon">4 sao</div>
-                        <div class="luaChon">Có bình luận</div>
+                        <div class="luaChon active" data-sao="0">Tất cả</div>
+                        <div class="luaChon" data-sao="5">5 sao</div>
+                        <div class="luaChon" data-sao="4">4 sao</div>
+                        <div class="luaChon" data-sao="3">3 sao</div>
+                        <div class="luaChon" data-sao="2">2 sao</div>
+                        <div class="luaChon" data-sao="1">1 sao</div>
                     </div>
                 </div>
             </div>
@@ -131,7 +145,7 @@
             <div class="ndung_comment">
                 @foreach (var item in Model)
                 {
-                <div class="comment-item">
+                <div class="comment-item" data-diem="@item.DiemDanhGia">
                         <div class="comment-avatar">
                         <img src="~/images/nguoiDung/@ViewBag.HinhAnhUser" alt="Avatar" class="avatar-img">
                         </div>
@@ -206,6 +220,30 @@
                     alert("Vui lòng chọn số sao đánh giá!");
                     return false;
                 }
+            });
+        });
+    </script>
+
+    <script>
+        $(document).ready(function () {
+            $(".luaChon").click(function () {
+                var selectedSao = parseInt($(this).data("sao"));
+
+                // Đổi màu lựa chọn
+                $(".luaChon").removeClass("active");
+                $(this).addClass("active");
+
+                // Lọc đánh giá
+                $(".comment-item").each(function () {
+                    var diem = parseFloat($(this).data("diem"));
+                    var saoLamTron = Math.round(diem);
+
+                    if (selectedSao === 0 || saoLamTron === selectedSao) {
+                        $(this).show();
+                    } else {
+                        $(this).hide();
+                    }
+                });
             });
         });
     </script>

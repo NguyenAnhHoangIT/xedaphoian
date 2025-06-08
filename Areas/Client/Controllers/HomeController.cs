@@ -11,6 +11,7 @@ using Microsoft.EntityFrameworkCore;
 using ThueXeDapHoiAn.Areas.Client.Models.ViewModels;
 using ThueXeDapHoiAn.Areas.Client.Models;
 using Microsoft.AspNetCore.Hosting;
+using ThueXeDapHoiAn.Areas.Admin.ViewModels;
 
 namespace ThueXeDapHoiAn.Areas.Client.Controllers
 {
@@ -382,6 +383,39 @@ namespace ThueXeDapHoiAn.Areas.Client.Controllers
         {
             return View();
         }
+
+        [Route("Client/AllCuaHang")]
+        public async Task<IActionResult> AllCuaHang()
+        {
+            // Lấy danh sách cửa hàng
+            var allCuaHang = await _context.CuaHang.Where(c=>c.TrangThaiCuaHang.Equals("True")).ToListAsync();
+
+            // Lấy tất cả đánh giá liên quan đến các cửa hàng đó (dùng để tính điểm trung bình)
+            var allDanhGia = await _context.DanhGia
+                .Include(dg => dg.DonThue)
+                .Where(dg => allCuaHang.Select(ch => ch.IdCuaHang).Contains(dg.DonThue.IdCuaHang))
+                .ToListAsync();
+
+            // Tạo list viewmodel cửa hàng kèm điểm trung bình đánh giá
+            var model = allCuaHang.Select(ch =>
+            {
+                var danhGiaCuaHang = allDanhGia.Where(dg => dg.DonThue.IdCuaHang == ch.IdCuaHang);
+                double diemTrungBinh = danhGiaCuaHang.Any() ? Math.Round(danhGiaCuaHang.Average(dg => dg.DiemDanhGia), 1) : 0;
+
+                return new CuaHangViewModel2
+                {
+                    IdCuaHang = ch.IdCuaHang,
+                    TenCuaHang = ch.TenCuaHang,
+                    MoTa = ch.GioiThieu,
+                    HinhAnh = ch.HinhAnh,
+                    DiemTrungBinh = diemTrungBinh,
+                    DiaChi = ch.DiaChi
+                };
+            }).ToList();
+
+            return View(model);
+        }
+
 
     }
 }
