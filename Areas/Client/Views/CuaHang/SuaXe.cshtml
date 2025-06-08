@@ -78,10 +78,12 @@
         <input type="number" name="soLuong" value="@Model.SoLuong" min="1"  />
 
         <label>Giá thuê theo giờ <span style="color:red">*</span></label>
-        <input type="number" name="giaThueTheoGio" value="@Model.GiaThueTheoGio" min="0"  />
+        <input type="number" name="giaThueTheoGio" value="@Model.GiaThueTheoGio.ToString("0.##", System.Globalization.CultureInfo.InvariantCulture)" min="0" />
+
 
         <label>Giá thuê theo ngày <span style="color:red">*</span></label>
-        <input type="number" name="giaThueTheoNgay" value="@Model.GiaThueTheoNgay" min="0"  />
+        <input type="number" name="giaThueTheoNgay" value="@Model.GiaThueTheoNgay.ToString("0.##", System.Globalization.CultureInfo.InvariantCulture)" min="0" />
+
 
         <label>Giới thiệu</label>
         <input type="text" name="gioiThieu" value="@Model.GioiThieu" />

@@ -56,11 +56,11 @@
             console.log("Thông tin xe:", xe);
 
             // Nếu ảnh không tìm thấy, hiển thị ảnh mặc định
-            const imageUrl = xe.HinhAnh ? `/images/${xe.HinhAnh}` : '/images/default-bike.png';
+            const imageUrl = xe.HinhAnh ? `${xe.HinhAnh}` : 'default-bike.png';
 
             let content = `
                 <h3>${xe.TenXe}</h3>
-                <img src="${imageUrl}" alt="${xe.TenXe}" style="max-width:100%; height:auto;"/>
+                <img src="/images/xe/${imageUrl}" alt="${xe.TenXe}" style="max-width:100%; height:auto;"/>
                 <p><strong>Giá thuê theo giờ:</strong> ${xe.GiaThueTheoGio} đ</p>
                 <p><strong>Giá thuê theo ngày:</strong> ${xe.GiaThueTheoNgay} đ</p>
                 <p><strong>Số lượng:</strong> ${xe.SoLuong}</p>

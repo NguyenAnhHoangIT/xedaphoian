@@ -13,8 +13,7 @@
 
 .wrapper {
     display: flex;
-    justify-content: space-between;
-    flex-wrap: wrap; /* Cho phép các phần tử trong wrapper di chuyển sang dòng mới khi không đủ chỗ */
+    justify-content: flex-start;
 }
 
 /* Tiêu đề */
@@ -350,7 +349,7 @@
 @media (min-width: 1200px) {
     .wrapper {
         display: flex;
-        justify-content: space-between;
+        justify-content: flex-start;
     }
 
     .bike-list {

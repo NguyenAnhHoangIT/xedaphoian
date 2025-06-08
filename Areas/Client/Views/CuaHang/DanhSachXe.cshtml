@@ -56,7 +56,6 @@
 
     <div class="content_cuahang">
         <div class="container_cuahang">
-            <h2>Danh sách xe đạp</h2>
             @if (TempData["ErrorMessage"] != null)
             {
                 <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
@@ -65,6 +64,7 @@
             {
                 <div class="alert alert-success">@TempData["SuccessMessage"]</div>
             }
+            <h2>Danh sách xe đạp</h2>
             <input type="text" id="searchInput" placeholder="Tìm theo tên xe..." />
             <div style="margin:10px 0;">
                 <label for="sortColumn">Sắp xếp theo: </label>

@@ -49,7 +49,6 @@
     flex-wrap: wrap;
     gap: 20px;
     padding: 20px 40px;
-    justify-content: center;
 }
 
 /* Sidebar bộ lọc */
@@ -91,6 +90,7 @@
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
     overflow: hidden;
     transition: transform 0.3s ease;
+    height: 100%;
 }
 
     .xe-card:hover {
@@ -125,6 +125,11 @@
     font-size: 14px;
     color: #555;
     margin-bottom: 10px;
+    display: -webkit-box;
+    -webkit-line-clamp: 3; /* limit to 3 lines */
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .gia {

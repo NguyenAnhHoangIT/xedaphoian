@@ -9,6 +9,8 @@
 
 @section Styles {
     <link rel="stylesheet" href="~/css/LayoutClient.css" />
+    <link href="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-directions/v4.1.1/mapbox-gl-directions.css" type="text/css" />
     <style>
 
         .shop-listing-link {
@@ -20,6 +22,7 @@
 
         .shop-listing {
             display: flex;
+            align-items: center;
             flex-direction: row;
             margin-top:10px;
             margin-left:200px;
@@ -34,6 +37,11 @@
             .shop-listing:hover {
                 transform: translateY(-4px);
                 box-shadow: 0 12px 32px rgba(0, 0, 0, 0.12);
+                
+            }
+
+            .shop-listing:hover .shop-name {
+                color: #FF9800;
             }
 
         .shop-image {
@@ -42,6 +50,10 @@
             height: 180px;
             overflow: hidden;
             background-color: #f5f5f5;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 10px;
         }
 
             .shop-image img {
@@ -112,11 +124,28 @@
         }
 
         }
+
+        #map {
+            width: 50%;
+            aspect-ratio: 16 / 9;
+            margin: 20px;
+            border-radius: 8px;
+            display: inline;
+        }
+
+        .map_container {
+            width: 100%;
+            display: flex;
+            align-items:center;
+            justify-content:center;
+        }
     </style>
 }
 
 <div class="container">
-
+    <div class="map_container">
+        <div id="map"></div>
+    </div>
     <div class="tab-content">
         @foreach (var item in Model)
         {
@@ -158,3 +187,171 @@
         }
     </div>
 </div>
+@section Scripts {
+    <script src="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.js"></script>
+    <script src="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-directions/v4.1.1/mapbox-gl-directions.js"></script>
+    <script src="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-language/v1.0.0/mapbox-gl-language.js"></script>
+    <script>
+        const idCuaHang = new URLSearchParams(window.location.search).get("id");
+
+        // Hàm dựng HTML của từng xe
+        function createXeCard(xe) {
+            return `
+                <a href="/Client/ChiTietXe?id=${xe.idXe}">
+                    <div class="xe-card">
+                        <img src="/images/xe/${xe.hinhAnh}" alt="${xe.tenXe}">
+                        <div class="xe-card-body">
+                            <p class="tenXe">${xe.tenXe}</p>
+                            <p class="moTa">${xe.gioiThieu}</p>
+                            <p class="gia">Giá thuê chỉ từ:</p>
+                            <span>${Number(xe.giaThueTheoGio).toLocaleString()} đ/chiếc</span>
+                        </div>
+                    </div>
+                </a>
+            `;
+        }
+
+        async function fetchXeTheoLoai() {
+            const checkedValues = Array.from(document.querySelectorAll(".filter-checkbox:checked"))
+                .map(cb => cb.value);
+
+            const url = new URL("/Client/XemChiTiet/GetXeTheoLoai", window.location.origin);
+            if (idCuaHang) {
+                url.searchParams.append("idCuaHang", idCuaHang);
+            }
+
+            checkedValues.forEach(id => url.searchParams.append("idLoaiXe", id));
+
+            try {
+                const res = await fetch(url.toString());
+                if (!res.ok) throw new Error("Lỗi mạng: " + res.status);
+
+                const data = await res.json();
+                const container = document.querySelector(".bike-list");
+
+                if (!container) {
+                    console.error("Không tìm thấy phần tử .bike-list");
+                    return;
+                }
+
+                container.innerHTML = "";
+
+                if (data.length === 0) {
+                    container.innerHTML = "<p>Không có xe phù hợp.</p>";
+                    return;
+                }
+
+                container.innerHTML = data.map(createXeCard).join("");
+            } catch (error) {
+                console.error("Lỗi khi lấy dữ liệu xe:", error);
+                const container = document.querySelector(".bike-list");
+                if (container) {
+                    container.innerHTML = "<p>Đã xảy ra lỗi khi tải dữ liệu xe. Vui lòng thử lại sau.</p>";
+                }
+            }
+        }
+
+        // Gắn sự kiện khi checkbox thay đổi
+        document.addEventListener("DOMContentLoaded", () => {
+            document.querySelectorAll(".filter-checkbox").forEach(cb => {
+                cb.addEventListener("change", fetchXeTheoLoai);
+            });
+
+            fetchXeTheoLoai(); // Tải danh sách lần đầu khi trang được load
+        });
+    </script>
+    <script>
+        mapboxgl.accessToken = 'pk.eyJ1IjoiaGFuaG9nYW4iLCJhIjoiY21iajcydzUyMGN4NjJqcTFnOWN2amQ4MSJ9.he4lo9oQTGFwphDygXxfsQ';
+
+        async function getCoordinatesFromAddress(address) {
+            const res = await fetch(`https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(address)}.json?access_token=${mapboxgl.accessToken}`);
+            const data = await res.json();
+            if (data.features.length === 0) return null;
+            return data.features[0].center; // [lng, lat]
+        }
+
+        async function showAllShopMarkers() {
+            const map = new mapboxgl.Map({
+                container: 'map',
+                style: 'mapbox://styles/mapbox/streets-v11',
+                center: [108.328, 15.880], // Default center Hội An
+                zoom: 12
+            });
+
+            map.addControl(new MapboxLanguage({ defaultLanguage: 'vi' }));
+            const directions = new MapboxDirections({
+                accessToken: mapboxgl.accessToken,
+                unit: 'metric',
+                profile: 'mapbox/walking', // hoặc walking, cycling tùy nhu cầu
+                controls: { instructions: true }
+            });
+            map.addControl(directions, 'top-left');
+
+            const shops = @Html.Raw(Json.Serialize(
+                Model.Select(shop => new {
+                    id = shop.IdCuaHang,
+                    ten = shop.TenCuaHang,
+                    diaChi = shop.DiaChi
+                })
+            ));
+
+
+            for (const shop of shops) {
+                let coords = await getCoordinatesFromAddress(shop.diaChi);
+
+                const marker = new mapboxgl.Marker()
+                    .setLngLat(coords)
+                    .setPopup(new mapboxgl.Popup().setHTML(`
+                        <strong>${shop.ten}</strong><br/>
+                        ${shop.diaChi}<br/>
+                        <button class="route-btn">Chỉ đường</button>
+                    `))
+                    .addTo(map);
+
+                // Lưu địa chỉ và tọa độ vào thuộc tính marker (để dễ lấy lại khi cần)
+                marker.shopAddress = shop.diaChi;
+                marker.shopCoords = coords;
+
+                marker.getElement().addEventListener('click', () => {
+                    marker.togglePopup();
+                });
+
+                marker.getPopup().on('open', () => {
+                    const popupEl = marker.getPopup().getElement();
+                    const btn = popupEl.querySelector('.route-btn');
+                    if (btn) {
+                        btn.onclick = () => {
+                            if (navigator.geolocation) {
+                                navigator.geolocation.getCurrentPosition(position => {
+                                    const userCoords = [position.coords.longitude, position.coords.latitude];
+
+                                    // Lấy địa chỉ của marker
+                                    const destinationAddress = marker.shopAddress;
+                                    const destinationCoords = marker.shopCoords;
+
+                                    console.log("Chỉ đường tới địa chỉ:", destinationAddress);
+
+                                    // Cài đặt điểm xuất phát và điểm đến cho directions
+                                    directions.setOrigin(userCoords);
+                                    directions.setDestination(destinationCoords);
+                                }, () => {
+                                    alert('Không thể lấy vị trí hiện tại của bạn.');
+                                });
+                            } else {
+                                alert('Trình duyệt không hỗ trợ lấy vị trí.');
+                            }
+                        }
+                    }
+                });
+            }
+
+
+           
+        }
+
+        document.addEventListener("DOMContentLoaded", showAllShopMarkers);
+    </script>
+
+
+
+}

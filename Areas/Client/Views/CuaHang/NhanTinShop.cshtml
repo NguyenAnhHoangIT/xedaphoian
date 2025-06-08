@@ -7,7 +7,16 @@
     <link rel="stylesheet" href="~/css/LayoutClient.css" />
     <link rel="stylesheet" href="~/css/NhanTinClient.css" />
 }
-
+<header>
+    <nav class="main-nav">
+        <a asp-area="Client" asp-controller="CuaHang" asp-action="ThongTinCuaHang" >Thông tin cửa hàng</a>
+        <a asp-area="Client" asp-controller="CuaHang" asp-action="DanhSachXe">Quản lý xe</a>
+        <a asp-area="Client" asp-controller="CuaHang" asp-action="DonThueChoDuyet">Quản lý đơn thuê</a>
+        <a asp-area="Client" asp-controller="CuaHang" asp-action="BaoCao">Báo cáo</a>
+        <a asp-area="Client" asp-controller="CuaHang" asp-action="DanhSachKhuyenMai">Khuyến mãi</a>
+        <a asp-area="Client" asp-controller="CuaHang" asp-action="NhanTinShop" class="active">Nhắn tin</a>
+    </nav>
+</header>
 <div class="ndung">
     <div class="wrapper">
         <div class="layout">
