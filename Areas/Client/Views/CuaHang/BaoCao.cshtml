@@ -307,6 +307,29 @@
             }
         });
 
+                const chiTietTheoNgay = @Html.Raw(ViewBag.ChiTietTheoNgay ?? "{}");
+
+        storeRevenueChart.options.onClick = function(evt, elements) {
+            if (elements.length > 0) {
+                const idx = elements[0].index;
+                const ngay = labels[idx];
+                const chiTiet = chiTietTheoNgay[ngay] || [];
+                let html = "";
+                chiTiet.forEach(item => {
+                    html += `<tr>
+                        <td>${item.TenNguoiDat}</td>
+                        <td>${item.TenXe}</td>
+                        <td>${item.LoaiXe}</td>
+                        <td>${item.SoLuong}</td>
+                        <td>${Number(item.TongTien).toLocaleString("vi-VN")} ₫</td>
+                    </tr>`;
+                });
+                document.getElementById("popupNgayTitle").innerText = "Danh sách đơn thuê ngày " + ngay;
+                document.getElementById("popupNgayBody").innerHTML = html || "<tr><td colspan='5'>Không có dữ liệu</td></tr>";
+                document.getElementById("popupNgay").style.display = "block";
+            }
+        };
+
             // Bảng doanh thu các xe
             const rankingTable = document.getElementById("vehicleRankingTable");
             data.doanhThuCacXe.forEach((item, index) => {
@@ -350,4 +373,22 @@
         </table>
     </div>
 </div>
-<!-- ...existing code... -->
+
+<div id="popupNgay" class="modal" style="display:none;position:fixed;z-index:9999;left:0;top:0;width:100vw;height:100vh;background:#0005;">
+    <div style="background:#fff;max-width:650px;margin:60px auto;padding:24px;border-radius:12px;position:relative;">
+        <button onclick="document.getElementById('popupNgay').style.display='none'" style="position:absolute;top:8px;right:12px;font-size:20px;background:none;border:none;">&times;</button>
+        <h4 id="popupNgayTitle"></h4>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Tên người đặt</th>
+                    <th>Tên xe</th>
+                    <th>Loại xe</th>
+                    <th>Số lượng</th>
+                    <th>Thành tiền</th>
+                </tr>
+            </thead>
+            <tbody id="popupNgayBody"></tbody>
+        </table>
+    </div>
+</div>
