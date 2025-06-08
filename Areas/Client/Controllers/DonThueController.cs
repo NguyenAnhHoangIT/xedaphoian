@@ -298,24 +298,35 @@ namespace ThueXeDapHoiAn.Areas.Client.Controllers
             // Kiểm tra người dùng hiện tại đã đánh giá đơn thuê cụ thể chưa
             bool daDanhGia = await _context.DanhGia
                 .AnyAsync(d => d.DonThue.IdDonThue == idDonThue && d.DonThue.UserId == currentUserId);
-
-            // Lấy tên tài khoản đầu tiên (nếu có)
-            var firstTaiKhoanId = danhGia.Select(d => d.DonThue.UserId).FirstOrDefault();
-            var tenTaiKhoan = await _context.TaiKhoan
-                .Where(tk => tk.Id == firstTaiKhoanId)
-                .Select(tk => tk.Ten)
+            var firstUserInfo = await _context.TaiKhoan
+                .Where(tk => tk.Id == danhGia.Select(d => d.DonThue.UserId).FirstOrDefault())
+                .Select(tk => new
+                {
+                    tk.Id,
+                    tk.Ten,
+                    tk.HinhAnh
+                })
                 .FirstOrDefaultAsync();
 
-            var tenCuaHang = await _context.CuaHang
-            .Where(ch => ch.IdCuaHang == idCuaHang)
-            .Select(ch => ch.TenCuaHang)
-            .FirstOrDefaultAsync();
+            var cuaHang = await _context.CuaHang
+                .Where(ch => ch.IdCuaHang == idCuaHang)
+                .Select(ch => new
+                {
+                    ch.TenCuaHang,
+                    ch.HinhAnh  // lấy luôn HinhAnh
+                })
+                .FirstOrDefaultAsync();
 
             ViewBag.DaDanhGia = daDanhGia;
-            ViewBag.TenTaiKhoan = tenTaiKhoan;
             ViewBag.IdDonThue = idDonThue;
             ViewBag.IdCuaHang = idCuaHang;
-            ViewBag.TenCuaHang = tenCuaHang;
+            ViewBag.TenCuaHang = cuaHang?.TenCuaHang;
+            ViewBag.HinhAnh = cuaHang?.HinhAnh;
+            ViewBag.TenTaiKhoan = firstUserInfo?.Ten;
+            ViewBag.HinhAnhUser = firstUserInfo?.HinhAnh;
+            ViewBag.IdTaiKhoan = firstUserInfo?.Id;
+            double diemTrungBinh = danhGia.Any() ? Math.Round(danhGia.Average(d => d.DiemDanhGia), 1) : 0;
+            ViewBag.DiemTrungBinh = diemTrungBinh;
 
             return View(danhGia);
         }

@@ -8,6 +8,12 @@
     <link rel="stylesheet" href="~/css/LayoutClient.css" />
     <link rel="stylesheet" href="~/css/ChiTietXe.css" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <style>
+        .stars i {
+            color: gold; /* hoặc #f5c518 */
+            font-size: 1.2rem;
+        }
+    </style>
 }
 <div class="ndung">
     <div class="wrapper">
@@ -16,11 +22,7 @@
             <img id="mainImage" src="~/images/xe/@Model.HinhAnh" style="width: 430px; height: 280px; border-radius: 6px;" alt="Ảnh chính">
 
             <!-- Ảnh nhỏ bên dưới -->
-            <div style="margin-top: 10px; display: flex; gap: 10px;">
-                <img src="~/images/xe1.jpg" style="width: 100px; height: 65px; cursor: pointer;" onclick="changeImage(this)">
-                <img src="~/images/xe2.jpg" style="width: 100px; height: 65px; cursor: pointer;" onclick="changeImage(this)">
-                <img src="~/images/xe3.png" style="width: 100px; height: 65px; cursor: pointer;" onclick="changeImage(this)">
-            </div>
+
         </div>
         <div style="margin-right: 250px;">
             <p class="title">@Model.TenXe</p>
@@ -86,27 +88,55 @@
     </div>
 
     <div class="wrapper2">
-        <p style="margin-left: 20px;" class="title">ĐÁNH GIÁ VỀ CỬA HÀNG</p>
+        <p style="margin-left: 20px;" class="title">
+            ĐÁNH GIÁ VỀ CỬA HÀNG @ViewBag.TenCuaHang?.ToString().ToUpper()
+        </p>
         <div class="danhGia">
             <div class="row">
                 <div class="col-md-4 col-12 text-center mb-3">
                     <div class="rating-summary">
                         <div class="shop-image">
-                            <img src="~/images/avatar-cuahang.jpg" alt="Shop Image" class="shop-img">
+                            <img src="~/images/CuaHang/@ViewBag.HinhAnhCuaHang" alt="Shop Image" class="shop-img">
                         </div>
+
                         <div class="rating-detail">
+                            @{
+                                double diemTB = ViewBag.DiemTrungBinh != null ? (double)ViewBag.DiemTrungBinh : 0;
+                                int fullStars = (int)Math.Floor(diemTB);
+                                bool hasHalfStar = diemTB - fullStars >= 0.5;
+                                int emptyStars = 5 - fullStars - (hasHalfStar ? 1 : 0);
+                            }
+
                             <div class="rating-detail-stars">
                                 <div class="stars">
-                                    <img src="~/images/star2.png" alt="star" class="star-icon">
-                                    <img src="~/images/star2.png" alt="star" class="star-icon">
-                                    <img src="~/images/star2.png" alt="star" class="star-icon">
-                                    <img src="~/images/star2.png" alt="star" class="star-icon">
-                                    <img src="~/images/star2.png" alt="star" class="star-icon">
+                                    @for (int i = 0; i < fullStars; i++)
+                                    {
+                                        <i class="fas fa-star"></i>
+                                    }
+                                    @if (hasHalfStar)
+                                    {
+                                        <i class="fas fa-star-half-alt"></i>
+                                    }
+                                    @for (int i = 0; i < emptyStars; i++)
+                                    {
+                                        <i class="far fa-star"></i>
+                                    }
                                 </div>
-                                <div class="rating-value"><p>4.5/5</p></div>
+                                <div class="rating-value">
+                                    <p>@diemTB.ToString("0.0")/5</p>
+                                </div>
                             </div>
-                            <div class="reviews-count"><p>(15 đánh giá)</p></div>
+
+
+                            @{
+                                var danhGiaList = ViewBag.DanhGiaList as List<DanhGiaModel_Client>;
+                                int soLuongDanhGia = danhGiaList != null ? danhGiaList.Count : 0;
+                            }
+                            <div class="reviews-count">
+                                <p>(@soLuongDanhGia đánh giá)</p>
+                            </div>
                         </div>
+
                     </div>
                 </div>
                 <div class="col-md-8 col-12">
@@ -129,19 +159,38 @@
 
                         <div class="comment-item">
                             <div class="comment-avatar">
-                                <img src="~/images/avatar-default.jpg" alt="Avatar" class="avatar-img">
+                                @{
+                                    var avatar = !string.IsNullOrEmpty(dg.DonThue.User.HinhAnh) ?
+                                    Url.Content("~/images/nguoiDung/" + dg.DonThue.User.HinhAnh) :
+                                    Url.Content("~/images/avatar-default.jpg");
+                                }
+                                <img src="@avatar" alt="Avatar" class="avatar-img" />
                             </div>
 
                             <div class="comment-detail">
                                 <p class="comment-author">@dg.DonThue.User.Ten</p>
                                 <div class="stars">
                                     @{
-                                        for (int i = 0; i < dg.DiemDanhGia; i++)
-                                        {
-                                            <img src="~/images/star2.png" alt="star" class="star-icon" />
-                                        }
+                                        double diem = dg.DiemDanhGia;
+                                        int fullStars2 = (int)Math.Floor(diem);
+                                        bool hasHalfStar2 = diem - fullStars2 >= 0.5;
+                                        int emptyStars2 = 5 - fullStars2 - (hasHalfStar2 ? 1 : 0);
+                                    }
+
+                                    @for (int i = 0; i < fullStars2; i++)
+                                    {
+                                        <i class="fas fa-star"></i>
+                                    }
+                                    @if (hasHalfStar2)
+                                    {
+                                        <i class="fas fa-star-half-alt"></i>
+                                    }
+                                    @for (int i = 0; i < emptyStars2; i++)
+                                    {
+                                        <i class="far fa-star"></i>
                                     }
                                 </div>
+
                                 <div class="comment-text">
                                     <p>@dg.NoiDungDanhGia</p>
                                     <p class="comment-date">@dg.ThoiGianDanhGia.ToString("dd/MM/yyyy")</p>

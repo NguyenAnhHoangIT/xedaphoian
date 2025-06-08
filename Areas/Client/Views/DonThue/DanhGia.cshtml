@@ -49,21 +49,42 @@
                 <div class="col-md-4 col-12 text-center mb-3">
                     <div class="rating-summary">
                         <div class="shop-image">
-                            <img src="~/images/avatar-cuahang.jpg" alt="Shop Image" class="shop-img">
+                            <img src="~/images/CuaHang/@ViewBag.HinhAnh" alt="Shop Image" class="shop-img">
                         </div>
+                        @{
+                            double diemTB = ViewBag.DiemTrungBinh;
+                            int avgFullStars = (int)Math.Floor(diemTB);
+                            bool avgHasHalfStar = diemTB - avgFullStars >= 0.25 && diemTB - avgFullStars < 0.75;
+                            int avgEmptyStars = 5 - avgFullStars - (avgHasHalfStar ? 1 : 0);
+                        }
                         <div class="rating-detail">
                             <div class="rating-detail-stars">
-                                <div class="stars">
-                                    <img src="~/images/star2.png" alt="star" class="star-icon">
-                                    <img src="~/images/star2.png" alt="star" class="star-icon">
-                                    <img src="~/images/star2.png" alt="star" class="star-icon">
-                                    <img src="~/images/star2.png" alt="star" class="star-icon">
-                                    <img src="~/images/star2.png" alt="star" class="star-icon">
+                                <div class="stars text-warning">
+                                    @for (int i = 0; i < avgFullStars; i++)
+                                    {
+                                        <i class="fas fa-star"></i>
+                                    }
+
+                                    @if (avgHasHalfStar)
+                                    {
+                                        <i class="fas fa-star-half-alt"></i>
+                                    }
+
+                                    @for (int i = 0; i < avgEmptyStars; i++)
+                                    {
+                                        <i class="far fa-star"></i>
+                                    }
                                 </div>
-                                <div class="rating-value"><p>4.5/5</p></div>
+                                <div class="rating-value">
+                                    <p>@diemTB/5</p>
+                                </div>
                             </div>
-                            <div class="reviews-count"><p>(15 đánh giá)</p></div>
+
+                            <div class="reviews-count">
+                                <p>(@Model.Count() đánh giá)</p>
+                            </div>
                         </div>
+
                     </div>
                 </div>
                 <div class="col-md-8 col-12">
@@ -112,7 +133,7 @@
                 {
                 <div class="comment-item">
                         <div class="comment-avatar">
-                            <img src="~/images/avatar-default.jpg" alt="Avatar" class="avatar-img">
+                        <img src="~/images/nguoiDung/@ViewBag.HinhAnhUser" alt="Avatar" class="avatar-img">
                         </div>
 
                        <div class="comment-detail">
