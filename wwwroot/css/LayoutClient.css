@@ -225,7 +225,6 @@ a {
     background-color: #F9F9F9;
     border: 1px solid #ddd;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    overflow-y: auto;
     display: none; /* Hidden by default */
     z-index: 10;
     padding: 10px;

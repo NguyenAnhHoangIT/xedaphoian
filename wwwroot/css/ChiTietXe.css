@@ -22,17 +22,24 @@
     color: #00175D;
     font-weight: bold;
     margin-top: 10px;
+    font-size: 1em;
 }
 
+.bike_name {
+    color: #000F3F;
+    font-weight: bold;
+    font-size: 1.3em;
+    margin-bottom: 10px;
+}
 /* Các trường nhập liệu và nút */
 .form-control {
-    margin-top: 7px;
     width: 200px;
     height: 30px;
+    font-size: 1.2em;
 }
 
 .text {
-    font-size: 18px;
+    font-size: 1em;
     color: #4C4A4A;
     font-weight: bold;
 }
@@ -262,6 +269,7 @@
     overflow: hidden;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     transition: transform 0.3s ease-in-out;
+    height: 100%;
 }
 
     .xe-card:hover {

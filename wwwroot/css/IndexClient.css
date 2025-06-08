@@ -369,15 +369,24 @@
 
 .bike-card {
     display: flex;
-    flex-direction:column;
-    padding: 0 10px;
+    flex-direction: column;
+    margin: 0 10px;
     min-width: 0;
     height: 100%;
+    width: 300px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease;
 }
 
 .bike-card:hover {
     transform: scale(1.01); /* Phóng to nhẹ */
     transition: transform 0.2s ease, box-shadow 0.2s ease;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+}
+
+.bike-card:hover .bike-name {
+    color: #FF9800; /* or any color you like */
+    transition: color 0.3s ease;
 }
 
 .bike-image {

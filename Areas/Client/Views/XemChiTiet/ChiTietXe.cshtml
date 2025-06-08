@@ -21,14 +21,12 @@
             <!-- Ảnh lớn -->
             <img id="mainImage" src="~/images/xe/@Model.HinhAnh" style="width: 430px; height: 280px; border-radius: 6px;" alt="Ảnh chính">
 
-            <!-- Ảnh nhỏ bên dưới -->
-
         </div>
         <div style="margin-right: 250px;">
-            <p class="title">@Model.TenXe</p>
+            <p class="bike_name">@Model.TenXe</p>
             <p class="title">Chọn khung giờ</p>
             <div style="display: flex;gap:6px;align-items: center;">
-                <p class="text">từ</p>
+                <p class="text">Từ</p>
                 <input type="datetime-local" class="form-control" id="thoigianGioFrom">
                 <p class="text">đến</p>
                 <input type="datetime-local" class="form-control" id="thoigianGioTo">
@@ -36,19 +34,18 @@
             <div id="errorMessage" style="color: red; display: none;">Thời gian "từ" không được lớn hơn thời gian "đến".</div>
             <div style="display: flex;gap:20px">
                 <p class="text">Tình trạng</p>
-                <p class="tinhtrang-soxe" style="display: none;">Còn 22 chiếc</p>
+                <p class="tinhtrang-soxe">@Model.SoLuong</p>
             </div>
             <div>
                 <div style="display:flex;gap:10px">
                     <p class="text">Theo giờ</p>
-                    <p>@Model.GiaThueTheoGio.ToString("N0") đ/1h.</p>
+                    <p>@Model.GiaThueTheoGio.ToString("N0") đ/h.</p>
                 </div>
                 <div style="display:flex;gap:10px">
                     <p class="text">Theo ngày</p>
-                    <p>@Model.GiaThueTheoNgay.ToString("N0") đ/ 1 ngày</p>
+                    <p>@Model.GiaThueTheoNgay.ToString("N0") đ/ngày</p>
                 </div>
             </div>
-            <p style="width: 460px;" class="title">@ViewBag.GioiThieuCuaHang</p>
             <div class="so-luong-group">
                 <p class="text">Số lượng</p>
                 <div class="quantity-wrapper">
@@ -60,14 +57,14 @@
             <div style="display: flex;gap:40px;margin-top: 30px">
                 <form id="add-to-cart-form" data-id="@Model.IdXe">
                     <button type="submit" class="add-to-cart"
-                            style="display: inline-block; height: 40px; background-color: #00FF84; color: #00175D; width: 200px; border-radius: 8px; line-height: 40px; text-align: center; font-weight: bold; border: none; cursor: pointer;">
+                            style="display: inline-block; height: 40px; background-color: #00FF84; color: #00175D; width: 200px; border-radius: 8px; line-height: 40px; text-align: center; font-weight: bold; border: none; cursor: pointer; font-size: 1em;">
                         Thêm vào giỏ hàng
                     </button>
                 </form>
 
                 <form id="add-to-cart-and-go-form" data-id="@Model.IdXe">
                     <button type="submit"
-                            style="height: 40px; background-color: #00175D; color: white; width: 200px; border-radius: 8px; cursor: pointer;">
+                            style="height: 40px; background-color: #00175D; color: white; width: 200px; border-radius: 8px; cursor: pointer; font-size: 1em;">
                         Thuê ngay
                     </button>
                 </form>
@@ -82,7 +79,7 @@
         <div>
             <div style="margin-left: 20px;">
                 <p class="title">CHI TIẾT SẢN PHẨM</p>
-                <p class="text">@Model.GioiThieu</p>
+                <p>@Model.GioiThieu</p>
             </div>
         </div>
     </div>

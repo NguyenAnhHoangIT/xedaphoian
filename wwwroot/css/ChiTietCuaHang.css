@@ -49,6 +49,7 @@
     flex-wrap: wrap;
     gap: 20px;
     padding: 20px 40px;
+    justify-content: center;
 }
 
 /* Sidebar bộ lọc */
@@ -81,7 +82,6 @@
     grid-template-columns: repeat(auto-fill, minmax(30%, 1fr));
     gap: 20px;
     width: 67%;
-    margin: 0 auto 0 0;
 }
 
 /* Thẻ xe */
