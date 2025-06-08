@@ -773,6 +773,8 @@ namespace ThueXeDapHoiAn.Areas.Client.Controllers
             .AsEnumerable() // chuyển sang xử lý trên C#
             .ToList();
 
+
+
             var doanhThuTheoLoaiXe = chiTietDonThueList
     .GroupBy(ct => ct.Xe.LoaiXe.TenLoaiXe)
     .Select(g => new ThongKeLoaiXe
@@ -830,6 +832,8 @@ namespace ThueXeDapHoiAn.Areas.Client.Controllers
                 .Take(10)
                 .ToList();
 
+
+
             var model = new BaoCaoViewModel
             {
                 SoXe = _dbHelper.LaySoXe(cuaHangId),
@@ -841,6 +845,30 @@ namespace ThueXeDapHoiAn.Areas.Client.Controllers
                 DoanhThuCacXe = doanhThuCacXe,
                 TopNguoiDung = topNguoiDung
             };
+            var chiTietTheoLoaiXe = chiTietDonThueList
+            .Select(ct => {
+                var thoiGianThue = (ct.DonThue.NgayTraXe - ct.DonThue.NgayNhanXe).TotalHours;
+                bool tinhTheoNgay = thoiGianThue > 23;
+                var soNgay = (int)Math.Ceiling((ct.DonThue.NgayTraXe - ct.DonThue.NgayNhanXe).TotalDays);
+                var soGio = (int)Math.Ceiling(thoiGianThue);
+                decimal tien = tinhTheoNgay
+                    ? (ct.GiaThueTheoNgay ?? 0m) * ct.SoLuong * soNgay
+                    : (ct.GiaThueTheoGio ?? 0m) * ct.SoLuong * soGio;
+                decimal mucGiam = ct.DonThue.KhuyenMai != null ? (decimal)ct.DonThue.KhuyenMai.MucGiamGia : 0m;
+                decimal tongTien = tien * (1m - mucGiam);
+
+                return new
+                {
+                    TenNguoiDat = ct.DonThue.User.Ho + " " + ct.DonThue.User.Ten,
+                    TenXe = ct.Xe.TenXe, // Thêm dòng này
+                    LoaiXe = ct.Xe.LoaiXe.TenLoaiXe,
+                    TongTien = tongTien
+                };
+            })
+            .ToList();
+
+            ViewBag.ChiTietTheoLoaiXe = System.Text.Json.JsonSerializer.Serialize(chiTietTheoLoaiXe);
+
             return View(model);
         }
         // ...existing code...

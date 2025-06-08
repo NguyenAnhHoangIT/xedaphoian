@@ -193,88 +193,118 @@
 @section Scripts {
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
+        // Truyền dữ liệu chi tiết loại xe từ backend sang JS
+        const chiTietTheoLoaiXe = @Html.Raw(ViewBag.ChiTietTheoLoaiXe ?? "[]");
+
         // Tạo object data đầy đủ từ model để JS dùng chung
         const data = {
             soXe: @Model.SoXe,
             soXeDaThue: @Model.SoXeDaThue,
             soDonDaThue: @Model.SoDonDaThue,
             doanhThuThangNay: @Model.DoanhThuThangNay.ToString(System.Globalization.CultureInfo.InvariantCulture),
-
             doanhThuTheoNgay: @Html.Raw(Json.Serialize(Model.DoanhThuTheoNgay)),
             doanhThuTheoLoaiXe: @Html.Raw(Json.Serialize(Model.DoanhThuTheoLoaiXe)),
             doanhThuCacXe: @Html.Raw(Json.Serialize(Model.DoanhThuCacXe)),
             topNguoiDung: @Html.Raw(Json.Serialize(Model.TopNguoiDung))
         };
+
         document.addEventListener("DOMContentLoaded", () => {
             document.getElementById("accountCount").innerText = data.soXe;
             document.getElementById("vehicleCount").innerText = data.soXeDaThue;
             document.getElementById("storeCount").innerText = data.soDonDaThue;
             document.getElementById("monthlyRevenue").innerText = Number(data.doanhThuThangNay).toLocaleString("vi-VN") + " ₫";
 
-            // Vẽ biểu đồ doanh thu theo ngày
-            const revenueCtx = document.getElementById("storeRevenueChart").getContext("2d");
-            new Chart(revenueCtx, {
-                type: "line",
+            // Tính tổng doanh thu các loại xe
+            const totalRevenue = data.doanhThuTheoLoaiXe.reduce((sum, item) => sum + item.doanhThu, 0);
+
+            // Vẽ biểu đồ doanh thu theo loại xe (Pie)
+            const vehicleTypeCtx = document.getElementById("vehicleRevenueChart").getContext("2d");
+            const vehicleTypeChart = new Chart(vehicleTypeCtx, {
+                type: "pie",
                 data: {
-                    labels: data.doanhThuTheoNgay.map(x => x.ngay),
+                    labels: data.doanhThuTheoLoaiXe.map(x => x.loaiXe),
                     datasets: [{
-                        label: "Doanh thu",
-                        data: data.doanhThuTheoNgay.map(x => x.doanhThu),
-                        borderColor: "#4CAF50",
-                        fill: false
+                        data: data.doanhThuTheoLoaiXe.map(x => x.doanhThu),
+                        backgroundColor: ["#FF6384", "#36A2EB", "#FFCE56", "#9CCC65", "#FFA726"]
                     }]
                 },
                 options: {
                     responsive: true,
-                    scales: {
-                        y: {
-                            min: 0,
-                            ticks: {
-                                callback: value => value.toLocaleString("vi-VN") + " ₫"
+                    plugins: {
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    const label = context.label || "";
+                                    const value = context.raw;
+                                    const percent = totalRevenue > 0 ? ((value / totalRevenue) * 100).toFixed(2) : 0;
+                                    return `${label}: ${value.toLocaleString('vi-VN')} VNĐ (${percent}%)`;
+                                }
                             }
+                        },
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                usePointStyle: true
+                            }
+                        }
+                    },
+                    onClick: (evt, elements) => {
+                        if (elements.length > 0) {
+                            const idx = elements[0].index;
+                            const loaiXe = data.doanhThuTheoLoaiXe[idx].loaiXe;
+                            const chiTiet = chiTietTheoLoaiXe.filter(x => x.LoaiXe === loaiXe);
+                            let html = "";
+                            chiTiet.forEach(item => {
+                            html += `<tr>
+                                <td>${item.TenNguoiDat}</td>
+                                <td>${item.TenXe}</td> <!-- Thêm dòng này -->
+                                <td>${item.LoaiXe}</td>
+                                <td>${Number(item.TongTien).toLocaleString("vi-VN")} ₫</td>
+                            </tr>`;
+                        });
+                            document.getElementById("popupLoaiXeTitle").innerText = "Danh sách người đặt - " + loaiXe;
+                            document.getElementById("popupLoaiXeBody").innerHTML = html || "<tr><td colspan='3'>Không có dữ liệu</td></tr>";
+                            document.getElementById("popupLoaiXe").style.display = "block";
                         }
                     }
                 }
             });
+                    const storeRevenueCtx = document.getElementById("storeRevenueChart").getContext("2d");
+        const labels = data.doanhThuTheoNgay.map(x => x.ngay || x.Ngay);
+        const values = data.doanhThuTheoNgay.map(x => x.doanhThu ?? x.DoanhThu);
 
-            // Vẽ biểu đồ doanh thu theo loại xe
-                    const vehicleTypeCtx = document.getElementById("vehicleRevenueChart").getContext("2d");
-
-        // Tính tổng doanh thu
-        const totalRevenue = data.doanhThuTheoLoaiXe.reduce((sum, item) => sum + item.doanhThu, 0);
-
-        new Chart(vehicleTypeCtx, {
-            type: "pie",
+        const storeRevenueChart = new Chart(storeRevenueCtx, {
+            type: "line",
             data: {
-                labels: data.doanhThuTheoLoaiXe.map(x => x.loaiXe),
+                labels: labels,
                 datasets: [{
-                    data: data.doanhThuTheoLoaiXe.map(x => x.doanhThu),
-                    backgroundColor: ["#FF6384", "#36A2EB", "#FFCE56", "#9CCC65", "#FFA726"]
+                    label: "Doanh thu (VNĐ)",
+                    data: values,
+                    borderColor: "#36A2EB",
+                    backgroundColor: "rgba(54,162,235,0.1)",
+                    fill: true,
+                    tension: 0.3,
+                    pointRadius: 3
                 }]
             },
             options: {
                 responsive: true,
                 plugins: {
+                    legend: { display: false },
                     tooltip: {
                         callbacks: {
                             label: function(context) {
-                                const label = context.label || "";
-                                const value = context.raw;
-                                const percent = ((value / totalRevenue) * 100).toFixed(2);
-                                return `${label}: ${value.toLocaleString('vi-VN')} VNĐ (${percent}%)`;
+                                return context.parsed.y.toLocaleString("vi-VN") + " ₫";
                             }
                         }
-                    },
-                    legend: {
-                        position: 'bottom',
-                        labels: {
-                            usePointStyle: true
-                        }
                     }
+                },
+                scales: {
+                    x: { title: { display: true, text: "Ngày" } },
+                    y: { title: { display: true, text: "Doanh thu (VNĐ)" }, beginAtZero: true }
                 }
             }
         });
-
 
             // Bảng doanh thu các xe
             const rankingTable = document.getElementById("vehicleRankingTable");
@@ -300,7 +330,23 @@
                 topUsersTable.insertAdjacentHTML("beforeend", row);
             });
         });
-
     </script>
-
 }
+<div id="popupLoaiXe" class="modal" style="display:none;position:fixed;z-index:9999;left:0;top:0;width:100vw;height:100vh;background:#0005;">
+    <div style="background:#fff;max-width:600px;margin:60px auto;padding:24px;border-radius:12px;position:relative;">
+        <button onclick="document.getElementById('popupLoaiXe').style.display='none'" style="position:absolute;top:8px;right:12px;font-size:20px;background:none;border:none;">&times;</button>
+        <h4 id="popupLoaiXeTitle"></h4>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Người đặt</th>
+                    <th>Tên xe</th>
+                    <th>Loại xe</th>
+                    <th>Tổng tiền</th>
+                </tr>
+            </thead>
+            <tbody id="popupLoaiXeBody"></tbody>
+        </table>
+    </div>
+</div>
+<!-- ...existing code... -->
