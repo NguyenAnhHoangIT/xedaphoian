@@ -76,7 +76,7 @@
             <label for="monthSelect" class="form-label mb-1" style="font-weight:500;">
                 <i class="fa-regular fa-calendar"></i> Chọn tháng
             </label>
-            <select id="monthSelect" name="month" class="form-select" style="width:130px;">
+            <select id="monthSelect" name="month" class="form-select" style="width:130px; font-size: 1em;">
                 @for (int m = 1; m <= 12; m++)
                 {
                     if (m == selectedMonth)
@@ -94,7 +94,7 @@
             <label for="yearSelect" class="form-label mb-1" style="font-weight:500;">
                 <i class="fa-regular fa-calendar-days"></i> Chọn năm
             </label>
-            <select id="yearSelect" name="year" class="form-select" style="width:130px;">
+            <select id="yearSelect" name="year" class="form-select" style="width:130px; font-size: 1em;">
                 @for (int y = currentYear - 5; y <= currentYear; y++)
                 {
                     if (y == selectedYear)
@@ -109,7 +109,7 @@
             </select>
         </div>
         <div style="align-self: flex-end;">
-            <button type="submit" class="btn btn-success px-4" style="margin-top: 8px;">
+            <button type="submit" class="btn btn-success px-4" style="margin-top: 8px; font-size: 1em; padding: 10px">
                 <i class="fa-solid fa-magnifying-glass"></i> Xem báo cáo
             </button>
         </div>
