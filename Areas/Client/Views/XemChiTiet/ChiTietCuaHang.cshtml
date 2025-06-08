@@ -29,9 +29,18 @@
     }
 </style>
 <div class="banner">
-    <div style="display: flex;width: 20%;justify-content: center;flex-direction: column;">
-        <div style="display: flex; margin-top: 20px;">
-            <h5 style="color: white;font-size: 20px;margin-left: 40px;">@Model.CuaHang.TenCuaHang</h5>
+    <div style="display: flex;width: 40%;justify-content: center;flex-direction: column;background: rgba(255, 255, 255, 0.1);  backdrop-filter: blur(10px);  border-radius: 16px; border: 1px solid rgba(255, 255, 255, 0.3); box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);">
+        <div style="display: flex; margin-top: 15px; align-items: center; gap: 20px;">
+            <div style="width: 30%; display: flex; justify-content: center; align-items: center; margin-left: 30px;">
+                <img src="~/images/CuaHang/@Model.CuaHang.HinhAnh" alt="Banner" style="width: 100%; height:100%; aspect-ratio: 1/1; object-fit: contain">
+            </div>
+            <div>
+                <h5 style="color: white;font-size: 1.3em;">@Model.CuaHang.TenCuaHang</h5>
+                <div class="chat_button" onclick="window.location.href='@Url.Action("VaoChat", "Client", new { idCuaHang = Model.CuaHang.IdCuaHang })'">
+                    <i class="fa-brands fa-rocketchat"></i>
+                    <p>Chat</p>
+                </div>
+            </div>
             @{
                 var diem = Model.DiemTrungBinh ?? 0;
                 var soSaoDay = (int)Math.Floor(diem);
@@ -47,7 +56,7 @@
                 int emptyStars = 5 - fullStars - (hasHalfStar ? 1 : 0);
             }
 
-            <div style="margin-left:40px" class="stars text-warning">
+            <div style="margin-left:30px" class="stars text-warning">
                 @for (int i = 0; i < fullStars; i++)
                 {
                     <i class="fas fa-star"></i>  <!-- full star -->
@@ -62,15 +71,15 @@
                 }
             </div>
         </div>
-        <p style="margin-left: 40px;" class="text">
+        <p style="margin-left: 30px;" class="text">
             @Model.CuaHang.GioiThieu
         </p>
         <div>
-            <p style="color: white;margin-left: 40px;"><i class="fa-solid fa-square-phone"></i> @Model.CuaHang.SoDienThoai</p>
-            <p style="color: white;margin-left: 40px;"><i class="fa-solid fa-location-dot"></i> @Model.CuaHang.DiaChi</p>
+            <p style="color: white;margin-left: 30px;"><i class="fa-solid fa-square-phone"></i> @Model.CuaHang.SoDienThoai</p>
+            <p style="color: white;margin-left: 30px;"><i class="fa-solid fa-location-dot"></i> @Model.CuaHang.DiaChi</p>
         </div>
     </div>
-    <div style="width: 20%; display: flex; justify-content: center; align-items: center;"><img src="@Model.CuaHang.HinhAnh" alt="Banner" style="width: 100%; height:100%; aspect-ratio: 1/1; object-fit: contain"></div>
+    
     <div id="map"></div>
 </div>
 
