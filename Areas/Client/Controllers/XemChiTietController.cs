@@ -549,5 +549,30 @@ namespace ThueXeDapHoiAn.Areas.Client.Controllers
         {
             return View();
         }
+
+        [Route("Client/VaoChat")]
+        public IActionResult VaoChat(int idCuaHang)
+        {
+            int? idTaiKhoan = int.Parse(User.FindFirstValue("idTaiKhoan")); 
+
+            var doanChat = _context.DoanChat
+                .FirstOrDefault(dc => dc.IdTaiKhoan == idTaiKhoan && dc.IdCuaHang == idCuaHang);
+
+            if (doanChat == null)
+            {
+                doanChat = new DoanChatModel
+                {
+                    IdTaiKhoan = idTaiKhoan.Value,
+                    IdCuaHang = idCuaHang,
+                    ThoiGianTao = DateTime.Now
+                };
+
+                _context.DoanChat.Add(doanChat);
+                _context.SaveChanges();
+            }
+
+            return RedirectToAction("NhanTinClient", "TinhNang");
+        }
+
     }
 }

@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
 using ThueXeDapHoiAn.Areas.Client.Data;
+using ThueXeDapHoiAn.Areas.Client.ViewComponents;
 using ThueXeDapHoiAn.Data;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -40,6 +41,9 @@ builder.Services.AddSingleton(x => new PaypalClient(
 ));
 builder.Services.AddScoped<DatabaseHelper>();
 builder.Services.AddScoped<DatabaseHelperAdmin>();
+
+builder.Services.AddSignalR();
+
 // Build the app
 var app = builder.Build();
 
@@ -49,7 +53,8 @@ if (!app.Environment.IsDevelopment())
     app.UseExceptionHandler("/Home/Error");
     app.UseHsts();
 }
-
+app.MapHub<ChatHub>("/chatHub");
+app.MapHub<ChatHubShop>("/chatHubShop");
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 

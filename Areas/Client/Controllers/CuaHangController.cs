@@ -888,5 +888,151 @@ namespace ThueXeDapHoiAn.Areas.Client.Controllers
 
             return View(don);
         }
+
+        [Route("Client/Shop/NhanTinShop")]
+        public async Task<IActionResult> NhanTinShop(int? id)
+        {
+
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (string.IsNullOrEmpty(userId))
+                return Unauthorized();
+
+            // Tìm IdCuaHang theo IdTaiKhoan (userId)
+            var cuaHang = await _context.CuaHang
+                .FirstOrDefaultAsync(ch => ch.IdTaiKhoan.ToString() == userId);
+
+            if (cuaHang == null)
+                return NotFound("Không tìm thấy cửa hàng liên quan đến tài khoản này");
+
+            int IdCuaHang = cuaHang.IdCuaHang;
+
+            // Lấy danh sách đoạn chat của shop
+            var dsDoanChat = _context.DoanChat
+            .Include(dc => dc.TaiKhoan)
+            .Where(dc => dc.IdCuaHang == IdCuaHang)
+            .Select(dc => new DoanChatViewModel
+            {
+                IdDoanChat = dc.IdDoanChat,
+                TaiKhoan = new TaiKhoanModel_Client
+                {
+                    IdTaiKhoan = dc.TaiKhoan.Id,
+                    Ho = dc.TaiKhoan.Ho,
+                    Ten = dc.TaiKhoan.Ten,
+                    SoDienThoai = dc.TaiKhoan.SoDienThoai,
+                    HinhAnh = dc.TaiKhoan.HinhAnh,
+                    VaiTro = dc.TaiKhoan.VaiTro,
+                    TrangThaiTaiKhoan = dc.TaiKhoan.TrangThai
+                },
+                IdTaiKhoanCuaHang = dc.TaiKhoan.Id
+            })
+            .ToList();
+
+
+            if (!dsDoanChat.Any())
+            {
+                // Nếu không có đoạn chat nào, trả về view với danh sách rỗng
+                return View(new DanhSachVaChiTietChatViewModel
+                {
+                    DanhSachDoanChat = dsDoanChat,
+                    ChiTietDoanChat = null
+                });
+            }
+
+            // Nếu id không truyền hoặc id không thuộc dsDoanChat thì mặc định lấy đoạn chat đầu tiên
+            int idDoanChat = id ?? dsDoanChat.First().IdDoanChat;
+            if (!dsDoanChat.Any(dc => dc.IdDoanChat == idDoanChat))
+                idDoanChat = dsDoanChat.First().IdDoanChat;
+
+            // Lấy chi tiết đoạn chat đang active
+            var doanChat = _context.DoanChat
+                .Include(dc => dc.TinNhans)
+                .Include(dc => dc.CuaHang)
+                .Include(dc => dc.TaiKhoan)
+                .FirstOrDefault(dc => dc.IdDoanChat == idDoanChat);
+
+            var chiTietDoanChat = doanChat == null ? null : new DoanChatViewModel
+            {
+                IdDoanChat = doanChat.IdDoanChat,
+                TaiKhoan = new TaiKhoanModel_Client
+                {
+                    IdTaiKhoan = doanChat.TaiKhoan.Id,
+                    Ho = doanChat.TaiKhoan.Ho,
+                    Ten = doanChat.TaiKhoan.Ten,
+                    SoDienThoai = doanChat.TaiKhoan.SoDienThoai,
+                    HinhAnh = doanChat.TaiKhoan.HinhAnh,
+                    VaiTro = doanChat.TaiKhoan.VaiTro,
+                    TrangThaiTaiKhoan = doanChat.TaiKhoan.TrangThai
+                },
+                TenNguoiDung = doanChat.CuaHang.TenCuaHang,
+                TinNhans = doanChat.TinNhans.OrderBy(t => t.ThoiGianGui).ToList(),
+                IdTaiKhoanCuaHang = doanChat.TaiKhoan.Id
+            };
+
+
+            // Trả về model tổng hợp chứa danh sách đoạn chat và chi tiết đoạn chat
+            var vmTongHop = new DanhSachVaChiTietChatViewModel
+            {
+                DanhSachDoanChat = dsDoanChat,
+                ChiTietDoanChat = chiTietDoanChat
+            };
+
+            return View(vmTongHop);
+        }
+
+        [Route("Client/Shop/GuiNhanTinShop")]
+        [HttpPost]
+        public IActionResult GuiTinNhan(int idDoanChat, string tinNhanMoi)
+        {
+            var userIdStr = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (string.IsNullOrEmpty(userIdStr)) return Unauthorized();
+
+            if (!int.TryParse(userIdStr, out int userId))
+                return Unauthorized();
+
+            var tn = new TinNhanModel
+            {
+                IdDoanChat = idDoanChat,
+                IdTaiKhoanGui = userId,
+                NoiDung = tinNhanMoi,
+                ThoiGianGui = DateTime.Now
+            };
+
+            _context.TinNhan.Add(tn);
+            _context.SaveChanges();
+
+            return Ok(new { Success = true });
+        }
+
+        [Route("Client/Shop/DanhSachDoanChat")]
+        [HttpGet]
+        public async Task<IActionResult> DanhSachDoanChat()
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (string.IsNullOrEmpty(userId))
+                return Unauthorized();
+
+            // Tìm IdCuaHang theo IdTaiKhoan (userId)
+            var cuaHang = await _context.CuaHang
+                .FirstOrDefaultAsync(ch => ch.IdTaiKhoan.ToString() == userId);
+
+            if (cuaHang == null)
+                return NotFound("Không tìm thấy cửa hàng liên quan đến tài khoản này");
+
+            int IdCuaHang = cuaHang.IdCuaHang;
+
+            // Lấy danh sách đoạn chat của user
+            var dsDoanChat = _context.DoanChat
+                .Include(dc => dc.TaiKhoan) // Already included
+                .Where(dc => dc.IdCuaHang == IdCuaHang)
+                .Select(dc => new DoanChatViewModel
+                {
+                    IdDoanChat = dc.IdDoanChat,
+                    CuaHang = dc.CuaHang,
+                })
+                .ToList();
+
+
+            return View(dsDoanChat);
+        }
     }
 }   

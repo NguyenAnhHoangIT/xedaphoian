@@ -20,6 +20,8 @@ namespace ThueXeDapHoiAn.Data
         public DbSet<KhuyenMaiModel_Client> KhuyenMai { get; set; }
         public DbSet<DanhGiaModel_Client> DanhGia { get; set; }
         public DbSet<ThongBaoModel_Client> ThongBao { get; set; }
+        public DbSet<DoanChatModel> DoanChat { get; set; }
+        public DbSet<TinNhanModel> TinNhan { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -45,6 +47,28 @@ namespace ThueXeDapHoiAn.Data
             // Cấu hình composite primary key cho ChiTietDonThue
             modelBuilder.Entity<ChiTietDonThueModel_Client>()
                 .HasKey(ct => new { ct.IdDonThue, ct.IdXe });
+
+            // Khoá ngoại cho DoanChat
+            modelBuilder.Entity<DoanChatModel>()
+                .HasOne(dc => dc.TaiKhoan)
+                .WithMany()
+                .HasForeignKey(dc => dc.IdTaiKhoan);
+
+            modelBuilder.Entity<DoanChatModel>()
+                .HasOne(dc => dc.CuaHang)
+                .WithMany()
+                .HasForeignKey(dc => dc.IdCuaHang);
+
+            // Khoá ngoại cho TinNhan
+            modelBuilder.Entity<TinNhanModel>()
+                .HasOne(tn => tn.DoanChat)
+                .WithMany(dc => dc.TinNhans)
+                .HasForeignKey(tn => tn.IdDoanChat);
+
+            modelBuilder.Entity<TinNhanModel>()
+                .HasOne(tn => tn.TaiKhoanGui)
+                .WithMany()
+                .HasForeignKey(tn => tn.IdTaiKhoanGui);
 
         }
 
