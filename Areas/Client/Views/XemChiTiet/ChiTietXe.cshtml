@@ -120,66 +120,52 @@
             </div>
 
             <!-- Comment Section Display -->
-            <div class="ndung_comment">
-                <div class="comment-item">
-                    <div class="comment-avatar">
-                        <img src="~/images/avatar-default.jpg" alt="Avatar" class="avatar-img">
-                    </div>
 
-                    <div class="comment-detail">
-                        <p class="comment-author">Hoàng</p>
-                        <div class="stars">
-                            <img src="~/images/star2.png" alt="star" class="star-icon">
-                            <img src="~/images/star2.png" alt="star" class="star-icon">
-                            <img src="~/images/star2.png" alt="star" class="star-icon">
-                            <img src="~/images/star2.png" alt="star" class="star-icon">
-                            <img src="~/images/star2.png" alt="star" class="star-icon">
-                        </div>
-                        <div class="comment-text">
-                            <p>Xe xịn xò, đạp siêu êm luôn, dịch vụ cũng rất tốt nữa</p>
-                            <p class="comment-date">20/03/2025</p>
-                        </div>
-                        <div class="comment-actions">
-                            <p class="comment-like">Thích</p>
-                            <p class="comment-reply">Phản hồi</p>
-                            <div class="report">
-                                <i class="fa-solid fa-triangle-exclamation"></i>
-                                <p>Báo cáo vi phạm</p>
+                @if (ViewBag.DanhGiaList != null && ((List<DanhGiaModel_Client>)ViewBag.DanhGiaList).Count > 0)
+                {
+                    foreach (var dg in (List<DanhGiaModel_Client>)ViewBag.DanhGiaList)
+                    {            
+                        <div class="ndung_comment">
+
+                        <div class="comment-item">
+                            <div class="comment-avatar">
+                                <img src="~/images/avatar-default.jpg" alt="Avatar" class="avatar-img">
+                            </div>
+
+                            <div class="comment-detail">
+                                <p class="comment-author">@dg.DonThue.User.Ten</p>
+                                <div class="stars">
+                                    @{
+                                        for (int i = 0; i < dg.DiemDanhGia; i++)
+                                        {
+                                            <img src="~/images/star2.png" alt="star" class="star-icon" />
+                                        }
+                                    }
+                                </div>
+                                <div class="comment-text">
+                                    <p>@dg.NoiDungDanhGia</p>
+                                    <p class="comment-date">@dg.ThoiGianDanhGia.ToString("dd/MM/yyyy")</p>
+                                </div>
+                                <div class="comment-actions">
+                                    <p class="comment-like">Thích</p>
+                                    <p class="comment-reply">Phản hồi</p>
+                                    <div class="report">
+                                        <i class="fa-solid fa-triangle-exclamation"></i>
+                                        <p>Báo cáo vi phạm</p>
+                                    </div>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                </div>
-                <div class="comment-item">
-                    <div class="comment-avatar">
-                        <img src="~/images/avatar-default.jpg" alt="Avatar" class="avatar-img">
-                    </div>
+                        </div>
+                    }
+                }
+                else
+                {
+                    <p>Chưa có đánh giá nào cho cửa hàng này.</p>
+                }
 
-                    <div class="comment-detail">
-                        <p class="comment-author">Bảo</p>
-                        <div class="stars">
-                            <img src="~/images/star2.png" alt="star" class="star-icon">
-                            <img src="~/images/star2.png" alt="star" class="star-icon">
-                            <img src="~/images/star2.png" alt="star" class="star-icon">
-                            <img src="~/images/star2.png" alt="star" class="star-icon">
-                        </div>
-                        <div class="comment-text">
-                            <p>Dịch vụ oke!</p>
-                            <p class="comment-date">10/03/2025</p>
-                        </div>
-                        <div class="comment-actions">
-                            <p class="comment-like">Thích</p>
-                            <p class="comment-reply">Phản hồi</p>
-                            <div class="report">
-                                <i class="fa-solid fa-triangle-exclamation"></i>
-                                <p>Báo cáo vi phạm</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
 
             </div>
-
-        </div>
     </div>
 
     <div class="wrapper2">

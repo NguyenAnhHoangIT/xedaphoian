@@ -112,6 +112,18 @@ namespace ThueXeDapHoiAn.Areas.Client.Controllers
                 .FirstOrDefault();
             ViewBag.GioiThieuCuaHang = gioiThieu;
 
+            var danhGiaList = await _context.DanhGia
+            .Include(dg => dg.DonThue)
+                .ThenInclude(dt => dt.CuaHang)
+            .Include(dg => dg.DonThue)
+                .ThenInclude(dt => dt.User)
+            .Where(dg => dg.DonThue.CuaHang.IdCuaHang == xe.IdCuaHang)
+            .ToListAsync();
+
+            danhGiaList = danhGiaList.OrderByDescending(dg => dg.ThoiGianDanhGia).ToList();
+
+            ViewBag.DanhGiaList = danhGiaList;
+
             return View(xe);
         }
 

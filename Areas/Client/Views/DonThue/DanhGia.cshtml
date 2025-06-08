@@ -1,128 +1,161 @@
-﻿@{
+﻿@model IEnumerable<ThueXeDapHoiAn.Areas.Client.Models.DanhGiaModel_Client>
+
+@{
     Layout = "~/Areas/Client/Views/Shared/_Layout.cshtml";
 }
 
 @section Styles {
-    <link rel="stylesheet" href="~/css/LayoutClient.css" />
-    <link rel="stylesheet" href="~/css/DanhGia.css" />
+<link rel="stylesheet" href="~/css/LayoutClient.css" />
+<link rel="stylesheet" href="~/css/DanhGia.css" />
 
-    <!-- Font Awesome cho icon sao -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-    <!-- RateYo CSS -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/rateYo/2.3.4/jquery.rateyo.min.css" rel="stylesheet">
-   
+<!-- Font Awesome cho icon sao -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<!-- RateYo CSS -->
+<link href="https://cdnjs.cloudflare.com/ajax/libs/rateYo/2.3.4/jquery.rateyo.min.css" rel="stylesheet">
+    <style>
+        .stars i {
+            color: gold; /* hoặc #f5c518 */
+            font-size: 1.2rem;
+        }
+
+        .alert-custom {
+            background-color: #e0f7fa;
+            border: 1px solid #4fc3f7;
+            color: #0277bd;
+            border-radius: 10px;
+            padding: 15px 20px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+            margin: 20px 0;
+        }
+
+            .alert-custom i {
+                font-size: 20px;
+                color: #0288d1;
+            }
+
+    </style>
 }
 
 <div class="ndung-container">
     <div class="ndung">
-      <p class="title">Đánh giá cửa hàng GIANT</p>
+        <p class="title">Đánh giá cửa hàng @ViewBag.TenCuaHang</p>
 
-      <div class="danhGia">
-        <div class="row">
-          <div class="col-md-4 col-12 text-center mb-3">
-            <div class="rating-summary">
-              <div class="shop-image">
-                <img src="~/images/avatar-cuahang.jpg" alt="Shop Image" class="shop-img">
-              </div>
-              <div class="rating-detail">
-                  <div class="rating-detail-stars">
-                      <div class="stars">
-                        <img src="~/images/star2.png" alt="star" class="star-icon">
-                        <img src="~/images/star2.png" alt="star" class="star-icon">
-                        <img src="~/images/star2.png" alt="star" class="star-icon">
-                        <img src="~/images/star2.png" alt="star" class="star-icon">
-                        <img src="~/images/star2.png" alt="star" class="star-icon">
-                      </div>
-                      <div class="rating-value"><p>4.5/5</p></div>
-                  </div>
-                  <div class="reviews-count"><p>(15 đánh giá)</p></div>
-              </div>
-            </div>
-          </div>
-          <div class="col-md-8 col-12">
-            <div class="filter-options">
-              <div class="luaChon">Tất cả</div>
-              <div class="luaChon">5 sao</div>
-              <div class="luaChon">4 sao</div>
-              <div class="luaChon">Có bình luận</div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Rating input with RateYo -->
-        <div class="rating">
-          <p class="rating-title">Đánh giá của bạn về đơn thuê:</p>
-          <div class="wrapper-rateyo">
-            <div class="rateyo" id="rating"></div>
-          </div>
-        </div>
-
-        <!-- Comment Section -->
-        <div class="comment">
-          <textarea class="textarea1" placeholder="Nội dung đánh giá"></textarea>
-        </div>
-        <button class="btn btn-warning btn-submit">Gửi đánh giá</button>
-      </div>
-
-      <!-- Comment Section Display -->
-      <div class="ndung_comment">
-        <div class="comment-item">
-          <div class="comment-avatar">
-            <img src="~/images/avatar-default.jpg" alt="Avatar" class="avatar-img">
-          </div>
-
-          <div class="comment-detail">
-              <p class="comment-author">Hoàng</p>
-              <div class="stars">
-                <img src="~/images/star2.png" alt="star" class="star-icon">
-                <img src="~/images/star2.png" alt="star" class="star-icon">
-                <img src="~/images/star2.png" alt="star" class="star-icon">
-                <img src="~/images/star2.png" alt="star" class="star-icon">
-                <img src="~/images/star2.png" alt="star" class="star-icon">
-              </div>
-              <div class="comment-text">
-                <p>Xe xịn xò, đạp siêu êm luôn, dịch vụ cũng rất tốt nữa</p>
-                <p class="comment-date">20/03/2025</p>
-              </div>
-              <div class="comment-actions">
-                <p class="comment-like">Thích</p>
-                <p class="comment-reply">Phản hồi</p>
-                <div class="report">
-                  <i class="fa-solid fa-triangle-exclamation"></i>
-                  <p>Báo cáo vi phạm</p>
-                </div>
-              </div>
-              </div>
-          </div>
-          <div class="comment-item">
-               <div class="comment-avatar">
-                <img src="~/images/avatar-default.jpg" alt="Avatar" class="avatar-img">
-               </div>
-
-               <div class="comment-detail">
-                  <p class="comment-author">Bảo</p>
-                  <div class="stars">
-                    <img src="~/images/star2.png" alt="star" class="star-icon">
-                    <img src="~/images/star2.png" alt="star" class="star-icon">
-                    <img src="~/images/star2.png" alt="star" class="star-icon">
-                    <img src="~/images/star2.png" alt="star" class="star-icon">
-                  </div>
-                  <div class="comment-text">
-                    <p>Dịch vụ oke!</p>
-                    <p class="comment-date">10/03/2025</p>
-                  </div>
-                  <div class="comment-actions">
-                    <p class="comment-like">Thích</p>
-                    <p class="comment-reply">Phản hồi</p>
-                    <div class="report">
-                      <i class="fa-solid fa-triangle-exclamation"></i>
-                      <p>Báo cáo vi phạm</p>
+        <div class="danhGia">
+            <div class="row">
+                <div class="col-md-4 col-12 text-center mb-3">
+                    <div class="rating-summary">
+                        <div class="shop-image">
+                            <img src="~/images/avatar-cuahang.jpg" alt="Shop Image" class="shop-img">
+                        </div>
+                        <div class="rating-detail">
+                            <div class="rating-detail-stars">
+                                <div class="stars">
+                                    <img src="~/images/star2.png" alt="star" class="star-icon">
+                                    <img src="~/images/star2.png" alt="star" class="star-icon">
+                                    <img src="~/images/star2.png" alt="star" class="star-icon">
+                                    <img src="~/images/star2.png" alt="star" class="star-icon">
+                                    <img src="~/images/star2.png" alt="star" class="star-icon">
+                                </div>
+                                <div class="rating-value"><p>4.5/5</p></div>
+                            </div>
+                            <div class="reviews-count"><p>(15 đánh giá)</p></div>
+                        </div>
                     </div>
-                  </div>
-               </div>
-          </div>
-        
-      </div>
+                </div>
+                <div class="col-md-8 col-12">
+                    <div class="filter-options">
+                        <div class="luaChon">Tất cả</div>
+                        <div class="luaChon">5 sao</div>
+                        <div class="luaChon">4 sao</div>
+                        <div class="luaChon">Có bình luận</div>
+                    </div>
+                </div>
+            </div>
+
+            @if (!(ViewBag.DaDanhGia ?? false))
+            {
+                <form method="post" action="/Client/DonThue/DanhGia/Submit/@(ViewBag.IdCuaHang ?? 0)/@(ViewBag.IdDonThue ?? 0)">
+                    <div class="rating">
+                        <p class="rating-title">Đánh giá của bạn về đơn thuê:</p>
+                        <div class="wrapper-rateyo">
+                            <div class="rateyo" id="rating"></div>
+                        </div>
+                    </div>
+
+                    <input type="hidden" id="rating-value2" name="DiemDanhGia" />
+
+                    <div class="comment">
+                        <textarea class="textarea1" name="NoiDungDanhGia" placeholder="Nội dung đánh giá"></textarea>
+                    </div>
+
+                    <input type="hidden" name="IdDonThue" value="@ViewBag.IdDonThue" />
+
+                    <button type="submit" class="btn btn-warning btn-submit">Gửi đánh giá</button>
+                </form>
+            }
+            else
+            {
+                <div class="alert-custom">
+                    <i class="fas fa-check-circle"></i>
+                    Bạn đã đánh giá đơn thuê này. Cảm ơn bạn!
+                </div>
+            }
+
+        </div>
+            <!-- Comment Section Display -->
+            <div class="ndung_comment">
+                @foreach (var item in Model)
+                {
+                <div class="comment-item">
+                        <div class="comment-avatar">
+                            <img src="~/images/avatar-default.jpg" alt="Avatar" class="avatar-img">
+                        </div>
+
+                       <div class="comment-detail">
+                        <p class="comment-author">@ViewBag.tenTaiKhoan</p>
+                        <div class="stars text-warning">
+                            @{
+                                double diem = item.DiemDanhGia;
+                                int fullStars = (int)Math.Floor(diem); // sao đầy
+                                bool hasHalfStar = diem - fullStars >= 0.25 && diem - fullStars < 0.75; // sao nửa
+                                int emptyStars = 5 - fullStars - (hasHalfStar ? 1 : 0); // sao trống
+                            }
+
+                            @for (int i = 0; i < fullStars; i++)
+                            {
+                                <i class="fas fa-star"></i> <!-- full star -->
+                            }
+
+                            @if (hasHalfStar)
+                            {
+                                <i class="fas fa-star-half-alt"></i> <!-- half star -->
+                            }
+
+                            @for (int i = 0; i < emptyStars; i++)
+                            {
+                                <i class="far fa-star"></i> <!-- empty star -->
+                            }
+                        </div>
+                                    <div class="comment-text">
+                                        <p>@item.NoiDungDanhGia</p>
+                                        <p class="comment-date">@item.ThoiGianDanhGia</p>
+                                    </div>
+                                    <div class="comment-actions">
+                                        <p class="comment-like">Thích</p>
+                                        <p class="comment-reply">Phản hồi</p>
+                                        <div class="report">
+                                            <i class="fa-solid fa-triangle-exclamation"></i>
+                                            <p>Báo cáo vi phạm</p>
+                                        </div>
+                                    </div>
+                       </div>
+              </div>
+              }
+            </div>
     </div>
   </div>
 @section Scripts {
@@ -131,34 +164,30 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/rateYo/2.3.4/jquery.rateyo.min.js"></script>
 
     <!-- Khởi tạo RateYo -->
+
     <script>
-        $(function () {
+               $(function () {
             $("#rating").rateYo({
                 rating: 0,
                 fullStar: true,
                 starWidth: "30px",
                 spacing: "8px",
-                onSet: function (rating, rateYoInstance) {
-                    console.log("Bạn đã chọn: " + rating);
-                    // Bạn có thể lưu giá trị này vào 1 biến ẩn hoặc xử lý submit
+                onSet: function (rating) {
+                    $("#rating-value2").val(rating);
+                }
+            });
+
+            // Kiểm tra submit, bắt lỗi nếu chưa chọn sao
+            $("form").on("submit", function(e){
+                var rating = $("#rating-value2").val();
+                if(!rating || rating == 0){
+                    e.preventDefault();
+                    alert("Vui lòng chọn số sao đánh giá!");
+                    return false;
                 }
             });
         });
-
-        $(".btn-submit").on("click", function() {
-            var rating = $("#rating").rateYo("option", "rating");
-            var comment = $(".textarea1").val();
-
-            if (rating === 0) {
-                alert("Vui lòng chọn số sao đánh giá!");
-                return;
-            }
-
-            // Gửi AJAX (ví dụ)
-            $.post("/api/danhgia", { rating: rating, comment: comment }, function(response) {
-                alert("Đánh giá của bạn đã được gửi!");
-                // Có thể reset form hoặc load lại danh sách đánh giá
-            });
-        });
     </script>
+
+
 }
