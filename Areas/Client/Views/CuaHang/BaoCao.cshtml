@@ -8,6 +8,49 @@
 @section Styles {
     <link rel="stylesheet" href="~/css/LayoutClient.css" />
     <link rel="stylesheet" href="~/css/BaoCao.css" />
+    <style>
+        .filter-bar-wrapper {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 80px;
+            margin-top: 32px; /* Thêm dòng này để cách header */
+            margin-bottom: 28px;
+        }
+
+        .filter-bar-form {
+            display: flex;
+            gap: 24px;
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 18px 24px;
+            box-shadow: 0 2px 8px #0001;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+            .filter-bar-form > div {
+                display: flex;
+                flex-direction: column;
+                min-width: 150px;
+            }
+
+        media (max-width: 700px) {
+            .filter-bar-form
+
+        {
+            flex-direction: column;
+            gap: 12px;
+            padding: 12px 6px;
+        }
+
+        .filter-bar-form > div {
+            min-width: 100px;
+        }
+
+        }
+    </style>
 }
 
 <header>
@@ -19,6 +62,59 @@
         <a asp-area="Client" asp-controller="CuaHang" asp-action="DanhSachKhuyenMai" >Khuyến mãi</a>
     </nav>
 </header>
+
+@{
+    var now = DateTime.Now;
+    int selectedMonth = Context.Request.Query["month"].Count > 0 ? int.Parse(Context.Request.Query["month"]) : now.Month;
+    int selectedYear = Context.Request.Query["year"].Count > 0 ? int.Parse(Context.Request.Query["year"]) : now.Year;
+    int currentYear = now.Year;
+}
+<div class="filter-bar-wrapper">
+    <form method="get" asp-action="BaoCao" class="filter-bar-form">
+        <div>
+            <label for="monthSelect" class="form-label mb-1" style="font-weight:500;">
+                <i class="fa-regular fa-calendar"></i> Chọn tháng
+            </label>
+            <select id="monthSelect" name="month" class="form-select" style="width:130px;">
+                @for (int m = 1; m <= 12; m++)
+                {
+                    if (m == selectedMonth)
+                    {
+                        <option value="@m" selected="selected">Tháng @m</option>
+                    }
+                    else
+                    {
+                        <option value="@m">Tháng @m</option>
+                    }
+                }
+            </select>
+        </div>
+        <div>
+            <label for="yearSelect" class="form-label mb-1" style="font-weight:500;">
+                <i class="fa-regular fa-calendar-days"></i> Chọn năm
+            </label>
+            <select id="yearSelect" name="year" class="form-select" style="width:130px;">
+                @for (int y = currentYear - 5; y <= currentYear; y++)
+                {
+                    if (y == selectedYear)
+                    {
+                        <option value="@y" selected="selected">@y</option>
+                    }
+                    else
+                    {
+                        <option value="@y">@y</option>
+                    }
+                }
+            </select>
+        </div>
+        <div style="align-self: flex-end;">
+            <button type="submit" class="btn btn-success px-4" style="margin-top: 8px;">
+                <i class="fa-solid fa-magnifying-glass"></i> Xem báo cáo
+            </button>
+        </div>
+    </form>
+</div>
+
 <div class="wrapper_cuahang">
     <div class="thongkecontainer animate-fade-in">
         <!-- Stats Grid -->
