@@ -374,6 +374,7 @@ namespace ThueXeDapHoiAn.Areas.Client.Controllers
                     .ThenInclude(ct => ct.Xe)
                         .ThenInclude(x => x.LoaiXe)
                 .Include(d => d.User)
+                .Include(d => d.KhuyenMai)
                 .Where(d => trangThaiChoPhep.Contains(d.TrangThaiDon) && d.IdCuaHang == cuaHang.IdCuaHang)
 
                 .ToListAsync();
@@ -438,6 +439,7 @@ namespace ThueXeDapHoiAn.Areas.Client.Controllers
                     .ThenInclude(ct => ct.Xe)
                         .ThenInclude(x => x.LoaiXe)
                 .Include(d => d.User)
+                .Include(d => d.KhuyenMai)
                 .Where(d => d.TrangThaiDon == "Hoàn thành" && d.IdCuaHang == cuaHang.IdCuaHang)
                 .ToListAsync();
 
@@ -675,8 +677,58 @@ namespace ThueXeDapHoiAn.Areas.Client.Controllers
             return RedirectToAction("ThemXe");
         }
 
+        // Hàm tính tổng doanh thu của 1 danh sách đơn thuê (đã có sẵn)
+        private decimal TinhTongDoanhThuThang(List<DonThueModel_Client> danhSachDonThue)
+        {
+            decimal tongDoanhThu = 0;
+            foreach (var don in danhSachDonThue)
+            {
+                decimal tongTien = 0;
+                foreach (var ct in don.ChiTietDonThue)
+                {
+                    var thoiGianThue = (don.NgayTraXe - don.NgayNhanXe).TotalHours;
+                    bool tinhTheoNgay = thoiGianThue > 23;
+                    var soNgay = (int)Math.Ceiling((don.NgayTraXe - don.NgayNhanXe).TotalDays);
+                    var soGio = (int)Math.Ceiling(thoiGianThue);
+
+                    if (tinhTheoNgay)
+                        tongTien += (ct.GiaThueTheoNgay ?? 0) * ct.SoLuong * soNgay;
+                    else
+                        tongTien += (ct.GiaThueTheoGio ?? 0) * ct.SoLuong * soGio;
+                }
+                if (don.KhuyenMai != null && don.KhuyenMai.MucGiamGia > 0)
+                    tongTien = tongTien * (1 - Convert.ToDecimal(don.KhuyenMai.MucGiamGia));
+                tongDoanhThu += tongTien;
+            }
+            return tongDoanhThu;
+        }
+
+        private List<ThongKeTheoNgay> TinhDoanhThuTheoNgay(List<DonThueModel_Client> danhSachDonThue, int month, int year)
+        {
+            // Tạo danh sách ngày trong tháng
+            var daysInMonth = Enumerable.Range(1, DateTime.DaysInMonth(year, month))
+                .Select(day => new DateTime(year, month, day))
+                .ToList();
+
+            // Tính doanh thu từng ngày dựa trên ngày trả xe
+            var doanhThuTheoNgay = danhSachDonThue
+                .GroupBy(d => d.NgayTraXe.Date)
+                .ToDictionary(g => g.Key, g => TinhTongDoanhThuThang(g.ToList()));
+
+            // Ghép vào danh sách ngày, nếu không có thì doanh thu = 0
+            var result = daysInMonth
+                .Select(date => new ThongKeTheoNgay
+                {
+                    Ngay = date.ToString("yyyy-MM-dd"),
+                    DoanhThu = doanhThuTheoNgay.ContainsKey(date) ? doanhThuTheoNgay[date] : 0
+                })
+                .ToList();
+
+            return result;
+        }
+
         [Route("Client/Shop/BaoCao")]
-        public async Task<IActionResult> BaoCao()
+        public async Task<IActionResult> BaoCao(int? month, int? year)
         {
             var userIdStr = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (string.IsNullOrEmpty(userIdStr)) return Unauthorized();
@@ -687,21 +739,140 @@ namespace ThueXeDapHoiAn.Areas.Client.Controllers
             if (cuaHang == null) return NotFound();
             int cuaHangId = cuaHang.IdCuaHang;
 
+            int m = month ?? DateTime.Now.Month;
+            int y = year ?? DateTime.Now.Year;
+
+            // Lấy danh sách đơn hoàn thành trong tháng
+            var donThueHoanThanh = await _context.DonThue
+            .Include(d => d.ChiTietDonThue)
+                .ThenInclude(ct => ct.Xe)
+                    .ThenInclude(x => x.LoaiXe)
+            .Include(d => d.KhuyenMai)
+            .Include(d => d.User)
+            .Where(d => d.TrangThaiDon == "Hoàn thành"
+                && d.IdCuaHang == cuaHangId
+                && d.NgayTraXe.Month == m
+                && d.NgayTraXe.Year == y)
+            .ToListAsync();
+
+            // Tổng doanh thu tháng
+            decimal tongDoanhThuThang = TinhTongDoanhThuThang(donThueHoanThanh);
+
+            // Doanh thu theo ngày (đủ ngày trong tháng)
+            var doanhThuTheoNgay = TinhDoanhThuTheoNgay(donThueHoanThanh, m, y);
+
+            var chiTietDonThueList = _context.ChiTietDonThue
+            .Include(ct => ct.DonThue)
+                .ThenInclude(d => d.KhuyenMai)
+            .Include(ct => ct.Xe)
+                .ThenInclude(x => x.LoaiXe)
+            .Where(ct => ct.DonThue.TrangThaiDon == "Hoàn thành"
+                && ct.DonThue.IdCuaHang == cuaHangId
+                && ct.DonThue.NgayTraXe.Month == m
+                && ct.DonThue.NgayTraXe.Year == y)
+            .AsEnumerable() // chuyển sang xử lý trên C#
+            .ToList();
+
+
+
+            var doanhThuTheoLoaiXe = chiTietDonThueList
+    .GroupBy(ct => ct.Xe.LoaiXe.TenLoaiXe)
+    .Select(g => new ThongKeLoaiXe
+    {
+        LoaiXe = g.Key,
+        DoanhThu = g.Sum(ct =>
+        {
+            var thoiGianThue = (ct.DonThue.NgayTraXe - ct.DonThue.NgayNhanXe).TotalHours;
+            bool tinhTheoNgay = thoiGianThue > 23;
+            var soNgay = (int)Math.Ceiling((ct.DonThue.NgayTraXe - ct.DonThue.NgayNhanXe).TotalDays);
+            var soGio = (int)Math.Ceiling(thoiGianThue);
+
+            decimal tien = tinhTheoNgay
+                ? (ct.GiaThueTheoNgay ?? 0m) * ct.SoLuong * soNgay
+                : (ct.GiaThueTheoGio ?? 0m) * ct.SoLuong * soGio;
+
+            decimal mucGiam = ct.DonThue.KhuyenMai != null ? (decimal)ct.DonThue.KhuyenMai.MucGiamGia : 0m;
+            return tien * (1m - mucGiam);
+        })
+    })
+    .ToList();
+
+            var doanhThuCacXe = chiTietDonThueList
+                .GroupBy(ct => ct.Xe.TenXe)
+                .Select(g => new DoanhThuXe
+                {
+                    TenXe = g.Key,
+                    DoanhThu = g.Sum(ct =>
+                    {
+                        var thoiGianThue = (ct.DonThue.NgayTraXe - ct.DonThue.NgayNhanXe).TotalHours;
+                        bool tinhTheoNgay = thoiGianThue > 23;
+                        var soNgay = (int)Math.Ceiling((ct.DonThue.NgayTraXe - ct.DonThue.NgayNhanXe).TotalDays);
+                        var soGio = (int)Math.Ceiling(thoiGianThue);
+
+                        decimal tien = tinhTheoNgay
+                            ? (ct.GiaThueTheoNgay ?? 0m) * ct.SoLuong * soNgay
+                            : (ct.GiaThueTheoGio ?? 0m) * ct.SoLuong * soGio;
+
+                        decimal mucGiam = ct.DonThue.KhuyenMai != null ? (decimal)ct.DonThue.KhuyenMai.MucGiamGia : 0m;
+                        return tien * (1m - mucGiam);
+                    })
+                })
+                .OrderByDescending(x => x.DoanhThu)
+                .ToList();
+
+            // Top 10 người dùng theo tổng tiền thuê
+            var topNguoiDung = donThueHoanThanh
+                .GroupBy(d => d.User.Ho + " " + d.User.Ten)
+                .Select(g => new TopNguoiDung
+                {
+                    TenNguoiDung = g.Key,
+                    TongTienThue = TinhTongDoanhThuThang(g.ToList())
+                })
+                .OrderByDescending(x => x.TongTienThue)
+                .Take(10)
+                .ToList();
+
+
+
             var model = new BaoCaoViewModel
             {
                 SoXe = _dbHelper.LaySoXe(cuaHangId),
-                SoXeDaThue = _dbHelper.LaySoXeDaThue(cuaHangId),
-                SoDonDaThue = _dbHelper.LaySoDonDaThue(cuaHangId),
-                DoanhThuThangNay = _dbHelper.LayDoanhThuThangNay(cuaHangId),
-
-                DoanhThuTheoNgay = _dbHelper.LayDoanhThuTheoNgay(cuaHangId),
-                DoanhThuTheoLoaiXe = _dbHelper.LayDoanhThuTheoLoaiXe(cuaHangId),
-                DoanhThuCacXe = _dbHelper.LayDoanhThuCacXe(cuaHangId),
-                TopNguoiDung = _dbHelper.LayTopNguoiDung(cuaHangId)
+                SoXeDaThue = _dbHelper.LaySoXeDaThue(cuaHangId, m, y),
+                SoDonDaThue = _dbHelper.LaySoDonDaThue(cuaHangId, m, y),
+                DoanhThuThangNay = tongDoanhThuThang,
+                DoanhThuTheoNgay = doanhThuTheoNgay,
+                DoanhThuTheoLoaiXe = doanhThuTheoLoaiXe,
+                DoanhThuCacXe = doanhThuCacXe,
+                TopNguoiDung = topNguoiDung
             };
+            var chiTietTheoLoaiXe = chiTietDonThueList
+            .Select(ct => {
+                var thoiGianThue = (ct.DonThue.NgayTraXe - ct.DonThue.NgayNhanXe).TotalHours;
+                bool tinhTheoNgay = thoiGianThue > 23;
+                var soNgay = (int)Math.Ceiling((ct.DonThue.NgayTraXe - ct.DonThue.NgayNhanXe).TotalDays);
+                var soGio = (int)Math.Ceiling(thoiGianThue);
+                decimal tien = tinhTheoNgay
+                    ? (ct.GiaThueTheoNgay ?? 0m) * ct.SoLuong * soNgay
+                    : (ct.GiaThueTheoGio ?? 0m) * ct.SoLuong * soGio;
+                decimal mucGiam = ct.DonThue.KhuyenMai != null ? (decimal)ct.DonThue.KhuyenMai.MucGiamGia : 0m;
+                decimal tongTien = tien * (1m - mucGiam);
+
+                return new
+                {
+                    TenNguoiDat = ct.DonThue.User.Ho + " " + ct.DonThue.User.Ten,
+                    TenXe = ct.Xe.TenXe, // Thêm dòng này
+                    LoaiXe = ct.Xe.LoaiXe.TenLoaiXe,
+                    TongTien = tongTien
+                };
+            })
+            .ToList();
+
+            ViewBag.ChiTietTheoLoaiXe = System.Text.Json.JsonSerializer.Serialize(chiTietTheoLoaiXe);
 
             return View(model);
         }
+        // ...existing code...
+
         [Route("Client/Shop/ChiTietDonThue")]
         public async Task<IActionResult> ChiTietDonThue(int id)
         {

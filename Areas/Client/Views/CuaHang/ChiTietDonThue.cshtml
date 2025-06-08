@@ -7,18 +7,16 @@
     var soNgay = (int)Math.Ceiling((Model.NgayTraXe - Model.NgayNhanXe).TotalDays);
     var soGio = (int)Math.Ceiling(thoiGianThue);
     var soGioNgay = tinhTheoNgay ? soNgay + " ngày" : soGio + " giờ";
-    decimal tongTien = 0;
+    decimal tongTienTruocKM = 0;
     foreach (var ct in chiTietList)
     {
         if (tinhTheoNgay)
-            tongTien += (ct.GiaThueTheoNgay ?? 0) * ct.SoLuong * soNgay;
+            tongTienTruocKM += (ct.GiaThueTheoNgay ?? 0) * ct.SoLuong * soNgay;
         else
-            tongTien += (ct.GiaThueTheoGio ?? 0) * ct.SoLuong * soGio;
+            tongTienTruocKM += (ct.GiaThueTheoGio ?? 0) * ct.SoLuong * soGio;
     }
-    if (Model.KhuyenMai != null && Model.KhuyenMai.MucGiamGia > 0)
-    {
-        tongTien = tongTien * (1 - Convert.ToDecimal(Model.KhuyenMai.MucGiamGia));
-    }
+    decimal mucGiamGia = (Model.KhuyenMai != null && Model.KhuyenMai.MucGiamGia > 0) ? Convert.ToDecimal(Model.KhuyenMai.MucGiamGia) : 0;
+    decimal tongTienSauKM = tongTienTruocKM * (1 - mucGiamGia);
 }
 @section Styles {
     <link rel="stylesheet" href="~/css/LayoutClient.css" />
@@ -103,8 +101,18 @@
             <td class="order-detail-value">@Model.NgayTraXe.ToString("HH\\h dd/MM/yyyy")</td>
         </tr>
         <tr>
-            <th class="order-detail-label">Tổng tiền</th>
-            <td class="order-detail-value">@string.Format("{0:N0} VND", tongTien)</td>
+            <th class="order-detail-label">Tổng tiền trước KM</th>
+            <td class="order-detail-value">@string.Format("{0:N0} VND", tongTienTruocKM)</td>
+        </tr>
+        <tr>
+            <th class="order-detail-label">Mức giảm giá</th>
+            <td class="order-detail-value">
+                @(mucGiamGia > 0 ? (mucGiamGia * 100).ToString("0.##") + " %" : "0 %")
+            </td>
+        </tr>
+        <tr>
+            <th class="order-detail-label">Tổng tiền sau KM</th>
+            <td class="order-detail-value">@string.Format("{0:N0} VND", tongTienSauKM)</td>
         </tr>
         <tr>
             <th class="order-detail-label">Ghi chú</th>
